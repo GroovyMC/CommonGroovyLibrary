@@ -1,0 +1,11 @@
+modLoader = "gml"
+loaderVersion = "[1,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/GroovyMC/CommonGroovyLibrary/issues"
+
+[[mods]]
+  modId = "cgltest"
+  version = "1.0.0"
+  displayName = "Common Groovy Library"
+  description = "CGL Test"
+  authors = "GroovyMC"

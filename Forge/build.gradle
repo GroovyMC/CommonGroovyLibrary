@@ -33,6 +33,7 @@ minecraft {
             mods {
                 cgl {
                     source sourceSets.main
+                    source sourceSets.test
                     source project(':Common').sourceSets.main
                 }
             }
@@ -59,9 +60,23 @@ minecraft {
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
+sourceSets {
+    transform {}
+    test {
+        compileClasspath += transform.output
+    }
+}
+configurations {
+    transformCompileOnly.extendsFrom(minecraft)
+    transformCompileOnly.extendsFrom(compileOnly)
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(path: ':Common', configuration: 'namedElements')
+
+    transformCompileOnly project(path: ':Common', configuration: 'transformOut')
+    testCompileOnly project(path: ':Common', configuration: 'transformOut')
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
@@ -72,11 +87,13 @@ dependencies {
     runtimeOnly("com.matyrobbrt.gml:gml:${gml_version}:all") {
         exclude module: 'transform'
     }
+
+    compileOnly reg.loaderSpecific()
 }
 
-tasks.withType(GroovyCompile) {
-    source(project(':Common').sourceSets.main.allGroovy)
-    source(project(':Common').sourceSets.main.allJava)
+tasks.named('compileGroovy', GroovyCompile) {
+    it.source(project(':Common').sourceSets.main.allGroovy)
+    it.source(project(':Common').sourceSets.main.allJava)
 }
 
 tasks.withType(JavaCompile) {

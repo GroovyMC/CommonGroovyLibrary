@@ -18,6 +18,17 @@ sourceSets {
             srcDirs = []
         }
     }
+    extension {}
+    transform {
+        compileClasspath += extension.output
+        runtimeClasspath += extension.output
+    }
+}
+
+configurations {
+    extensionCompileOnly.extendsFrom(compileClasspath)
+    transformCompileOnly.extendsFrom(compileClasspath)
+    transformOut
 }
 
 loom {
@@ -43,6 +54,8 @@ dependencies {
     modCompileOnly("org.quiltmc:quilt-loader:${quilt_loader_version}")
 
     implementation group:'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    transformOut sourceSets.extension.output
+    transformOut sourceSets.transform.output
 }
 
 processResources {

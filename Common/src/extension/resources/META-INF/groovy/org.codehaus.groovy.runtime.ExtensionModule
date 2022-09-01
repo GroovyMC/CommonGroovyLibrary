@@ -1,0 +1,3 @@
+moduleName=CGL Extensions
+moduleVersion=1.0.0
+staticExtensionClasses=io.github.groovymc.cgl.extension.StaticGeneralExtensions
