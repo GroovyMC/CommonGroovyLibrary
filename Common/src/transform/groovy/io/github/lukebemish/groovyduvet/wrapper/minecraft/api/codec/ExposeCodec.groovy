@@ -31,7 +31,7 @@ import java.lang.annotation.Target
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target([ElementType.FIELD, ElementType.METHOD])
-@GroovyASTTransformationClass('io.github.lukebemish.groovyduvet.wrapper.minecraft.impl.codec.ExposeCodecTransformation')
+@GroovyASTTransformationClass('io.github.groovymc.cgl.transform.codec.ExposeCodecTransformation')
 @CompileStatic
 @interface ExposeCodec {
 }

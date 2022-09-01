@@ -98,12 +98,18 @@ subprojects {
 
     dependencies {
         compileOnly groovyDep('stdlib')
-        compileOnly groovyDep('ginq')
-        compileOnly groovyDep('nio')
+
         compileOnly groovyDep('contracts')
+        compileOnly groovyDep('datetime')
+        compileOnly groovyDep('nio')
         compileOnly groovyDep('macro')
         compileOnly groovyDep('macro-library')
         compileOnly groovyDep('templates')
+        compileOnly groovyDep('typecheckers')
+        compileOnly groovyDep('dateutil')
+        compileOnly groovyDep('ginq')
+        compileOnly groovyDep('toml')
+        compileOnly groovyDep('json')
     }
 }
 

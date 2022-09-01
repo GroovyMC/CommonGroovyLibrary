@@ -45,7 +45,7 @@ import java.lang.annotation.Target
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target([ElementType.TYPE])
-@GroovyASTTransformationClass('io.github.lukebemish.groovyduvet.wrapper.minecraft.impl.codec.CodecSerializableTransformation')
+@GroovyASTTransformationClass('io.github.groovymc.cgl.transform.codec.CodecSerializableTransformation')
 @CompileStatic
 @interface CodecSerializable {
     /**
