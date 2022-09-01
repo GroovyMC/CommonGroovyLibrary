@@ -8,12 +8,13 @@ buildscript {
     }
 }
 plugins {
+    id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 apply plugin: 'org.spongepowered.mixin'
 
-archivesBaseName = "${mod_name}-forge-${minecraft_version}"
+archivesBaseName = "cgl-${minecraft_version}-forge"
 
 minecraft {
     mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
@@ -104,4 +105,32 @@ processResources {
     from project(':Common').sourceSets.main.resources
 }
 
-jar.finalizedBy('reobfJar')
+jar {
+    finalizedBy('reobfJar')
+    from('LICENSE') {
+        rename { "${it}_${mod_name}"}
+    }
+    from sourceSets.transform.output
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'io.github.groovymc.cgl'
+            artifactId = "cgl-${minecraft_version}-forge"
+            version = project.version
+
+            artifacts = [jar, sourcesJar]
+        }
+    }
+    repositories {
+        maven {
+            name = 'ModdingInquisitionMavenRepo'
+            url = 'https://maven.moddinginquisition.org/releases'
+            credentials {
+                username = findProperty('inquisitionMavenUser') ?: ''
+                password = findProperty('inquisitionMavenPassword') ?: ''
+            }
+        }
+    }
+}

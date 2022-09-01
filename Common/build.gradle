@@ -3,7 +3,7 @@ plugins {
     id 'org.quiltmc.loom' version '0.12.+'
 }
 
-archivesBaseName = "${mod_name}-common-${minecraft_version}"
+archivesBaseName = "cgl-${minecraft_version}"
 
 repositories {
     maven {
@@ -51,7 +51,8 @@ dependencies {
     }
     //DO NOT USE IN PROJECT
     //Provides necessary stuff for project to compile
-    modCompileOnly("org.quiltmc:quilt-loader:${quilt_loader_version}")
+    modCompileOnly "org.quiltmc:quilt-loader:${quilt_loader_version}"
+    modCompileOnly 'com.github.javaparser:javaparser-core:3.24.4'
 
     implementation group:'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     transformOut sourceSets.extension.output
@@ -63,12 +64,50 @@ processResources {
     filesMatching(['pack.mcmeta']) {
         expand buildProps
     }
+    exclude 'mods.groovy'
 }
 
 afterEvaluate {
     tasks.remapJar.setDependsOn([tasks.jar])
 }
+jar {
+    archiveClassifier.set('')
+    from sourceSets.extension.output
+    from sourceSets.transform.output
+}
 
 remapJar.enabled = false
 prepareRemapJar.enabled = false
 remapSourcesJar.enabled = false
+
+groovydoc {
+    use = true
+    docTitle = "CommonGroovyLibrary v${version} - Common"
+}
+tasks.register('groovydocJar', Jar) {
+    it.classifier 'javadoc'
+    it.from groovydoc.destinationDir
+    it.dependsOn(groovydoc)
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'io.github.groovymc.cgl'
+            artifactId = "cgl-${minecraft_version}"
+            version = project.version
+
+            artifacts = [jar, sourcesJar, groovydocJar]
+        }
+    }
+    repositories {
+        maven {
+            name = 'ModdingInquisitionMavenRepo'
+            url = 'https://maven.moddinginquisition.org/releases'
+            credentials {
+                username = findProperty('inquisitionMavenUser') ?: ''
+                password = findProperty('inquisitionMavenPassword') ?: ''
+            }
+        }
+    }
+}

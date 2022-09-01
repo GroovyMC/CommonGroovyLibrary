@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-archivesBaseName = "${mod_name}-quilt-${minecraft_version}"
+archivesBaseName = "cgl-${minecraft_version}-quilt"
 
 repositories {
     maven {
@@ -72,7 +72,29 @@ tasks.withType(JavaCompile) {
 }
 
 jar {
-    from("LICENSE") {
+    from('LICENSE') {
         rename { "${it}_${mod_name}"}
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'io.github.groovymc.cgl'
+            artifactId = "cgl-${minecraft_version}-quilt"
+            version = project.version
+
+            artifacts = [remapJar, sourcesJar]
+        }
+    }
+    repositories {
+        maven {
+            name = 'ModdingInquisitionMavenRepo'
+            url = 'https://maven.moddinginquisition.org/releases'
+            credentials {
+                username = findProperty('inquisitionMavenUser') ?: ''
+                password = findProperty('inquisitionMavenPassword') ?: ''
+            }
+        }
     }
 }
