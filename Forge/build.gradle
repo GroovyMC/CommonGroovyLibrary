@@ -139,7 +139,7 @@ publishing {
             pom.withXml { node ->
                 node.asNode().dependencies
                         .'*'
-                        .findAll { it.artifactId.text().contains('regutils') || it.artifactId.text().contains("cgl-${minecraft_version}") }
+                        .findAll { it.artifactId.text().contains('regutils') || it.artifactId.text().contains("cgl-${minecraft_version}") || it.group.text().contains("com.matyrobbrt.gml") }
                         .each { it.parent().remove(it) }
             }
         }
