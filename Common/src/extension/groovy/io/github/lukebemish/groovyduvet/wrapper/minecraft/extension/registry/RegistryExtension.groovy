@@ -15,22 +15,32 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.groovymc.cgl.extension
+package io.github.lukebemish.groovyduvet.wrapper.minecraft.extension.registry
 
 import groovy.transform.CompileStatic
+import net.minecraft.core.Registry
+import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.item.crafting.Recipe
-import net.minecraft.world.item.crafting.RecipeType
 
 @CompileStatic
-class StaticGeneralExtensions {
-    static <T extends Recipe> RecipeType<T> simple(ResourceLocation name) {
-        final actualName = name.toString()
-        return new RecipeType<T>() {
-            @Override
-            String toString() {
-                return actualName
-            }
-        }
+class RegistryExtension {
+    static <A> A getAt(Registry<A> self, ResourceLocation name) {
+        return self.get(name)
+    }
+
+    static <A> A getAt(Registry<A> self, ResourceKey<A> key) {
+        return self.get(key)
+    }
+
+    static <A> void putAt(Registry<A> self, ResourceLocation name, A value) {
+        Registry.register(self, name, value)
+    }
+
+    static <A> void putAt(Registry<A> self, ResourceKey<A> key, A value) {
+        Registry.register(self, key, value)
+    }
+
+    static <A> ResourceLocation getAt(Registry<A> self, A member) {
+        return self.getKey(member)
     }
 }

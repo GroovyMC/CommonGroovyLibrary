@@ -15,21 +15,23 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.groovymc.cgl.forge
+package io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec
 
-import com.matyrobbrt.gml.GModContainer
 import groovy.transform.CompileStatic
-import io.github.groovymc.cgl.reg.forge.ForgeBusGetter
-import net.minecraftforge.eventbus.api.IEventBus
-import net.minecraftforge.fml.ModContainer
+import org.codehaus.groovy.transform.GroovyASTTransformationClass
 
+import java.lang.annotation.ElementType
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
+import java.lang.annotation.Target
+
+/**
+ * Exposes a single field or getter method as providing a codec within a class. The transformation gives the parent
+ * class the {@link ExposesCodec} annotation, pointing at the property defined by the annotated method or field.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target([ElementType.FIELD, ElementType.METHOD])
+@GroovyASTTransformationClass('io.github.lukebemish.groovyduvet.wrapper.minecraft.impl.codec.ExposeCodecTransformation')
 @CompileStatic
-class GMLBusGetter implements ForgeBusGetter {
-    @Override
-    IEventBus getModEventBus(ModContainer modContainer) {
-        if (modContainer instanceof GModContainer) {
-            return modContainer.modBus
-        }
-        return null
-    }
+@interface ExposeCodec {
 }

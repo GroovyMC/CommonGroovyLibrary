@@ -1,3 +1,4 @@
 moduleName=CGL Extensions
 moduleVersion=1.0.0
-staticExtensionClasses=io.github.groovymc.cgl.extension.StaticGeneralExtensions
+extensionClasses = io.github.lukebemish.groovyduvet.wrapper.minecraft.extension.registry.RegistryExtension,io.github.lukebemish.groovyduvet.wrapper.minecraft.extension.math.ArithmeticExtension,io.github.lukebemish.groovyduvet.wrapper.minecraft.extension.chat.ComponentExtension
+staticExtensionClasses=io.github.groovymc.cgl.extension.StaticGeneralExtensions,io.github.lukebemish.groovyduvet.wrapper.minecraft.extension.chat.StyleExtension

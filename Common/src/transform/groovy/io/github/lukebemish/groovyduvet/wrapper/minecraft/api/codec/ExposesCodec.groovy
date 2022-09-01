@@ -15,21 +15,25 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.groovymc.cgl.forge
+package io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec
 
-import com.matyrobbrt.gml.GModContainer
 import groovy.transform.CompileStatic
-import io.github.groovymc.cgl.reg.forge.ForgeBusGetter
-import net.minecraftforge.eventbus.api.IEventBus
-import net.minecraftforge.fml.ModContainer
 
+import java.lang.annotation.ElementType
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
+import java.lang.annotation.Target
+
+/**
+ * Marks a class as having a codec that can be used with members of that class.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 @CompileStatic
-class GMLBusGetter implements ForgeBusGetter {
-    @Override
-    IEventBus getModEventBus(ModContainer modContainer) {
-        if (modContainer instanceof GModContainer) {
-            return modContainer.modBus
-        }
-        return null
-    }
+@interface ExposesCodec {
+    /**
+     * The name of the property at which the codec is stored. If the annotated class is {@code A}, the value should
+     * point to a property of type {@code Codec<A>}.
+     */
+    String value()
 }
