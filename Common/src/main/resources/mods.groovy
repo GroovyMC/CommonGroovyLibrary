@@ -18,9 +18,16 @@ ModsDotGroovy.make {
 
         dependencies {
             minecraft = this.minecraftVersionRange
+
             forge {
-                versionRange = "[${this.forgeVersion},)"
+                versionRange = ">=${this.forgeVersion}"
             }
+            onForge {
+                mod('gml_version') {
+                    versionRange = ">=${this.buildProperties['gml_version']}"
+                }
+            }
+
             quiltLoader {
                 versionRange = ">=${this.quiltLoaderVersion}"
             }
