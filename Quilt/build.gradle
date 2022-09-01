@@ -35,7 +35,7 @@ dependencies {
     // }
 
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
-    runtimeOnly project(':Common')
+    implementation project(path: ':Common', configuration: 'namedElements')
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
@@ -64,6 +64,7 @@ processResources {
 
 tasks.withType(GroovyCompile) {
     source(project(':Common').sourceSets.main.allGroovy)
+    source(project(':Common').sourceSets.main.allJava)
 }
 
 tasks.withType(JavaCompile) {

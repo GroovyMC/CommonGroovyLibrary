@@ -76,6 +76,11 @@ dependencies {
 
 tasks.withType(GroovyCompile) {
     source(project(':Common').sourceSets.main.allGroovy)
+    source(project(':Common').sourceSets.main.allJava)
+}
+
+tasks.withType(JavaCompile) {
+    source(project(':Common').sourceSets.main.allJava)
 }
 
 processResources {
