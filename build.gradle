@@ -110,6 +110,8 @@ subprojects {
         compileOnly groovyDep('ginq')
         compileOnly groovyDep('toml')
         compileOnly groovyDep('json')
+
+        compileOnly 'com.matyrobbrt.enhancedgroovy:dsl:0.1.0'
     }
 }
 
