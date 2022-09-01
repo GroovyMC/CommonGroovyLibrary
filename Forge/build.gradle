@@ -136,6 +136,12 @@ publishing {
             version = project.version
 
             artifacts = [jar, sourcesJar]
+            pom.withXml { node ->
+                node.asNode().dependencies
+                        .'*'
+                        .findAll { it.artifactId.text().contains('regutils') || it.artifactId.text().contains("cgl-${minecraft_version}") }
+                        .each { it.parent().remove(it) }
+            }
         }
     }
     repositories {
