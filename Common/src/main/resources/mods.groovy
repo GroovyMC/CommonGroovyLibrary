@@ -19,7 +19,7 @@ ModsDotGroovy.make {
     modLoader = 'gml'
     loaderVersion = '[1,)'
 
-    license = 'MIT'
+    license = 'LGPL-3.0-or-later'
     issueTrackerUrl = 'https://github.com/GroovyMC/CommonGroovyLibrary/issues'
 
     mod {
@@ -45,6 +45,12 @@ ModsDotGroovy.make {
                 }
             }
 
+            onQuilt {
+                mod('groovyduvet_core') {
+                    versionRange = ">=${this.buildProperties['groovyduvet_version']}"
+                }
+            }
+
             quiltLoader {
                 versionRange = ">=${this.quiltLoaderVersion}"
             }
@@ -58,5 +64,18 @@ ModsDotGroovy.make {
                 }
             ]
         }
+    }
+
+    onQuilt {
+        modmenu = [
+                'badges':['library'],
+                'parent':[
+                        'id':'groovyduvet',
+                        'name':'GroovyDuvet',
+                        'description':'Language adapter and wrapper libraries for Groovy mods on Quilt',
+                        'icon':'assets/groovyduvet/icon.png',
+                        'badges':['library']
+                ]
+        ]
     }
 }
