@@ -1,6 +1,7 @@
 plugins {
-    id 'org.quiltmc.loom' version '0.12.+'
+    id 'java-library'
     id 'maven-publish'
+    id 'org.quiltmc.loom' version '0.12.+'
 }
 
 archivesBaseName = "${mod_name}-common-${minecraft_version}"
@@ -9,6 +10,14 @@ repositories {
     maven {
         name = 'Forge / Mixin'
         url = 'https://maven.minecraftforge.net'
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = []
+        }
     }
 }
 
@@ -35,6 +44,8 @@ dependencies {
     modCompileOnly("org.quiltmc:quilt-loader:${quilt_loader_version}")
 
     implementation group:'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+
+    api sourceSets.main.output
 }
 
 processResources {
@@ -44,5 +55,12 @@ processResources {
     }
 }
 
+afterEvaluate {
+    tasks.remapJar.setDependsOn([tasks.jar])
+    // TODO figure this out
+    tasks.classes.setDependsOn([])
+}
+
 remapJar.enabled = false
+prepareRemapJar.enabled = false
 remapSourcesJar.enabled = false

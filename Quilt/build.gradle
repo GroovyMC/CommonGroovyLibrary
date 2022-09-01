@@ -27,6 +27,7 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_version}@zip")
     }
     modImplementation "org.quiltmc:quilt-loader:${quilt_loader_version}"
+    modImplementation "io.github.lukebemish.groovyduvet:groovyduvet:${groovyduvet_version}"
 
     // We do not currently need qsl
     // modImplementation("org.quiltmc:qsl:${quilt_stdlib_version}") {
@@ -59,11 +60,6 @@ loom {
 
 processResources {
     from project(':Common').sourceSets.main.resources
-    inputs.property 'version', project.version
-
-    filesMatching('quilt.mod.json') {
-        expand 'version': project.version
-    }
 }
 
 tasks.withType(GroovyCompile) {

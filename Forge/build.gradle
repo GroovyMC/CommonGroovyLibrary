@@ -24,19 +24,20 @@ minecraft {
         accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
         project.logger.debug('Forge Access Transformers are enabled for this project.')
     }
-    configureEach {
-        workingDirectory project.file('run')
-        property 'mixin.env.remapRefMap', 'true'
-        property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-        mods {
-            cgl {
-                source sourceSets.main
-                source project(':Common').sourceSets.main
-            }
-        }
-    }
 
     runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods {
+                cgl {
+                    source sourceSets.main
+                    source project(':Common').sourceSets.main
+                }
+            }
+        }
+
         client {
             ideaModule "${rootProject.name}.${project.name}.main"
             taskName 'Client'
@@ -66,10 +67,15 @@ dependencies {
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    compileOnly "com.matyrobbrt.gml:gml:${gml_version}"
+    runtimeOnly("com.matyrobbrt.gml:gml:${gml_version}:all") {
+        exclude module: 'transform'
+    }
 }
 
 tasks.withType(GroovyCompile) {
-    source(project(':Common').sourceSets.main.allSource)
+    source(project(':Common').sourceSets.main.allGroovy)
 }
 
 processResources {
