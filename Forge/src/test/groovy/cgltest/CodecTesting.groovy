@@ -8,6 +8,6 @@ import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSeriali
 class CodecTesting {
     String myProperty
     static void yes() {
-        CodecTesting.C
+        CodecTesting.CODEC
     }
 }
