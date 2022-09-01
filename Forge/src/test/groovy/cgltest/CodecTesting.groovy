@@ -5,11 +5,11 @@ import groovy.transform.TupleConstructor
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
 
 @CompileStatic
-@CodecSerializable
+@CodecSerializable(property = "CODEC_GOES_HERE")
 @TupleConstructor
 class CodecTesting {
     String myProperty
     static void yes() {
-        CodecTesting.$CODEC
+        CodecTesting.CODEC_GOES_HERE
     }
 }
