@@ -32,8 +32,6 @@ configurations {
 }
 
 loom {
-    remapArchives = false
-    setupRemappedVariants = false
     enableTransitiveAccessWideners = false
     runConfigs.configureEach {
         ideConfigGenerated = false
@@ -59,6 +57,11 @@ dependencies {
     transformOut sourceSets.transform.output
 }
 
+import net.fabricmc.loom.task.AbstractRemapJarTask
+tasks.withType(AbstractRemapJarTask).each {
+    it.targetNamespace = "named"
+}
+
 processResources {
     def buildProps = project.properties.clone()
     filesMatching(['pack.mcmeta']) {
@@ -67,23 +70,25 @@ processResources {
     exclude 'mods.groovy'
 }
 
-afterEvaluate {
-    tasks.remapJar.setDependsOn([tasks.jar])
-}
 jar {
-    archiveClassifier.set('')
     from sourceSets.extension.output
     from sourceSets.transform.output
 }
 
-remapJar.enabled = false
-prepareRemapJar.enabled = false
-remapSourcesJar.enabled = false
+sourcesJar {
+    from sourceSets.extension.allSource
+    from sourceSets.transform.allSource
+}
 
 groovydoc {
     use = true
     docTitle = "CommonGroovyLibrary v${version} - Common"
+    source sourceSets.extension.allGroovy
+    source sourceSets.extension.allJava
+    source sourceSets.transform.allGroovy
+    source sourceSets.transform.allJava
 }
+
 tasks.register('groovydocJar', Jar) {
     it.classifier 'javadoc'
     it.from groovydoc.destinationDir
@@ -96,8 +101,8 @@ publishing {
             groupId = 'io.github.groovymc.cgl'
             artifactId = "cgl-${minecraft_version}"
             version = project.version
-
-            artifacts = [jar, sourcesJar, groovydocJar]
+            from components.java
+            artifact groovydocJar
         }
     }
     repositories {

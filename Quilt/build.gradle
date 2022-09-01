@@ -60,15 +60,23 @@ loom {
 
 processResources {
     from project(':Common').sourceSets.main.resources
+    from project(':Common').sourceSets.transform.resources
+    from project(':Common').sourceSets.extension.resources
 }
 
 tasks.withType(GroovyCompile) {
-    source(project(':Common').sourceSets.main.allGroovy)
-    source(project(':Common').sourceSets.main.allJava)
+    it.source(project(':Common').sourceSets.main.allGroovy)
+    it.source(project(':Common').sourceSets.main.allJava)
+    it.source(project(':Common').sourceSets.transform.allGroovy)
+    it.source(project(':Common').sourceSets.transform.allJava)
+    it.source(project(':Common').sourceSets.extension.allGroovy)
+    it.source(project(':Common').sourceSets.extension.allJava)
 }
 
 tasks.withType(JavaCompile) {
     source(project(':Common').sourceSets.main.allJava)
+    source(project(':Common').sourceSets.transform.allJava)
+    source(project(':Common').sourceSets.extension.allJava)
 }
 
 jar {
@@ -77,14 +85,19 @@ jar {
     }
 }
 
+sourcesJar {
+    from project(':Common').sourceSets.main.allSource
+    from project(':Common').sourceSets.transform.allSource
+    from project(':Common').sourceSets.extension.allSource
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = 'io.github.groovymc.cgl'
             artifactId = "cgl-${minecraft_version}-quilt"
             version = project.version
-
-            artifacts = [remapJar, sourcesJar]
+            from components.java
         }
     }
     repositories {

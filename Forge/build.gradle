@@ -93,16 +93,24 @@ dependencies {
 }
 
 tasks.named('compileGroovy', GroovyCompile) {
-    it.source(project(':Common').sourceSets.main.allGroovy)
-    it.source(project(':Common').sourceSets.main.allJava)
+    source(project(':Common').sourceSets.main.allGroovy)
+    source(project(':Common').sourceSets.main.allJava)
+    source(project(':Common').sourceSets.transform.allGroovy)
+    source(project(':Common').sourceSets.transform.allJava)
+    source(project(':Common').sourceSets.extension.allGroovy)
+    source(project(':Common').sourceSets.extension.allJava)
 }
 
 tasks.withType(JavaCompile) {
     source(project(':Common').sourceSets.main.allJava)
+    source(project(':Common').sourceSets.transform.allJava)
+    source(project(':Common').sourceSets.extension.allJava)
 }
 
 processResources {
     from project(':Common').sourceSets.main.resources
+    from project(':Common').sourceSets.transform.resources
+    from project(':Common').sourceSets.extension.resources
 }
 
 jar {
@@ -111,6 +119,13 @@ jar {
         rename { "${it}_${mod_name}"}
     }
     from sourceSets.transform.output
+}
+
+sourcesJar {
+    from sourceSets.transform.allSource
+    from project(':Common').sourceSets.main.allSource
+    from project(':Common').sourceSets.transform.allSource
+    from project(':Common').sourceSets.extension.allSource
 }
 
 publishing {
