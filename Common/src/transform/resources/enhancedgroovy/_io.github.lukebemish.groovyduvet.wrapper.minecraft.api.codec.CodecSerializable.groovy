@@ -1,10 +1,12 @@
 //file:noinspection GrPackage
 import com.matyrobbrt.enhancedgroovy.dsl.ClassTransformer
+import com.matyrobbrt.enhancedgroovy.dsl.members.Annotation
 
-((ClassTransformer) this.transformer).tap {
-    it.addField([
-            'name': 'CODEC',
-            'type': "com.mojang.serialization.Codec<${it.className}>",
-            'modifiers': ['public', 'static', 'final']
-    ])
-}
+final transformer = ((ClassTransformer) this.transformer)
+final annotation = ((Annotation) this.annotation)
+
+transformer.addField([
+        'name': annotation.getAttribute('property'),
+        'type': "com.mojang.serialization.Codec<${transformer.className}>",
+        'modifiers': ['public', 'static', 'final']
+])
