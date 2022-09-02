@@ -30,6 +30,10 @@ import java.lang.annotation.Target
  *
  * The {@link ExposesCodec} annotation will be automatically applied with the proper value if it is not already present
  * on the class.
+ *
+ * Codec serialization supports commented codecs. Comments can be provided either with the {@link io.github.groovymc.cgl.api.codec.comments.Comment}
+ * Annotation, or through groovydocs. If provided through groovydocs, the {@code groovy.attach.runtime} compiler flag must
+ * be true. This can be set in gradle with {@code compileGroovy.groovyOptions.optimizationOptions.groovydoc = true}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target([ElementType.TYPE])

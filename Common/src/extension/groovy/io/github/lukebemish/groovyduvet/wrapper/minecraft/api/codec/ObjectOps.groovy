@@ -20,9 +20,11 @@ import java.util.stream.Stream
  * @see {@link groovy.toml.TomlBuilder}
  * @see {@link groovy.toml.TomlSlurper}
  */
-@Singleton
+@Singleton(strict = false)
 @CompileStatic
 class ObjectOps implements DynamicOps<Object> {
+
+    protected ObjectOps() {}
 
     @Override
     Object empty() {
@@ -45,7 +47,7 @@ class ObjectOps implements DynamicOps<Object> {
             return outOps.createNumeric(input)
         if (input instanceof Date)
             return outOps.createString(input.format("yyyy-MM-dd'T'HH:mm:ssZ"))
-        throw new UnsupportedOperationException("ObjectOps was unable to convert a value: " + input)
+        throw new UnsupportedOperationException("${this.class.simpleName} was unable to convert a value: " + input)
     }
 
     @Override
@@ -98,8 +100,7 @@ class ObjectOps implements DynamicOps<Object> {
             return DataResult.error("key is not a string: " + key, map)
         return stringResult.flatMap{
             final Map output = [:]
-            if (map != this.empty())
-            {
+            if (map != this.empty()) {
                 Map oldConfig = map as Map
                 output.putAll(oldConfig)
             }

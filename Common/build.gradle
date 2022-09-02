@@ -59,8 +59,6 @@ dependencies {
     transformOut sourceSets.extension.output
     transformOut sourceSets.transform.output
     extensionOut sourceSets.transform.output
-
-    transformCompileOnly "com.matyrobbrt.enhancedgroovy:dsl:$enhanced_groovy_version"
 }
 
 import net.fabricmc.loom.task.AbstractRemapJarTask
