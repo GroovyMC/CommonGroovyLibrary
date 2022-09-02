@@ -24,11 +24,13 @@ import com.mojang.brigadier.context.CommandContext
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.FromString
+import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.arguments.ColorArgument
-import net.minecraft.commands.arguments.ComponentArgument
-import net.minecraft.commands.arguments.EntityArgument
-import net.minecraft.commands.arguments.UuidArgument
+import net.minecraft.commands.arguments.*
+import net.minecraft.commands.arguments.blocks.BlockInput
+import net.minecraft.commands.arguments.blocks.BlockStateArgument
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument
+import net.minecraft.commands.arguments.item.ItemArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
@@ -254,6 +256,50 @@ final class ArgumentExtensions {
     }
     // endregion
 
+    // region Registries
+    static <S, T extends ArgumentBuilder<S, T>> T effect(ArgumentBuilder<S, T> self, String name, @DelegatesTo(
+            type = 'com.mojang.brigadier.builder.RequiredArgumentBuilder<S,net.minecraft.world.effect.MobEffect>',
+            strategy = DELEGATE_FIRST
+    ) @ClosureParams(
+            value = FromString,
+            options = 'io.github.groovymc.cgl.extension.brigadier.ArgumentGetter<S,net.minecraft.world.effect.MobEffect>'
+    ) Closure closure) {
+        argument(self, name, MobEffectArgument.effect(), defaultGetter(), closure)
+    }
+
+    static <S, T extends ArgumentBuilder<S, T>> T item(ArgumentBuilder<S, T> self, String name,
+                                           CommandBuildContext context, @DelegatesTo(
+            type = 'com.mojang.brigadier.builder.RequiredArgumentBuilder<S,net.minecraft.world.item.Item>',
+            strategy = DELEGATE_FIRST
+    ) @ClosureParams(
+            value = FromString,
+            options = 'io.github.groovymc.cgl.extension.brigadier.ArgumentGetter<S,net.minecraft.world.item.Item>'
+    ) Closure closure) {
+        argument(self, name, ItemArgument.item(context), (String nm) -> (CommandContext<S> ctx) -> ItemArgument.getItem(ctx, nm).getItem(), closure)
+    }
+
+    static <S, T extends ArgumentBuilder<S, T>> T blockState(ArgumentBuilder<S, T> self, String name,
+                                                       CommandBuildContext context, @DelegatesTo(
+            type = 'com.mojang.brigadier.builder.RequiredArgumentBuilder<S,net.minecraft.world.level.block.state.BlockState>',
+            strategy = DELEGATE_FIRST
+    ) @ClosureParams(
+            value = FromString,
+            options = 'io.github.groovymc.cgl.extension.brigadier.ArgumentGetter<S,net.minecraft.world.level.block.state.BlockState>'
+    ) Closure closure) {
+        argument(self, name, BlockStateArgument.block(context), (String nm) ->
+                (CommandContext<S> ctx) -> ctx.getArgument(nm, BlockInput).state, closure)
+    }
+    // endregion
+
+    static <S, T extends ArgumentBuilder<S, T>> T blockPos(ArgumentBuilder<S, T> self, String name, @DelegatesTo(
+            type = 'com.mojang.brigadier.builder.RequiredArgumentBuilder<S,net.minecraft.commands.arguments.coordinates.Coordinates>',
+            strategy = DELEGATE_FIRST
+    ) @ClosureParams(
+            value = FromString,
+            options = 'io.github.groovymc.cgl.extension.brigadier.ArgumentGetter<S,net.minecraft.commands.arguments.coordinates.Coordinates>'
+    ) Closure closure) {
+        argument(self, name, BlockPosArgument.blockPos(), defaultGetter(), closure)
+    }
     static <S, T extends ArgumentBuilder<S, T>> T color(ArgumentBuilder<S, T> self, String name, @DelegatesTo(
             type = 'com.mojang.brigadier.builder.RequiredArgumentBuilder<S,net.minecraft.ChatFormatting>',
             strategy = DELEGATE_FIRST
