@@ -8,6 +8,7 @@ package cgltest
 import com.matyrobbrt.gml.bus.EventBusSubscriber
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.level.Level
 import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 
@@ -67,6 +68,13 @@ class CommandTest {
                             final message = player?.op ? Component.literal("Sorry, you're not OP.") : Component.literal("Yes you are OP!")
                             send"${asFailure(it) ? "Failure" : "Success"}"(message)
                         }
+                    }
+                }
+
+                then 'nether', {
+                    requires { it.player?.op }
+                    executes {
+                        player?.changeDimension server.getLevel(Level.NETHER)
                     }
                 }
             }

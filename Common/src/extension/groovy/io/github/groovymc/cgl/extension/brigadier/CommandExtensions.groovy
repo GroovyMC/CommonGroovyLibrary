@@ -47,21 +47,35 @@ final class CommandExtensions {
     /**
      * Creates and configures a {@linkplain LiteralArgumentBuilder}.
      * @param name the name of the brigadier
-     * @param closure a {@linkplain Closure} that configures the brigadier
-     * @return the configured brigadier
-     * @see StaticCommandExtensions#literal(com.mojang.brigadier.builder.LiteralArgumentBuilder, java.lang.String, groovy.lang.Closure) similar,
-     * so that type inferrence works right
+     * @param closure a {@linkplain Closure} that configures the command
+     * @return the configured builder
      */
     @SuppressWarnings(['DuplicatedCode', 'unused'])
-    static <T> LiteralArgumentBuilder<T> literal(LiteralArgumentBuilder<T> self, String name, @DelegatesTo(
-            type = 'com.mojang.brigadier.builder.LiteralArgumentBuilder<T>',
+    static <S, T extends ArgumentBuilder<S, T>> LiteralArgumentBuilder<S> literal(ArgumentBuilder<S, T> self, String name, @DelegatesTo(
+            type = 'com.mojang.brigadier.builder.LiteralArgumentBuilder<S>',
             strategy = DELEGATE_FIRST
     ) Closure closure) {
-        final command = LiteralArgumentBuilder.<T> literal(name)
+        final command = LiteralArgumentBuilder.<S> literal(name)
         closure.delegate = command
         closure.resolveStrategy = DELEGATE_FIRST
         closure(command)
         return command
+    }
+
+    /**
+     * Creates and configures and appends a {@linkplain LiteralArgumentBuilder}.
+     * @param name the name of the brigadier
+     * @param closure a {@linkplain Closure} that configures the sub-command
+     */
+    static <S, T extends ArgumentBuilder<S, T>> T then(ArgumentBuilder<S, T> self, String name, @DelegatesTo(
+            type = 'com.mojang.brigadier.builder.LiteralArgumentBuilder<S>',
+            strategy = DELEGATE_FIRST
+    ) Closure closure) {
+        final command = LiteralArgumentBuilder.<S> literal(name)
+        closure.delegate = command
+        closure.resolveStrategy = DELEGATE_FIRST
+        closure(command)
+        return self.then(command)
     }
 
     /**
