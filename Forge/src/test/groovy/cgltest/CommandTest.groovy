@@ -37,14 +37,14 @@ class CommandTest {
                 }
 
                 then literal('kill') {
-                    requires { it.hasPermission(0) }
+                    requires { it.isAnyone() }
                     entities('multipleEntitySelector') { entities ->
                         executes {
                             final toKill = entities(it)
                             toKill.each {
                                 it.remove(Entity.RemovalReason.KILLED)
                             }
-                            source.sendSuccess Component.literal("Killed ${toKill.size()} entities!")
+                            sendSuccess Component.literal("Killed ${toKill.size()} entities!")
                         }
                     }
                 }
@@ -56,6 +56,16 @@ class CommandTest {
                             executes {
                                 player(it).sendSystemMessage(message(it))
                             }
+                        }
+                    }
+                }
+
+                then literal('amIOp?') {
+                    requires anyone
+                    bool('asFailure') { asFailure ->
+                        executes {
+                            final message = player?.op ? Component.literal("Sorry, you're not OP.") : Component.literal("Yes you are OP!")
+                            send"${asFailure(it) ? "Failure" : "Success"}"(message)
                         }
                     }
                 }

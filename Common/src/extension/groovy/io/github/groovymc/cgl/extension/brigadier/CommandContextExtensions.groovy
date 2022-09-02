@@ -112,4 +112,10 @@ final class CommandContextExtensions {
     static void sendSuccess(CommandSourceStack self, Component message) {
         self.sendSuccess(message, false)
     }
+    static void sendSuccess(CommandContext<CommandSourceStack> self, Component message, boolean allowLogging = false) {
+        self.source.sendSuccess(message, allowLogging)
+    }
+    static void sendFailure(CommandContext<CommandSourceStack> self, Component message) {
+        self.source.sendFailure(message)
+    }
 }
