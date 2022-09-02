@@ -82,6 +82,7 @@ subprojects {
         it.groovyOptions.fork = true
         it.groovyOptions.encoding = 'UTF-8'
         it.groovyOptions.optimizationOptions.indy = true
+        it.groovyOptions.optimizationOptions.groovydoc = true
         it.exclude('mods.groovy')
     }
 
@@ -112,6 +113,9 @@ subprojects {
         compileOnly groovyDep('json')
 
         compileOnly 'com.matyrobbrt.enhancedgroovy:dsl:0.1.0'
+
+        implementation "com.electronwill.night-config:core:$project.nightconfig_version"
+        implementation "com.electronwill.night-config:toml:$project.nightconfig_version"
     }
 }
 

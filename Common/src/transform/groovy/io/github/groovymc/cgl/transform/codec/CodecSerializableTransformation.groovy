@@ -17,7 +17,9 @@
 
 package io.github.groovymc.cgl.transform.codec
 
+
 import groovy.transform.CompileStatic
+import io.github.groovymc.cgl.api.codec.comments.Comment
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposesCodec
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.WithCodec
@@ -49,7 +51,9 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
     static final ClassNode MY_TYPE = makeWithoutCaching(CodecSerializable)
     static final ClassNode EXPOSES_TYPE = makeWithoutCaching(ExposesCodec)
     static final ClassNode WITH_TYPE = makeWithoutCaching(WithCodec)
+    static final ClassNode COMMENT = makeWithoutCaching(Comment)
     static final ClassNode TUPLE_CODEC_BUILDER = makeWithoutCaching('io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.TupleCodecBuilder')
+    static final ClassNode MAP_COMMENT_SPEC = makeWithoutCaching('io.github.groovymc.cgl.api.codec.comments.MapCommentSpec')
     static final String CODEC = 'com.mojang.serialization.Codec'
     static final ClassNode CODEC_NODE = makeWithoutCaching(CODEC)
     static final String RECORD_CODEC_BUILDER = 'com.mojang.serialization.codecs.RecordCodecBuilder'
@@ -117,6 +121,48 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             initialValue = new MethodCallExpression(grouped, 'apply', new MethodReferenceExpression(new ClassExpression(parent), new ConstantExpression('new')))
         }
 
+        // Parse and merge comments
+        Map<String,String> comments = [:]
+        for (int i = 0; i < assembler.parameters.size(); i++) {
+            String name = assembler.parameters[i].name
+            AnnotatedNode node = parent.getField(name)
+            if (node?.isStatic()) node = null
+            String docs = node?.groovydoc?.content
+            docs = docs?.with {toCommentFreeText(it)}?.trim()?:''
+            if (node !== null) {
+                String val = node.getAnnotations(COMMENT).find()?.with {
+                    return getMemberStringValue(it, 'value')
+                }
+                if (val != '' && val !== null)
+                    docs = val
+            }
+            if (docs == '') {
+                node = parent.getMethod((ClassHelper.isPrimitiveBoolean(assembler.parameters[i].type) ? "is" : "get") + BeanUtils.capitalize(name))
+                if (node?.isStatic()) node = null
+                docs = node?.groovydoc?.content
+                docs = docs?.with {toCommentFreeText(it)}?.trim()?:''
+                if (node !== null) {
+                    String val = node.getAnnotations(COMMENT).find()?.with {
+                        return getMemberStringValue(it, 'value')
+                    }
+                    if (val != '' && val !== null)
+                        docs = val
+                }
+            }
+
+            if (docs != '') {
+                comments[name] = docs
+            }
+        }
+
+        initialValue = new MethodCallExpression(initialValue, 'comment', new StaticMethodCallExpression(
+                MAP_COMMENT_SPEC,
+                'of',
+                new ArgumentListExpression(new MapExpression(comments.collect {key, comment ->
+                    new MapEntryExpression(new ConstantExpression(key),new ConstantExpression(comment))
+                }))
+        ))
+
         ClassNode wrappedNode = makeWithoutCaching(CODEC)
         wrappedNode.redirect = resolvedCodec
         parent.addField(fieldName, Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL, wrappedNode, initialValue)
@@ -127,6 +173,42 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             })
     }
 
+    // Credit to Paint_Ninja
+    static String toCommentFreeText(String content) {
+        // For single line comments:
+        // ^(\/\*\*\s?)(?<string>.+)(\s?\*\/) turns '/** ... */' into ...
+        final String commentFreeText = content
+                .stripIndent()
+                .replaceAll($/^(/\*\*\s?)(?<string>.+)(\s?\*/)/$, '$2')
+
+        if (!commentFreeText.contains('*/'))
+            return commentFreeText
+
+        // For multi-line comments:
+        // ^(/\*\*\s?) turns '/** ' into ''
+        // ^(\s\*\s?)(?<string>.+)? turns ' * ...' into '...'
+        // ^(\s?\*\/) turns '*/' into ''
+        String multiLineCommentFreeText = ''
+        boolean firstLine = true
+        commentFreeText.eachLine { line ->
+            line = line.stripIndent()
+                    .replaceAll(/^(\/\*\*\s?)/, '')
+                    .replaceAll(/^(\*\s?)(?<string>.+)?/, '$2')
+                    .replaceAll($/^(\*/)/$, '')
+
+            if (firstLine) {
+                firstLine = false
+                multiLineCommentFreeText += line
+            } else if (line != '/') {
+                multiLineCommentFreeText += '\n' + line
+            }
+
+            return
+        }
+
+        return multiLineCommentFreeText[1..-1] // trim off the first newline
+    }
+
     Object getMemberValue(AnnotationNode node, String name, Object defaultVal) {
         return getMemberValue(node, name)?:defaultVal
     }
@@ -134,7 +216,9 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
     Expression assembleExpression(ClassNode parent, Parameter parameter, boolean isTooBig) {
         String name = parameter.name
         FieldNode field = parent.getField(name)
+        if (field?.isStatic()) field = null
         MethodNode getter = parent.getMethod((ClassHelper.isPrimitiveBoolean(parameter.type) ? "is" : "get") + BeanUtils.capitalize(name))
+        if (getter?.isStatic()) getter = null
         List<AnnotationNode> annotations = []
         annotations.addAll(parameter.annotations)
         annotations.addAll(field?.annotations?:[])
@@ -255,7 +339,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             }
             ClassNode child = clazz.genericsTypes[0].type
             Expression childExpression = getCodecFromType(child,context,path+[WithCodecPath.LIST])
-            return new MethodCallExpression(childExpression, 'listOf', new ArgumentListExpression())
+            return new MethodCallExpression(childExpression, 'commentFirstListOf', new ArgumentListExpression())
         }
         if (clazz == ClassHelper.MAP_TYPE) {
             if (!clazz.usingGenerics) {

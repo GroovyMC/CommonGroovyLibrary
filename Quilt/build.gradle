@@ -39,6 +39,9 @@ dependencies {
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
+
+    include "com.electronwill.night-config:core:$project.nightconfig_version"
+    include "com.electronwill.night-config:toml:$project.nightconfig_version"
 }
 
 loom {
@@ -89,6 +92,10 @@ sourcesJar {
     from project(':Common').sourceSets.main.allSource
     from project(':Common').sourceSets.transform.allSource
     from project(':Common').sourceSets.extension.allSource
+}
+
+tasks.withType(GroovyCompile) {
+    it.groovyOptions.optimizationOptions.groovydoc = true
 }
 
 publishing {
