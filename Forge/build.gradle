@@ -104,7 +104,7 @@ tasks.named('compileGroovy', GroovyCompile) {
     source(project(':Common').sourceSets.extension.allJava)
 }
 
-tasks.withType(JavaCompile) {
+tasks.named('compileJava', JavaCompile) {
     source(project(':Common').sourceSets.main.allJava)
     source(project(':Common').sourceSets.transform.allJava)
     source(project(':Common').sourceSets.extension.allJava)
