@@ -32,7 +32,7 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods
 
 @CompileStatic
 class ArithmeticExtension {
-    // BlockPos
+    // region BlockPos
     static BlockPos plus(BlockPos self, Vec3i other) {
         return self.offset(other)
     }
@@ -69,8 +69,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion BlockPos
 
-    // Vec3i
+    // region Vec3i
     static Vec3i plus(Vec3i self, Vec3i other) {
         return self.offset(other)
     }
@@ -109,8 +110,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion Vec3
 
-    // Vec3/Position
+    // region Vec3/Position
     static Vec3 plus(Position self, Position other) {
         return new Vec3(self.x()+other.x(), self.y()+other.y(), self.z()+other.z())
     }
@@ -153,8 +155,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion
 
-    // Vector3d
+    // region Vector3d
     static Vector3d plus(Vector3d self, Vector3d other) {
         return new Vector3d(self.x+other.x, self.y+other.y, self.z+other.z)
     }
@@ -197,8 +200,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion
 
-    // Vector3f
+    // region Vector3f
     static Vector3f plus(Vector3f self, Vector3f other) {
         return new Vector3f(self.x()+other.x() as float, self.y()+other.y() as float, self.z()+other.z() as float)
     }
@@ -241,8 +245,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion
 
-    // Vector4f
+    // region Vector4f
     static Vector4f plus(Vector4f self, Vector4f other) {
         return new Vector4f(self.x()+other.x() as float, self.y()+other.y() as float, self.z()+other.z() as float, self.w()+other.w() as float)
     }
@@ -283,9 +288,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion
 
-    // Quaternion
-
+    // region Quaternion
     static <T> T asType(Quaternion self, Class<T> type) {
         return switch (type) {
             case Vec3, Position, Vector3d, Vector3f, Vec3i, BlockPos ->
@@ -298,8 +303,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion
 
-    // Vec2
+    // region Vec2
     static Vec2 plus(Vec2 self, Vec2 other) {
         return new Vec2(self.x+other.x as float, self.y+other.y as float)
     }
@@ -344,8 +350,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion
 
-    // AABB
+    // region AABB
     static AABB plus(AABB self, BlockPos other) {
         return self.move(other)
     }
@@ -353,8 +360,9 @@ class ArithmeticExtension {
     static AABB plus(AABB self, Vec3 other) {
         return self.move(other)
     }
+    // endregion
 
-    // VoxelShapes
+    // region VoxelShapes
     static VoxelShape plus(VoxelShape self, VoxelShape other) {
         return Shapes.join(self, other, BooleanOp.OR)
     }
@@ -374,10 +382,9 @@ class ArithmeticExtension {
     static VoxelShape minus(VoxelShape self, VoxelShape other) {
         return Shapes.join(self, other, BooleanOp.NOT_SECOND)
     }
+    // endregion
 
-    // Matrix3f
-
-    // Matrix4f
+    // region Matrix4f
     static <T> T asType(Matrix4f self, Class<T> type) {
         return switch (type) {
             case Transformation ->
@@ -386,8 +393,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion
 
-    // SymmetricGroup3
+    // region SymmetricGroup3
     static int getAt(SymmetricGroup3 self, int p) {
         return self.permutation(p)
     }
@@ -415,8 +423,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion
 
-    // OctahedralGroup
+    // region OctahedralGroup
     static OctahedralGroup multiply(OctahedralGroup self, OctahedralGroup other) {
         return self.compose(other)
     }
@@ -433,8 +442,9 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion
 
-    // Transformation
+    // region Transformation
     static Transformation multiply(Transformation self, Transformation other) {
         return self.compose(other)
     }
@@ -451,4 +461,5 @@ class ArithmeticExtension {
                 (T) DefaultGroovyMethods.asType(self, type)
         }
     }
+    // endregion
 }

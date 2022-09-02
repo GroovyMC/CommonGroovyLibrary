@@ -27,8 +27,11 @@ sourceSets {
 
 configurations {
     extensionCompileOnly.extendsFrom(compileClasspath)
+    annotationsCompileOnly.extendsFrom(compileClasspath)
     transformCompileOnly.extendsFrom(compileClasspath)
+
     transformOut
+    extensionOut
 }
 
 loom {
@@ -55,6 +58,7 @@ dependencies {
     implementation group:'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     transformOut sourceSets.extension.output
     transformOut sourceSets.transform.output
+    extensionOut sourceSets.transform.output
 
     transformCompileOnly "com.matyrobbrt.enhancedgroovy:dsl:$enhanced_groovy_version"
 }

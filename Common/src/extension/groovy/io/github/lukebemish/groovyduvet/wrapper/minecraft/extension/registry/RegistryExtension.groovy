@@ -18,9 +18,11 @@
 package io.github.lukebemish.groovyduvet.wrapper.minecraft.extension.registry
 
 import groovy.transform.CompileStatic
+import net.minecraft.core.HolderSet
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.TagKey
 
 @CompileStatic
 class RegistryExtension {
@@ -42,5 +44,9 @@ class RegistryExtension {
 
     static <A> ResourceLocation getAt(Registry<A> self, A member) {
         return self.getKey(member)
+    }
+
+    static <T> HolderSet.Named<T> getAt(Registry<T> self, TagKey<T> tag) {
+        return self.getOrCreateTag(tag)
     }
 }

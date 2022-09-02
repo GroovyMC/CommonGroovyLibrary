@@ -78,6 +78,7 @@ dependencies {
 
     transformCompileOnly project(path: ':Common', configuration: 'transformOut')
     testCompileOnly project(path: ':Common', configuration: 'transformOut')
+    testCompileOnly project(path: ':Common', configuration: 'extensionOut')
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
