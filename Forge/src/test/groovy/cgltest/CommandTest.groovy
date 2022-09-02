@@ -65,14 +65,18 @@ class CommandTest {
                     requires anyone
                     bool('asFailure') { asFailure ->
                         executes {
-                            final message = player?.op ? Component.literal("Sorry, you're not OP.") : Component.literal("Yes you are OP!")
-                            send"${asFailure(it) ? "Failure" : "Success"}"(message)
+                            final message = it.getPlayer()?.isOp() ? Component.literal("Sorry, you're not OP.") : Component.literal("Yes you are OP!")
+                            if (asFailure(it)) {
+                                sendFailure(message)
+                            } else {
+                                sendSuccess(message)
+                            }
                         }
                     }
                 }
 
                 then 'nether', {
-                    requires { it.player?.op }
+                    requires { it.getPlayer()?.op }
                     executes {
                         player?.changeDimension server.getLevel(Level.NETHER)
                     }
