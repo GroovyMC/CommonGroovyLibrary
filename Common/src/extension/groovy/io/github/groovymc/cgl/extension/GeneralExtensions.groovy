@@ -6,11 +6,13 @@
 package io.github.groovymc.cgl.extension
 
 import groovy.transform.CompileStatic
+import net.minecraft.server.level.ServerPlayer
 
 @CompileStatic
-@interface EnvironmentExtension {
-    enum Side {
-        SERVER, CLIENT
+class GeneralExtensions {
+
+    static boolean isOp(ServerPlayer player) {
+        return player.server.playerList.isOp(player.gameProfile)
     }
-    Side value()
+
 }
