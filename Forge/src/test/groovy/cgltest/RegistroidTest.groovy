@@ -44,7 +44,7 @@ import net.minecraftforge.registries.ForgeRegistries
 class RegistroidTest {
     static final Block SOME_TEST = new Block(BlockBehaviour.Properties.of(Material.DIRT))
     static final SoundEvent TEST_SOUND
-    static final SoundEvent TEST_SOUND_2 = new SoundEvent(null, .1f)
+    static final SoundEvent TEST_SOUND_2 = new SoundEvent(null)
 
     @Registroid
     static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registry.ITEM_REGISTRY, 'groovylicioustest')

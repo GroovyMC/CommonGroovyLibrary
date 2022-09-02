@@ -101,7 +101,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
 
         // Collect information about existing DR fields, in order to prevent addons from creating duplicate registries
         final existingDRFields = targetClass.fields.stream()
-                .filter { it.type == REGISTRATION_PROVIDER_TYPE }
+                .filter { it.type == REGISTRATION_PROVIDER_TYPE || it.type.name == 'net.minecraftforge.registries.DeferredRegister' }
                 .toList()
         final existingDRs = existingDRFields.stream()
                 .map { it.type.genericsTypes[0].type }.toList()
@@ -411,7 +411,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
                                     new Handle(Opcodes.H_INVOKESTATIC, classInternal, lambdaMethod.name, getDesc, false),
                                     JarType.getType(getDesc)
                             })
-                    it.visitMethodInsn(Opcodes.INVOKEVIRTUAL, drType, 'register', isForge ? DR_REGISTER_DESC : REGISTER_DESC, false)
+                    it.visitMethodInsn(isForge ? Opcodes.INVOKEVIRTUAL : Opcodes.INVOKEINTERFACE, drType, 'register', isForge ? DR_REGISTER_DESC : REGISTER_DESC, !isForge)
                 }
         )
 
@@ -423,7 +423,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
         property.setGetterBlock(GeneralUtils.stmt(GeneralUtils.bytecodeX(property.type) {
             // (MyFieldType) MyClass.$registryObjectForMY_PROPERTY.get()
             it.visitFieldInsn(Opcodes.GETSTATIC, classInternal, field.name, Type.getDescriptor(RegistryObject))
-            it.visitMethodInsn(Opcodes.INVOKEVIRTUAL, REG_OBJECT_INTERNAL, 'get', '()Ljava/lang/Object;', false)
+            it.visitMethodInsn(isForge ? Opcodes.INVOKEVIRTUAL : Opcodes.INVOKEINTERFACE, REG_OBJECT_INTERNAL, 'get', '()Ljava/lang/Object;', !isForge)
             it.visitTypeInsn(Opcodes.CHECKCAST, getInternalName(property.type))
         }))
     }

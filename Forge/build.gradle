@@ -34,8 +34,10 @@ minecraft {
             mods {
                 cgl {
                     source sourceSets.main
-                    source sourceSets.test
                     source project(':Common').sourceSets.main
+                }
+                cgltest {
+                    source sourceSets.test
                 }
             }
         }

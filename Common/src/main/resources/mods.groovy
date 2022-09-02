@@ -40,7 +40,7 @@ ModsDotGroovy.make {
                 versionRange = ">=${this.forgeVersion}"
             }
             onForge {
-                mod('gml_version') {
+                mod('gml') {
                     versionRange = ">=${this.buildProperties['gml_version']}"
                 }
             }

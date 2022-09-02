@@ -68,6 +68,10 @@ tasks.withType(AbstractRemapJarTask).each {
     it.targetNamespace = "named"
 }
 
+configurations.configureEach {
+    it.exclude module: 'sponge-mixin'
+}
+
 processResources {
     def buildProps = project.properties.clone()
     filesMatching(['pack.mcmeta']) {
