@@ -7,6 +7,9 @@ package io.github.groovymc.cgl.api.codec.comments
 
 import groovy.transform.CompileStatic
 
+/**
+ * A {@link CommentSpec} backed by a {@link Map}.
+ */
 @CompileStatic
 class MapCommentSpec implements CommentSpec {
     Map<String, String> values
@@ -15,6 +18,10 @@ class MapCommentSpec implements CommentSpec {
         this.values = values
     }
 
+    /**
+     * Build a new {@link CommentSpec} backed by the provided map. A direct reference to the map is made, so that if the
+     * map is later mutated the spec will be as well.
+     */
     static MapCommentSpec of(Map<String, String> values) {
         return new MapCommentSpec(values)
     }

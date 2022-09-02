@@ -11,10 +11,19 @@ import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
 import com.mojang.serialization.ListBuilder
 
+/**
+ * A {@link com.mojang.serialization.Codec} representing a list of objects, where the first element will have its
+ * comments attached, and the others will be encoded without comments.
+ */
 final class CommentFirstListCodec<O> implements Codec<List<O>> {
     private final Codec<O> elementCodec
     private final Codec<List<O>> decodeDelegate
 
+    /**
+     * Construct a new first-element-commented list code from the provided single element codec.
+     * @param elementCodec A codec representing a single element. Should contain any comment behavior that will be
+     * applied during encoding.
+     */
     CommentFirstListCodec(Codec<O> elementCodec) {
         this.elementCodec = elementCodec
         this.decodeDelegate = elementCodec.listOf()

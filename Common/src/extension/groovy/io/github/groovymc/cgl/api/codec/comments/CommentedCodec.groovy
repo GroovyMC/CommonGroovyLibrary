@@ -11,11 +11,21 @@ import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
 import groovy.transform.CompileStatic
 
+/**
+ * A {@link com.mojang.serialization.Codec} with comments attached. The delegate codec is assumed to be encode to a
+ * map-like structure; if this is not the case, comments will not be attached when encoding with a comment-supporting
+ * {@link com.mojang.serialization.DynamicOps}.
+ */
 @CompileStatic
 final class CommentedCodec<O> implements Codec<O> {
     private Codec<O> delegate
-    private CommentSpec spec
+    final CommentSpec spec
 
+    /**
+     * Construct a new commented codec using the provided delegate codec and comment specification
+     * @param delegate The codec to delegate encoding and decoding logic to.
+     * @param spec The comment specification for the constructed codec.
+     */
     CommentedCodec(Codec<O> delegate, CommentSpec spec) {
         this.delegate = delegate
         this.spec = spec

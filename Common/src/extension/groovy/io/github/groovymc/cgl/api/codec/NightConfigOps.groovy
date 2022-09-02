@@ -18,10 +18,19 @@ import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ObjectOps
 
 import java.util.stream.Stream
 
+/**
+ * A {@link CommentingOps} for encoding and decoding from NightConfig config types.
+ */
 @CompileStatic
 abstract class NightConfigOps extends ObjectOps implements CommentingOps<Object> {
 
+    /**
+     * Provides an empty config to encode to when building map-like structures.
+     */
     protected abstract Config newConfig()
+    /**
+     * Whether this instance should attach comments to the configs it encodes during finalization.
+     */
     protected abstract boolean isCommented()
 
     @Override
