@@ -74,6 +74,8 @@ configurations {
     transformCompileOnly.extendsFrom(compileOnly)
 }
 
+jarJar.enable()
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(path: ':Common', configuration: 'namedElements')
@@ -91,6 +93,9 @@ dependencies {
     runtimeOnly("com.matyrobbrt.gml:gml:${gml_version}:all") {
         exclude module: 'transform'
     }
+
+    jarJar "blue.endless:jankson:[$project.jankson_version,)"
+    minecraftLibrary "blue.endless:jankson:$project.jankson_version"
 
     compileOnly reg.loaderSpecific()
 }
@@ -114,11 +119,23 @@ processResources {
 }
 
 jar {
+    classifier 'partial'
     finalizedBy('reobfJar')
     from('LICENSE') {
         rename { "${it}_${mod_name}"}
     }
     from sourceSets.transform.output
+}
+
+tasks.build.dependsOn tasks.jarJar
+
+reobf {
+    jarJar {}
+}
+
+tasks.jarJar {
+    classifier ''
+    finalizedBy tasks.reobfJarJar
 }
 
 sourcesJar {
@@ -135,7 +152,7 @@ publishing {
             artifactId = "cgl-${minecraft_version}-forge"
             version = project.version
 
-            artifacts = [jar, sourcesJar]
+            artifacts = [tasks.jarJar, sourcesJar]
             pom.withXml { node ->
                 node.asNode().dependencies
                         .'*'

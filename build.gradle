@@ -24,6 +24,7 @@ modsDotGroovy {
 
 subprojects {
     apply plugin: 'groovy'
+    apply plugin: 'java-library'
     apply plugin: 'org.cadixdev.licenser'
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -114,8 +115,9 @@ subprojects {
 
         compileOnly 'com.matyrobbrt.enhancedgroovy:dsl:0.1.0'
 
-        implementation "com.electronwill.night-config:core:$project.nightconfig_version"
-        implementation "com.electronwill.night-config:toml:$project.nightconfig_version"
+        api "com.electronwill.night-config:core:$project.nightconfig_version"
+        api "com.electronwill.night-config:toml:$project.nightconfig_version"
+        api "blue.endless:jankson:$project.jankson_version"
     }
 }
 

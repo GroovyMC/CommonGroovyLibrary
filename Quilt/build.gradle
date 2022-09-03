@@ -42,6 +42,7 @@ dependencies {
 
     include "com.electronwill.night-config:core:$project.nightconfig_version"
     include "com.electronwill.night-config:toml:$project.nightconfig_version"
+    include "blue.endless:jankson:$project.jankson_version"
 }
 
 loom {
