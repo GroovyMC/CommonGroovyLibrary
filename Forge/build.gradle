@@ -97,11 +97,8 @@ dependencies {
 
 tasks.named('compileGroovy', GroovyCompile) {
     source(project(':Common').sourceSets.main.allGroovy)
-    source(project(':Common').sourceSets.main.allJava)
     source(project(':Common').sourceSets.transform.allGroovy)
-    source(project(':Common').sourceSets.transform.allJava)
     source(project(':Common').sourceSets.extension.allGroovy)
-    source(project(':Common').sourceSets.extension.allJava)
 }
 
 tasks.named('compileJava', JavaCompile) {
