@@ -12,14 +12,14 @@ ModsDotGroovy.make {
 
     mod {
         modId = this.buildProperties['mod_id']
-        displayName = 'Common Groovy Library'
+        displayName = this.buildProperties['mod_name']
         version = this.version
         group = this.group
         intermediate_mappings = 'net.fabricmc:intermediary'
         displayUrl = 'https://github.com/GroovyMC/CommonGroovyLibrary'
 
         description = "A library for common easy Groovy mod development."
-        authors = ['GroovyMC']
+        authors = [this.buildProperties['mod_author']]
 
         dependencies {
             minecraft = this.minecraftVersionRange
