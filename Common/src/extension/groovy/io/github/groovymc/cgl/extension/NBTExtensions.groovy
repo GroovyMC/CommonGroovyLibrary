@@ -12,6 +12,10 @@ import groovy.transform.TypeCheckingMode
 import net.minecraft.nbt.*
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 
+/**
+ * Extensions for working with {@linkplain Tag NBT}.
+ * @author CommonGroovyLibrary
+ */
 @CompileStatic
 class NBTExtensions {
     // region Setters

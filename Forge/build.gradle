@@ -94,7 +94,9 @@ dependencies {
         exclude module: 'transform'
     }
 
-    jarJar "blue.endless:jankson:[$project.jankson_version,)"
+    jarJar("blue.endless:jankson:[$project.jankson_version,)") {
+        jarJar.pin(it, project.jankson_version)
+    }
     minecraftLibrary "blue.endless:jankson:$project.jankson_version"
 
     compileOnly reg.loaderSpecific()

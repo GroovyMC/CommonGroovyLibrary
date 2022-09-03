@@ -13,6 +13,10 @@ import net.minecraft.world.item.crafting.RecipeType
 
 import java.nio.file.Path
 
+/**
+ * General static extensions.
+ * @author CommonGroovyLibrary
+ */
 @CompileStatic
 class StaticGeneralExtensions {
     static <T extends Recipe> RecipeType<T> simple(RecipeType self, ResourceLocation name) {

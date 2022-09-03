@@ -11,6 +11,10 @@ import net.minecraft.core.HolderSet
 import net.minecraft.core.Registry
 import net.minecraft.tags.TagKey
 
+/**
+ * Extensions for working with tags.
+ * @author CommonGroovyLibrary
+ */
 @CompileStatic
 class TagExtensions {
     static <T> boolean isCase(HolderSet.Named<T> holder, T object) {

@@ -2,6 +2,7 @@
  * Copyright (C) 2022 GroovyMC and contributors
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
+//file:noinspection unused
 
 package io.github.lukebemish.groovyduvet.wrapper.minecraft.extension.chat
 
@@ -12,8 +13,12 @@ import groovy.transform.stc.SimpleType
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.chat.StyleBuilder
 import net.minecraft.network.chat.Style
 
-@CompileStatic
+/**
+ * Utility methods for creating and configuring {@linkplain Style Styles}.
+ * @author CommonGroovyLibrary
+ */
 @AutoFinal
+@CompileStatic
 class StyleExtension {
     static Style of(Style type,
                     @DelegatesTo(value = StyleBuilder, strategy = Closure.DELEGATE_FIRST)

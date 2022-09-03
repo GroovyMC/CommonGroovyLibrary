@@ -19,8 +19,12 @@ import net.minecraft.nbt.ShortTag
 import net.minecraft.nbt.StringTag
 import net.minecraft.nbt.Tag
 
+/**
+ * Static extensions for working with {@linkplain Tag NBT}.
+ * @author CommonGroovyLibrary
+ */
 @CompileStatic
- final class StaticNBTExtensions {
+final class StaticNBTExtensions {
     static CompoundTag of(CompoundTag self, Map<String, ?> map) {
         final tag = new CompoundTag()
         map.forEach((key, val) -> tag.put(key, from(null, val)))

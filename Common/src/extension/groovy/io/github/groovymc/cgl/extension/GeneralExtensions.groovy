@@ -8,6 +8,10 @@ package io.github.groovymc.cgl.extension
 import groovy.transform.CompileStatic
 import net.minecraft.server.level.ServerPlayer
 
+/**
+ * General extension methods.
+ * @author CommonGroovyLibrary
+ */
 @CompileStatic
 class GeneralExtensions {
 

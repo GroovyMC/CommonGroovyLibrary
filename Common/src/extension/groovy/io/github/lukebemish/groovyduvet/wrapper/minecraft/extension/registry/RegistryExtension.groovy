@@ -12,6 +12,10 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 
+/**
+ * Extensions for working with registries in a map-like style.
+ * @author CommonGroovyLibrary
+ */
 @CompileStatic
 class RegistryExtension {
     static <A> A getAt(Registry<A> self, ResourceLocation name) {

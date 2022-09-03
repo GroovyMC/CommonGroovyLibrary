@@ -10,6 +10,10 @@ import io.github.groovymc.cgl.api.codec.comments.CommentFirstListCodec
 import io.github.groovymc.cgl.api.codec.comments.CommentSpec
 import io.github.groovymc.cgl.api.codec.comments.CommentedCodec
 
+/**
+ * Extensions for {@linkplain Codec Codecs}.
+ * @author CommonGroovyLibrary
+ */
 class CodecExtensions {
     static <O> Codec<O> comment(Codec<O> codec, CommentSpec spec) {
         return new CommentedCodec<>(codec, spec)

@@ -20,8 +20,8 @@ import java.util.stream.Stream
  * @see {@link groovy.toml.TomlBuilder}
  * @see {@link groovy.toml.TomlSlurper}
  */
-@Singleton(strict = false)
 @CompileStatic
+@Singleton(strict = false)
 class ObjectOps implements DynamicOps<Object> {
 
     protected ObjectOps() {}

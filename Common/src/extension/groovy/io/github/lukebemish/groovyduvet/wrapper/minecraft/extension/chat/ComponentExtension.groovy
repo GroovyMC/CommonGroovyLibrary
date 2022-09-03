@@ -11,6 +11,10 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 
+/**
+ * Extensions for modifying {@linkplain Component Components}.
+ * @author CommonGroovyLibrary
+ */
 @CompileStatic
 class ComponentExtension {
     static MutableComponent plus(MutableComponent self, Component component) {
@@ -32,7 +36,7 @@ class ComponentExtension {
     }
 
     static MutableComponent leftShift(MutableComponent self, List<ChatFormatting> style) {
-        self.withStyle(style.<ChatFormatting>toArray(new ChatFormatting[0]))
+        self.withStyle(style.<ChatFormatting> toArray(new ChatFormatting[0]))
         return self
     }
 }

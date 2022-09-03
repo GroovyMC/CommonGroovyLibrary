@@ -56,7 +56,8 @@ class TupleCodecBuilder {
      * {@link GetterMapCodec}, in the same order.
      * @return A {@link Codec} of the return type of the provided closure.
      */
-    <O> Codec<O> apply(Closure<O> closure) {
+    @SuppressWarnings('GrUnnecessaryPublicModifier')
+    public <O> Codec<O> apply(Closure<O> closure) {
         return new Codec<O>() {
             @Override
             <T> DataResult<Pair<O, T>> decode(DynamicOps<T> ops, T input) {
