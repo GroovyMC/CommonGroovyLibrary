@@ -195,7 +195,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
     @Override
     DataResult<Stream<Pair<JsonElement, JsonElement>>> getMapValues(JsonElement input) {
         if (input instanceof JsonObject)
-            return DataResult.<Stream<Pair<JsonElement,JsonElement>>>success(input.entrySet().stream().map {key, value -> Pair.of(new JsonPrimitive(key), value instanceof JsonNull ? null : value) })
+            return DataResult.<Stream<Pair<JsonElement,JsonElement>>>success(input.entrySet().stream().<Pair<JsonElement,JsonElement>>map {entry -> Pair.of(new JsonPrimitive(entry.key), entry.value instanceof JsonNull ? null : entry.value) })
         return DataResult.error("Not a JSON object: $input")
     }
 
