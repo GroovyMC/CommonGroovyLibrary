@@ -140,6 +140,8 @@ tasks.jarJar {
     finalizedBy tasks.reobfJarJar
 }
 
+reg.configureJarTask(tasks.jarJar)
+
 sourcesJar {
     from sourceSets.transform.allSource
     from project(':Common').sourceSets.main.allSource
