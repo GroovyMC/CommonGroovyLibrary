@@ -15,7 +15,9 @@ import groovy.transform.CompileStatic
  * A {@link com.mojang.serialization.Codec} with comments attached. The delegate codec is assumed to be encode to a
  * map-like structure; if this is not the case, comments will not be attached when encoding with a comment-supporting
  * {@link com.mojang.serialization.DynamicOps}.
+ * @deprecated use {@link io.github.groovymc.cgl.api.codec.TupleMapCodec} instead.
  */
+@Deprecated(forRemoval = true, since = '0.1.2')
 @CompileStatic
 final class CommentedCodec<O> implements Codec<O> {
     final Codec<O> delegate

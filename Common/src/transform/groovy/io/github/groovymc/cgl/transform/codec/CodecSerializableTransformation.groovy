@@ -5,7 +5,6 @@
 
 package io.github.groovymc.cgl.transform.codec
 
-
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.codec.comments.Comment
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
@@ -16,7 +15,6 @@ import org.apache.groovy.util.BeanUtils
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.expr.*
 import org.codehaus.groovy.ast.stmt.ReturnStatement
-import org.codehaus.groovy.ast.stmt.Statement
 import org.codehaus.groovy.ast.tools.GeneralUtils
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
@@ -40,7 +38,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
     static final ClassNode EXPOSES_TYPE = makeWithoutCaching(ExposesCodec)
     static final ClassNode WITH_TYPE = makeWithoutCaching(WithCodec)
     static final ClassNode COMMENT = makeWithoutCaching(Comment)
-    static final ClassNode TUPLE_CODEC_BUILDER = makeWithoutCaching('io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.TupleCodecBuilder')
+    static final ClassNode TUPLE_MAP_CODEC = makeWithoutCaching('io.github.groovymc.cgl.api.codec.TupleMapCodec')
     static final ClassNode MAP_COMMENT_SPEC = makeWithoutCaching('io.github.groovymc.cgl.api.codec.comments.MapCommentSpec')
     static final String CODEC = 'com.mojang.serialization.Codec'
     static final ClassNode CODEC_NODE = makeWithoutCaching(CODEC)
@@ -83,30 +81,13 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         else
             throw new RuntimeException('Codec-serializable classes must have at least one constructor.')
 
-        boolean isTooBig = assembler.parameters.size() > 16
-
         ClassNode resolvedCodec = makeWithoutCaching(CODEC)
         resolvedCodec.setGenericsTypes(new GenericsType(parent))
 
         Expression[] grouping = new Expression[assembler.parameters.size()]
 
         for (int i = 0; i < assembler.parameters.size(); i++) {
-            grouping[i] = assembleExpression(parent, assembler.parameters[i], isTooBig)
-        }
-
-        Expression initialValue
-        if (!isTooBig) {
-            Expression grouped = new MethodCallExpression(new VariableExpression('i', INSTANCE_NODE), 'group', new ArgumentListExpression(grouping))
-            Statement statement = new ReturnStatement(new MethodCallExpression(grouped, 'apply',
-                    new ArgumentListExpression(new VariableExpression('i', INSTANCE_NODE),
-                            new MethodReferenceExpression(new ClassExpression(parent), new ConstantExpression('new')))))
-            LambdaExpression function = new LambdaExpression(new Parameter[]{new Parameter(INSTANCE_NODE, 'i')}, statement).tap {
-                variableScope = new VariableScope()
-            }
-            initialValue = new StaticMethodCallExpression(makeWithoutCaching(RECORD_CODEC_BUILDER), 'create', new ArgumentListExpression(function))
-        } else {
-            Expression grouped = new StaticMethodCallExpression(TUPLE_CODEC_BUILDER, 'of', new ArgumentListExpression(grouping))
-            initialValue = new MethodCallExpression(grouped, 'apply', new MethodReferenceExpression(new ClassExpression(parent), new ConstantExpression('new')))
+            grouping[i] = assembleExpression(parent, assembler.parameters[i])
         }
 
         // Parse and merge comments
@@ -144,14 +125,18 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         }
 
         if (!comments.isEmpty()) {
-            initialValue = new MethodCallExpression(initialValue, 'comment', new StaticMethodCallExpression(
+            grouping = (new Expression[] {new StaticMethodCallExpression(
                     MAP_COMMENT_SPEC,
                     'of',
                     new ArgumentListExpression(new MapExpression(comments.collect { key, comment ->
                         new MapEntryExpression(new ConstantExpression(key), new ConstantExpression(comment))
                     }))
-            ))
+            )})+grouping
         }
+        grouping = (new Expression[] {new MethodReferenceExpression(new ClassExpression(parent), new ConstantExpression('new'))}) + grouping
+
+        Expression grouped = new StaticMethodCallExpression(TUPLE_MAP_CODEC, 'of', new ArgumentListExpression(grouping))
+        Expression initialValue = new MethodCallExpression(grouped, 'codec', new ArgumentListExpression())
 
         ClassNode wrappedNode = makeWithoutCaching(CODEC)
         wrappedNode.redirect = resolvedCodec
@@ -203,7 +188,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         return getMemberValue(node, name)?:defaultVal
     }
 
-    Expression assembleExpression(ClassNode parent, Parameter parameter, boolean isTooBig) {
+    Expression assembleExpression(ClassNode parent, Parameter parameter) {
         String name = parameter.name
         FieldNode field = parent.getField(name)
         if (field?.isStatic()) field = null
@@ -230,9 +215,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             variableScope = new VariableScope()
         }
 
-        Expression forGetter = isTooBig ?
-                new StaticMethodCallExpression(TUPLE_CODEC_BUILDER, 'forGetter', new ArgumentListExpression(fieldOf, forGetterArg)) :
-                new MethodCallExpression(fieldOf, 'forGetter', new ArgumentListExpression(forGetterArg))
+        Expression forGetter = new StaticMethodCallExpression(TUPLE_MAP_CODEC, 'forGetter', new ArgumentListExpression(fieldOf, forGetterArg))
         return forGetter
     }
 

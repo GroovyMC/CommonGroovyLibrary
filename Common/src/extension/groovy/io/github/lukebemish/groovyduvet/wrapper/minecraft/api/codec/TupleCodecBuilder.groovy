@@ -15,7 +15,9 @@ import groovy.transform.CompileStatic
 /**
  * A tool for assembling codecs for structures with more than 16 fields. For structures with less, use
  * {@link com.mojang.serialization.codecs.RecordCodecBuilder} instead.
+ * @deprecated use {@link io.github.groovymc.cgl.api.codec.TupleMapCodec} instead.
  */
+@Deprecated(forRemoval = true, since = '0.1.2')
 @AutoFinal
 @CompileStatic
 class TupleCodecBuilder {
