@@ -18,7 +18,7 @@ import groovy.transform.CompileStatic
  */
 @CompileStatic
 final class CommentedCodec<O> implements Codec<O> {
-    private Codec<O> delegate
+    final Codec<O> delegate
     final CommentSpec spec
 
     /**

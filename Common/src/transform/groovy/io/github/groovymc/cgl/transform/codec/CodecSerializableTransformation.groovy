@@ -143,13 +143,15 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             }
         }
 
-        initialValue = new MethodCallExpression(initialValue, 'comment', new StaticMethodCallExpression(
-                MAP_COMMENT_SPEC,
-                'of',
-                new ArgumentListExpression(new MapExpression(comments.collect {key, comment ->
-                    new MapEntryExpression(new ConstantExpression(key),new ConstantExpression(comment))
-                }))
-        ))
+        if (!comments.isEmpty()) {
+            initialValue = new MethodCallExpression(initialValue, 'comment', new StaticMethodCallExpression(
+                    MAP_COMMENT_SPEC,
+                    'of',
+                    new ArgumentListExpression(new MapExpression(comments.collect { key, comment ->
+                        new MapEntryExpression(new ConstantExpression(key), new ConstantExpression(comment))
+                    }))
+            ))
+        }
 
         ClassNode wrappedNode = makeWithoutCaching(CODEC)
         wrappedNode.redirect = resolvedCodec
