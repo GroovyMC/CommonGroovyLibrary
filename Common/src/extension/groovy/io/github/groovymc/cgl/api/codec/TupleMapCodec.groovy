@@ -99,42 +99,42 @@ class TupleMapCodec<O> extends MapCodec<O> {
             RecordBuilder<T> add(T key, T value) {
                 var added = builder.get().add(key, value)
                 builder.set(added)
-                return added
+                return this
             }
 
             @Override
             RecordBuilder<T> add(T key, DataResult<T> value) {
                 var added = builder.get().add(key, value)
                 builder.set(added)
-                return added
+                return this
             }
 
             @Override
             RecordBuilder<T> add(DataResult<T> key, DataResult<T> value) {
                 var added = builder.get().add(key, value)
                 builder.set(added)
-                return added
+                return this
             }
 
             @Override
             RecordBuilder<T> withErrorsFrom(DataResult<?> result) {
                 var added = builder.get().withErrorsFrom(result)
                 builder.set(added)
-                return added
+                return this
             }
 
             @Override
             RecordBuilder<T> setLifecycle(Lifecycle lifecycle) {
                 var added = builder.get().setLifecycle(lifecycle)
                 builder.set(added)
-                return added
+                return this
             }
 
             @Override
             RecordBuilder<T> mapError(UnaryOperator<String> onError) {
                 var added = builder.get().mapError(onError)
                 builder.set(added)
-                return added
+                return this
             }
 
             @Override
