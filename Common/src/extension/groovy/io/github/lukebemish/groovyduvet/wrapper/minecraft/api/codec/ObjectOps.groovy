@@ -9,6 +9,7 @@ import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
 import groovy.transform.CompileStatic
+import org.codehaus.groovy.runtime.NullObject
 
 import java.util.stream.Stream
 
@@ -28,7 +29,7 @@ class ObjectOps implements DynamicOps<Object> {
 
     @Override
     Object empty() {
-        return null
+        return NullObject.nullObject
     }
 
     @Override
@@ -37,7 +38,7 @@ class ObjectOps implements DynamicOps<Object> {
             return convertMap(outOps, input)
         if (input instanceof List)
             return convertList(outOps, input)
-        if (input == null)
+        if (input == NullObject.nullObject)
             return outOps.empty()
         if (input instanceof Boolean)
             return outOps.createBoolean(input)

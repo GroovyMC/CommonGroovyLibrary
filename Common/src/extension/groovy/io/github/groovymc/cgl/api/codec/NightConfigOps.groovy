@@ -39,6 +39,8 @@ abstract class NightConfigOps extends ObjectOps implements CommentingOps<Object>
             return convertMap(outOps, input)
         if (input instanceof Map)
             throw new UnsupportedOperationException("${this.class.simpleName} was unable to convert a value: $input")
+        if (input instanceof NullObject)
+            return outOps.empty()
         return super.convertTo(outOps, input)
     }
 
