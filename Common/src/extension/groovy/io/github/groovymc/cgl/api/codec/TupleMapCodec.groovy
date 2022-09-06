@@ -87,59 +87,53 @@ class TupleMapCodec<O> extends MapCodec<O> {
         for (GetterMapCodec<?> codec : codecs) {
             prefix = codec.codec.encode(codec.getter.call(input), ops, prefix)
         }
-        AtomicReference<RecordBuilder<T>> builder = new AtomicReference<>(prefix)
 
         return new RecordBuilder<T>() {
+            RecordBuilder<T> builder = prefix
             @Override
             DynamicOps<T> ops() {
-                return ops
+                return builder.ops()
             }
 
             @Override
             RecordBuilder<T> add(T key, T value) {
-                var added = builder.get().add(key, value)
-                builder.set(added)
+                builder = builder.add(key, value)
                 return this
             }
 
             @Override
             RecordBuilder<T> add(T key, DataResult<T> value) {
-                var added = builder.get().add(key, value)
-                builder.set(added)
+                builder = builder.add(key, value)
                 return this
             }
 
             @Override
             RecordBuilder<T> add(DataResult<T> key, DataResult<T> value) {
-                var added = builder.get().add(key, value)
-                builder.set(added)
+                builder = builder.add(key, value)
                 return this
             }
 
             @Override
             RecordBuilder<T> withErrorsFrom(DataResult<?> result) {
-                var added = builder.get().withErrorsFrom(result)
-                builder.set(added)
+                builder = builder.withErrorsFrom(result)
                 return this
             }
 
             @Override
             RecordBuilder<T> setLifecycle(Lifecycle lifecycle) {
-                var added = builder.get().setLifecycle(lifecycle)
-                builder.set(added)
+                builder = builder.setLifecycle(lifecycle)
                 return this
             }
 
             @Override
             RecordBuilder<T> mapError(UnaryOperator<String> onError) {
-                var added = builder.get().mapError(onError)
-                builder.set(added)
+                builder = builder.mapError(onError)
                 return this
             }
 
             @Override
             DataResult<T> build(T buildPrefix) {
-                DataResult<T> built = builder.get().build(buildPrefix)
+                DataResult<T> built = builder.build(buildPrefix)
                 if (this.ops() instanceof CommentingOps<T>) {
                     CommentingOps<T> commentingOps = (CommentingOps<T>) this.ops()
                     return built.map { commentingOps.finalize(it, spec) }
