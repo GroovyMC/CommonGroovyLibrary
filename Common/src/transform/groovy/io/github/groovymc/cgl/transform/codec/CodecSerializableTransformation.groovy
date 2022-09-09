@@ -68,6 +68,10 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         }
     }
 
+    static String toSnakeCase( String text ) {
+        text.replaceAll( /([A-Z])/, /_$1/ ).toLowerCase().replaceAll( /^_/, '' )
+    }
+
     void doAssembleCodec(ClassNode parent, AnnotationNode anno) {
         String fieldName = getMemberValue(anno, "property", DEFAULT_CODEC_PROPERTY)
         if (parent.getField(fieldName)?.static)
@@ -87,7 +91,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         Expression[] grouping = new Expression[assembler.parameters.size()]
 
         for (int i = 0; i < assembler.parameters.size(); i++) {
-            grouping[i] = assembleExpression(parent, assembler.parameters[i])
+            grouping[i] = assembleExpression(anno, parent, assembler.parameters[i], getMemberBooleanValue(anno, 'camelToSnake', false))
         }
 
         // Parse and merge comments
@@ -148,6 +152,14 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             })
     }
 
+    boolean getMemberBooleanValue(AnnotationNode node, String name, boolean defaultValue) {
+        Object value = getMemberValue(node, name)
+        if (value instanceof Boolean) {
+            return (Boolean) value
+        }
+        return defaultValue
+    }
+
     // Credit to Paint_Ninja
     static String toCommentFreeText(String content) {
         // For single line comments:
@@ -188,7 +200,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         return getMemberValue(node, name)?:defaultVal
     }
 
-    Expression assembleExpression(ClassNode parent, Parameter parameter) {
+    Expression assembleExpression(AnnotationNode anno, ClassNode parent, Parameter parameter, boolean camelToSnake) {
         String name = parameter.name
         FieldNode field = parent.getField(name)
         if (field?.isStatic()) field = null
@@ -200,11 +212,19 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         annotations.addAll(getter?.annotations?:[])
         List<WithCodecPath> path = (isOptional(parameter.type))?([WithCodecPath.OPTIONAL]):([])
         Expression baseCodec = getCodecFromType(unresolveOptional(parameter.type),annotations,path)
-        Expression fieldOf
-        if (!isOptional(parameter.type))
-            fieldOf = new MethodCallExpression(baseCodec, 'fieldOf', new ArgumentListExpression(new ConstantExpression(parameter.name)))
-        else
-            fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(parameter.name)))
+        Expression fieldOf = null
+        String fieldName = camelToSnake? toSnakeCase(name) : name
+        findFieldOf: {
+            if (!isOptional(parameter.type)) {
+                if (getMemberBooleanValue(anno, 'allowDefaultValues', false)) {
+                    if (field !== null && field.initialValueExpression !== null) {
+                        fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(parameter.name), field.initialValueExpression))
+                    }
+                }
+                fieldOf = new MethodCallExpression(baseCodec, 'fieldOf', new ArgumentListExpression(new ConstantExpression(parameter.name)))
+            } else
+                fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(parameter.name)))
+        }
 
         ClassNode redirected = makeWithoutCaching(parent.name)
         redirected.redirect = parent

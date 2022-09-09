@@ -41,4 +41,16 @@ import java.lang.annotation.Target
      * {@link CodecRetriever}.
      */
     String property() default '$CODEC'
+
+    /**
+     * Whether properties of names in camel case ({@code propertyName}) should be converted into snake case
+     * ({@code property_name}). Note: this default will be switched to true in 1.20.
+     */
+    boolean camelToSnake() default false
+
+    /**
+     * Whether setting a default value for a field should make the matching constructor parameter optional. Note: this
+     * default will be switched to true in 1.20.
+     */
+    boolean allowDefaultValues() default false
 }
