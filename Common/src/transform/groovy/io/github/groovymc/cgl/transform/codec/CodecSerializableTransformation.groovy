@@ -212,19 +212,15 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         annotations.addAll(getter?.annotations?:[])
         List<WithCodecPath> path = (isOptional(parameter.type))?([WithCodecPath.OPTIONAL]):([])
         Expression baseCodec = getCodecFromType(unresolveOptional(parameter.type),annotations,path)
-        Expression fieldOf = null
+        Expression fieldOf
         String fieldName = camelToSnake? toSnakeCase(name) : name
-        findFieldOf: {
-            if (!isOptional(parameter.type)) {
-                if (getMemberBooleanValue(anno, 'allowDefaultValues', false)) {
-                    if (field !== null && field.initialValueExpression !== null) {
-                        fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(parameter.name), field.initialValueExpression))
-                    }
-                }
-                fieldOf = new MethodCallExpression(baseCodec, 'fieldOf', new ArgumentListExpression(new ConstantExpression(parameter.name)))
-            } else
-                fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(parameter.name)))
-        }
+        if (!isOptional(parameter.type)) {
+            if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && field !== null && field.initialValueExpression !== null)
+                fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), field.initialValueExpression))
+            else
+                fieldOf = new MethodCallExpression(baseCodec, 'fieldOf', new ArgumentListExpression(new ConstantExpression(fieldName)))
+        } else
+            fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName)))
 
         ClassNode redirected = makeWithoutCaching(parent.name)
         redirected.redirect = parent
