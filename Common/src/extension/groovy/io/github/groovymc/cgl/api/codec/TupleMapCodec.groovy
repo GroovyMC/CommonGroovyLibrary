@@ -44,7 +44,7 @@ class TupleMapCodec<O> extends MapCodec<O> {
     }
 
     /**
-     * Begin a builder using a series of {@link MapCodec} linked to getters.
+     * Create a codec using a series of {@link MapCodec} linked to getters and an assembly closure.
      * @param assembler The function that will assemble the final object, given a list of arguments
      * @param spec The comment specification for the constructed codec.
      * @param codecs The combined {@link MapCodec} and getters, in order, to use in the codec.
