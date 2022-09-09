@@ -215,8 +215,10 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         Expression fieldOf
         String fieldName = camelToSnake? toSnakeCase(name) : name
         if (!isOptional(parameter.type)) {
-            if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && field !== null && field.initialValueExpression !== null)
-                fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), field.initialValueExpression))
+            PropertyNode pNode = parent.getProperty(name)
+            if (pNode?.isStatic()) pNode = null
+            if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && pNode !== null && pNode.initialExpression !== null)
+                fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), pNode.initialExpression))
             else
                 fieldOf = new MethodCallExpression(baseCodec, 'fieldOf', new ArgumentListExpression(new ConstantExpression(fieldName)))
         } else
