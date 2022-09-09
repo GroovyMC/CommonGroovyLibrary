@@ -1,19 +1,11 @@
-package io.github.groovymc.cgl.api.codec
+package io.github.groovymc.cgl.api.codec.comments
 
-import com.mojang.serialization.DataResult
-import com.mojang.serialization.DynamicOps
-import com.mojang.serialization.Lifecycle
-import com.mojang.serialization.MapCodec
-import com.mojang.serialization.MapLike
-import com.mojang.serialization.RecordBuilder
+import com.mojang.serialization.*
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.groovymc.cgl.api.codec.comments.CommentSpec
-import io.github.groovymc.cgl.api.codec.comments.CommentingOps
 
 import java.util.function.UnaryOperator
 import java.util.stream.Stream
-
 /**
  * A {@link MapCodec} that wraps another {@link MapCodec}, providing a comment during encoding. Should work most places
  * that the original MapCodec would.
@@ -21,7 +13,7 @@ import java.util.stream.Stream
  */
 @CompileStatic
 @TupleConstructor
-class CommentedFieldCodec<O> extends MapCodec<O> {
+class CommentedFieldMapCodec<O> extends MapCodec<O> {
     final MapCodec<O> delegate
     final CommentSpec comments
 
