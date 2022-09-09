@@ -14,6 +14,11 @@ import io.github.groovymc.cgl.api.codec.comments.CommentingOps
 import java.util.function.UnaryOperator
 import java.util.stream.Stream
 
+/**
+ * A {@link MapCodec} that wraps another {@link MapCodec}, providing a comment during encoding. Should work most places
+ * that the original MapCodec would.
+ * @param <O>
+ */
 @CompileStatic
 @TupleConstructor
 class CommentedFieldCodec<O> extends MapCodec<O> {
