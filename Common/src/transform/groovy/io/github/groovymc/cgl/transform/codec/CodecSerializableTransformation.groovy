@@ -337,7 +337,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
                 throw new RuntimeException('Constructor parameters and their matching fields in codec-serializable classes may not use a raw Map')
             }
             ClassNode key = clazz.genericsTypes[0].type
-            ClassNode value = clazz.genericsTypes[0].type
+            ClassNode value = clazz.genericsTypes[1].type
             Expression keyExpression = getCodecFromType(key,context,path+[WithCodecPath.MAP_KEY])
             Expression valueExpression = getCodecFromType(value,context,path+[WithCodecPath.MAP_VAL])
             return new StaticMethodCallExpression(CODEC_NODE, 'unboundedMap', new ArgumentListExpression(
@@ -349,7 +349,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
                 throw new RuntimeException('Constructor parameters and their matching fields in codec-serializable classes may not use a raw Pair')
             }
             ClassNode left = clazz.genericsTypes[0].type
-            ClassNode right = clazz.genericsTypes[0].type
+            ClassNode right = clazz.genericsTypes[1].type
             Expression leftExpression = getCodecFromType(left,context,path+[WithCodecPath.PAIR_FIRST])
             Expression rightExpression = getCodecFromType(right,context,path+[WithCodecPath.PAIR_SECOND])
             return new StaticMethodCallExpression(CODEC_NODE, 'pair', new ArgumentListExpression(
@@ -361,7 +361,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
                 throw new RuntimeException('Constructor parameters and their matching fields in codec-serializable classes may not use a raw Pair')
             }
             ClassNode left = clazz.genericsTypes[0].type
-            ClassNode right = clazz.genericsTypes[0].type
+            ClassNode right = clazz.genericsTypes[1].type
             Expression leftExpression = getCodecFromType(left,context,path+[WithCodecPath.EITHER_LEFT])
             Expression rightExpression = getCodecFromType(right,context,path+[WithCodecPath.EITHER_RIGHT])
             return new StaticMethodCallExpression(CODEC_NODE, 'either', new ArgumentListExpression(
