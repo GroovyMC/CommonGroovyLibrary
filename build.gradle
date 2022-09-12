@@ -114,7 +114,7 @@ subprojects {
         compileOnly groovyDep('toml')
         compileOnly groovyDep('json')
 
-        compileOnly 'com.matyrobbrt.enhancedgroovy:dsl:0.1.0'
+        compileOnly 'com.matyrobbrt.enhancedgroovy:dsl:0.2.0'
 
         api "com.electronwill.night-config:core:$project.nightconfig_version"
         api "com.electronwill.night-config:toml:$project.nightconfig_version"

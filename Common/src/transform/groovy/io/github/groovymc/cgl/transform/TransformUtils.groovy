@@ -9,12 +9,15 @@ import groovy.transform.CompileStatic
 import groovy.transform.Generated
 import groovy.transform.NamedParam
 import groovy.transform.NamedVariant
+import groovyjarjarasm.asm.Handle
+import groovyjarjarasm.asm.MethodVisitor
+import groovyjarjarasm.asm.Type as JarType
 import org.codehaus.groovy.ast.*
-import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.Statement
 import org.codehaus.groovy.ast.tools.GeneralUtils
+import org.objectweb.asm.Opcodes
 
 import javax.annotation.Nullable
 
@@ -104,5 +107,53 @@ class TransformUtils {
 
     static void addLastCtorStatement(final ClassNode classNode, final Statement statement) {
         (getOrCreatorCtor(classNode).code as BlockStatement).addStatement(statement)
+    }
+
+    static void indy(MethodVisitor visitor, ClassNode functionalInterface, MethodNode lambdaMethod, ClassNode declaringType) {
+        final method = functionalInterface.methods.find { it.isAbstract() } ?: getAllMethods(functionalInterface).find { it.isAbstract() }
+        visitor.visitInvokeDynamicInsn(
+                method.name, "()L${getInternalName(functionalInterface)};",
+                new Handle(Opcodes.H_INVOKESTATIC, 'java/lang/invoke/LambdaMetafactory', 'metafactory', '(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;', false),
+                new Object[] {
+                    getDesc(method),
+                    new Handle(declaringType.interface ? Opcodes.INVOKEINTERFACE : (lambdaMethod.isStatic() ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL), getInternalName(declaringType), lambdaMethod.name, getDesc(lambdaMethod).getDescriptor(), declaringType.isInterface()),
+                    getDesc(lambdaMethod)
+                }
+        )
+    }
+
+    static List<MethodNode> getAllMethods(ClassNode classNode) {
+        final methods = new ArrayList<>(classNode.methods)
+        if (classNode.superClass !== null) {
+            methods.addAll(getAllMethods(classNode.superClass))
+        }
+        for (final it in classNode.interfaces) {
+            methods.addAll(getAllMethods(it))
+        }
+        return methods
+    }
+
+    private static String getInternalName(ClassNode classNode) {
+        return classNode.name.replace('.' as char, '/' as char)
+    }
+
+    private static JarType getDesc(MethodNode method) {
+        JarType.getMethodType(getType(method.returnType),
+                Arrays.stream(method.parameters).map {getType(it.type) }.toArray(JarType[]::new))
+    }
+
+    private static JarType getType(ClassNode classNode) {
+        return switch (classNode) {
+            case ClassHelper.int_TYPE -> JarType.INT_TYPE
+            case ClassHelper.double_TYPE -> JarType.DOUBLE_TYPE
+            case ClassHelper.boolean_TYPE -> JarType.BOOLEAN_TYPE
+            case ClassHelper.float_TYPE -> JarType.FLOAT_TYPE
+            case ClassHelper.short_TYPE -> JarType.SHORT_TYPE
+            case ClassHelper.byte_TYPE -> JarType.BYTE_TYPE
+            case ClassHelper.VOID_TYPE -> JarType.VOID_TYPE
+            case ClassHelper.long_TYPE -> JarType.LONG_TYPE
+            case ClassHelper.char_TYPE -> JarType.CHAR_TYPE
+            default -> JarType.getObjectType(getInternalName(classNode))
+        }
     }
 }
