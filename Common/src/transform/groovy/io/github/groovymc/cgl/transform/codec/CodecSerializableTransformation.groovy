@@ -217,7 +217,9 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         if (!isOptional(parameter.type)) {
             PropertyNode pNode = parent.getProperty(name)
             if (pNode?.isStatic()) pNode = null
-            if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && pNode !== null && pNode.initialExpression !== null)
+            if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && parameter.initialExpression !== null)
+                fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), parameter.initialExpression))
+            else if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && pNode !== null && pNode.initialExpression !== null)
                 fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), pNode.initialExpression))
             else
                 fieldOf = new MethodCallExpression(baseCodec, 'fieldOf', new ArgumentListExpression(new ConstantExpression(fieldName)))
