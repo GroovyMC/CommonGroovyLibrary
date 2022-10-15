@@ -13,15 +13,19 @@ repositories {
 }
 
 sourceSets {
-    main {
-        java {
-            srcDirs = []
-        }
-    }
     transform {}
     extension {
         compileClasspath += transform.output
         runtimeClasspath += transform.output
+    }
+    main {
+        java {
+            srcDirs = []
+        }
+        compileClasspath += transform.output
+        runtimeClasspath += transform.output
+        compileClasspath += extension.output
+        runtimeClasspath += extension.output
     }
 }
 
