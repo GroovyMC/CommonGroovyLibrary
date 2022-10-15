@@ -5,6 +5,9 @@
 
 package io.github.groovymc.cgl.api.environment
 
+/**
+ * Represents a physical side that the game can exist on.
+ */
 enum Side {
     SERVER,
     CLIENT

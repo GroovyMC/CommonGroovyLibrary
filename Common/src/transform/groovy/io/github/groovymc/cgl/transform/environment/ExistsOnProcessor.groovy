@@ -6,7 +6,7 @@
 package io.github.groovymc.cgl.transform.environment
 
 import groovy.transform.CompileStatic
-import io.github.groovymc.cgl.api.environment.Platform
+import io.github.groovymc.cgl.api.environment.Loader
 import io.github.groovymc.cgl.api.environment.Side
 import org.codehaus.groovy.ast.AnnotatedNode
 import org.jetbrains.annotations.ApiStatus
@@ -14,5 +14,5 @@ import org.jetbrains.annotations.ApiStatus
 @ApiStatus.Internal
 @CompileStatic
 interface ExistsOnProcessor {
-    void process(AnnotatedNode node, Side side, List<Platform> platforms)
+    void process(AnnotatedNode node, Side side, List<Loader> loaders)
 }

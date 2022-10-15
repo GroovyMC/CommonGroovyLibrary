@@ -7,7 +7,7 @@ package io.github.groovymc.cgl.quilt.transform.environment
 
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.transform.environment.ExistsOnProcessor
-import io.github.groovymc.cgl.api.environment.Platform
+import io.github.groovymc.cgl.api.environment.Loader
 import io.github.groovymc.cgl.api.environment.Side
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -28,8 +28,8 @@ class ExistsOnProcessorImpl implements ExistsOnProcessor {
     static final ClassNode ENV_TYPE = makeWithoutCaching(EnvType)
 
     @Override
-    void process(AnnotatedNode node, Side side, List<Platform> platforms) {
-        if (platforms.contains(Platform.QUILT)) {
+    void process(AnnotatedNode node, Side side, List<Loader> loaders) {
+        if (loaders.contains(Loader.QUILT)) {
             switch (side) {
                 case Side.CLIENT:
                     node.addAnnotation(new AnnotationNode(ENVIRONMENT).tap {

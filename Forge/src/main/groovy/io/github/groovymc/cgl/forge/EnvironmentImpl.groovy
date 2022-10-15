@@ -7,7 +7,7 @@ package io.github.groovymc.cgl.forge
 
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.environment.Environment
-import io.github.groovymc.cgl.api.environment.Platform
+import io.github.groovymc.cgl.api.environment.Loader
 import io.github.groovymc.cgl.api.environment.Side
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.fml.loading.FMLLoader
@@ -17,8 +17,8 @@ import org.jetbrains.annotations.ApiStatus
 @ApiStatus.Internal
 class EnvironmentImpl implements Environment {
     @Override
-    Platform getPlatform() {
-        Platform.FORGE
+    Loader getLoader() {
+        Loader.FORGE
     }
 
     @Override

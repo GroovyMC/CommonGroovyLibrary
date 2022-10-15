@@ -6,7 +6,7 @@
 package io.github.groovymc.cgl.transform.environment
 
 import groovy.transform.CompileStatic
-import io.github.groovymc.cgl.api.environment.Platform
+import io.github.groovymc.cgl.api.environment.Loader
 import io.github.groovymc.cgl.api.environment.Side
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.AnnotatedNode
@@ -41,9 +41,9 @@ class ExistsOnASTTransformer extends AbstractASTTransformation {
         if (MY_TYPE != anno.getClassNode()) return
 
         Side side = ExistsOnASTTransformer.<Side>parseSingleExpr(anno.getMember('value'), Side::valueOf)
-        List<Platform> platforms = ExistsOnASTTransformer.<Platform>getMemberValues(anno, 'applyOn', Platform::valueOf)
+        List<Loader> loaders = ExistsOnASTTransformer.<Loader>getMemberValues(anno, 'applyOn', Loader::valueOf)
 
-        PROCESSOR?.process(parent, side, platforms)
+        PROCESSOR?.process(parent, side, loaders)
     }
 
     static <T extends Enum> List<T> getMemberValues(AnnotationNode anno, String name, Function<String,T> getter) {

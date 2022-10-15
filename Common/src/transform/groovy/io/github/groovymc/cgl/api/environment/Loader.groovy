@@ -5,7 +5,10 @@
 
 package io.github.groovymc.cgl.api.environment
 
-enum Platform {
+/**
+ * Represents which loader the game is running on or a mod is compiling for.
+ */
+enum Loader {
     FORGE,
     QUILT
 }
