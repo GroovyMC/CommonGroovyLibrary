@@ -20,6 +20,13 @@ repositories {
     }
 }
 
+sourceSets {
+    transform {}
+}
+configurations {
+    transformCompileOnly.extendsFrom(compileClasspath)
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.layered() {
@@ -36,6 +43,8 @@ dependencies {
 
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(path: ':Common', configuration: 'namedElements')
+
+    transformCompileOnly project(path: ':Common', configuration: 'transformOut')
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
@@ -84,9 +93,11 @@ jar {
     from('LICENSE') {
         rename { "${it}_${mod_name}"}
     }
+    from sourceSets.transform.output
 }
 
 sourcesJar {
+    from sourceSets.transform.allSource
     from project(':Common').sourceSets.main.allSource
     from project(':Common').sourceSets.transform.allSource
     from project(':Common').sourceSets.extension.allSource
