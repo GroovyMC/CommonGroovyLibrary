@@ -80,9 +80,11 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(path: ':Common', configuration: 'namedElements')
 
-    transformCompileOnly project(path: ':Common', configuration: 'transformOut')
-    testCompileOnly project(path: ':Common', configuration: 'transformOut')
+    transformCompileOnly project(path: ':Common', configuration: 'extensionOut')
     testCompileOnly project(path: ':Common', configuration: 'extensionOut')
+    testCompileOnly project(path: ':Common', configuration: 'transformOut')
+    compileOnly project(path: ':Common', configuration: 'extensionOut')
+    compileOnly project(path: ':Common', configuration: 'transformOut')
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'

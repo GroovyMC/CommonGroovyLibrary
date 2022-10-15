@@ -2,8 +2,8 @@ package io.github.groovymc.cgl.forge.transform.environment
 
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.transform.environment.ExistsOnProcessor
-import io.github.groovymc.cgl.transform.environment.Platform
-import io.github.groovymc.cgl.transform.environment.Side
+import io.github.groovymc.cgl.api.environment.Platform
+import io.github.groovymc.cgl.api.environment.Side
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
 import org.codehaus.groovy.ast.AnnotatedNode

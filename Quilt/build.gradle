@@ -44,7 +44,8 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(path: ':Common', configuration: 'namedElements')
 
-    transformCompileOnly project(path: ':Common', configuration: 'transformOut')
+    transformCompileOnly project(path: ':Common', configuration: 'extensionOut')
+    compileOnly project(path: ':Common', configuration: 'extensionOut')
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'

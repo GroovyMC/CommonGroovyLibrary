@@ -1,6 +1,8 @@
 package io.github.groovymc.cgl.transform.environment
 
 import groovy.transform.CompileStatic
+import io.github.groovymc.cgl.api.environment.Platform
+import io.github.groovymc.cgl.api.environment.Side
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.AnnotatedNode
 import org.codehaus.groovy.ast.AnnotationNode
@@ -34,7 +36,7 @@ class ExistsOnASTTransformer extends AbstractASTTransformation {
         if (MY_TYPE != anno.getClassNode()) return
 
         Side side = parseSingleExpr<Side>(anno.getMember('value'), Side::valueOf)
-        List<Platform> platforms = getMemberValues<Platform>(anno, 'platforms', Platform::valueOf)
+        List<Platform> platforms = getMemberValues<Platform>(anno, 'applyOn', Platform::valueOf)
 
         PROCESSOR.process(parent, side, platforms)
     }
@@ -46,7 +48,7 @@ class ExistsOnASTTransformer extends AbstractASTTransformation {
         }
         if (expr instanceof ListExpression) {
             final ListExpression listExpression = (ListExpression) expr
-            List<T> list = new ArrayList<>();
+            List<T> list = new ArrayList<>()
             for (Expression itemExpr : listExpression.getExpressions()) {
                 if (itemExpr instanceof ConstantExpression) {
                     T value = parseSingleExpr(itemExpr, getter)

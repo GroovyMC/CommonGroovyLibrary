@@ -8,6 +8,9 @@ package io.github.lukebemish.groovyduvet.wrapper.minecraft.extension.math
 
 import com.mojang.math.*
 import groovy.transform.CompileStatic
+import io.github.groovymc.cgl.api.environment.Platform
+import io.github.groovymc.cgl.api.environment.Side
+import io.github.groovymc.cgl.transform.environment.ExistsOn
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Position
 import net.minecraft.core.Vec3i
@@ -18,7 +21,6 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
-
 /**
  * Arithmetic extensions for Minecraft vectors.
  * @author CommonGroovyLibrary
@@ -438,14 +440,17 @@ class ArithmeticExtension {
     // endregion
 
     // region Transformation
+    @ExistsOn(value = Side.CLIENT, applyOn = Platform.FORGE)
     static Transformation multiply(Transformation self, Transformation other) {
         return self.compose(other)
     }
 
+    @ExistsOn(value = Side.CLIENT, applyOn = Platform.FORGE)
     static Transformation negative(Transformation self) {
         return self.inverse()
     }
 
+    @ExistsOn(value = Side.CLIENT, applyOn = Platform.FORGE)
     static <T> T asType(Transformation self, Class<T> type) {
         return switch (type) {
             case Matrix4f ->

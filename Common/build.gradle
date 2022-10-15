@@ -18,10 +18,10 @@ sourceSets {
             srcDirs = []
         }
     }
-    extension {}
-    transform {
-        compileClasspath += extension.output
-        runtimeClasspath += extension.output
+    transform {}
+    extension {
+        compileClasspath += transform.output
+        runtimeClasspath += transform.output
     }
 }
 
@@ -56,9 +56,9 @@ dependencies {
     modCompileOnly 'com.github.javaparser:javaparser-core:3.24.4'
 
     implementation group:'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
-    transformOut sourceSets.extension.output
-    transformOut sourceSets.transform.output
+    extensionOut sourceSets.extension.output
     extensionOut sourceSets.transform.output
+    transformOut sourceSets.transform.output
 }
 
 import net.fabricmc.loom.task.AbstractRemapJarTask

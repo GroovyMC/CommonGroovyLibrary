@@ -6,6 +6,8 @@
 package io.github.groovymc.cgl.transform.codec
 
 import groovy.transform.CompileStatic
+import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposeCodec
+import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposesCodec
 import org.apache.groovy.util.BeanUtils
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.expr.ConstantExpression
@@ -21,8 +23,8 @@ import static org.codehaus.groovy.ast.ClassHelper.makeWithoutCaching
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
 class ExposeCodecTransformation extends AbstractASTTransformation {
 
-    static final ClassNode MY_TYPE = makeWithoutCaching(io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposeCodec)
-    static final ClassNode TARGET_TYPE = makeWithoutCaching(io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposesCodec)
+    static final ClassNode MY_TYPE = makeWithoutCaching(ExposeCodec)
+    static final ClassNode TARGET_TYPE = makeWithoutCaching(ExposesCodec)
     static final ClassNode CODEC_NODE = makeWithoutCaching('com.mojang.serialization.Codec')
 
     @Override
