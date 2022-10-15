@@ -6,7 +6,7 @@
 package io.github.groovymc.cgl.quilt
 
 import groovy.transform.CompileStatic
-import io.github.groovymc.cgl.api.environment.Environment
+import io.github.groovymc.cgl.api.environment.GameEnvironment
 import io.github.groovymc.cgl.api.environment.Loader
 import io.github.groovymc.cgl.api.environment.Side
 import net.fabricmc.api.EnvType
@@ -16,7 +16,7 @@ import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader
 
 @CompileStatic
 @ApiStatus.Internal
-class EnvironmentImpl implements Environment {
+class GameEnvironmentImpl implements GameEnvironment {
     @Override
     Loader getLoader() {
         return Loader.QUILT

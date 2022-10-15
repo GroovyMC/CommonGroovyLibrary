@@ -12,10 +12,10 @@ import groovy.transform.CompileStatic
  * the current environment is a development environment.
  */
 @CompileStatic
-interface Environment {
-    public static final Environment INSTANCE = ServiceLoader.load(Environment)
+interface GameEnvironment {
+    public static final GameEnvironment INSTANCE = ServiceLoader.load(GameEnvironment)
             .findFirst()
-            .orElseThrow({ -> new NullPointerException("Failed to load service for ${Environment.name}") })
+            .orElseThrow({ -> new NullPointerException("Failed to load service for ${GameEnvironment.name}") })
 
     /**
      * Gets the current loader.
