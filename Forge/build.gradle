@@ -68,6 +68,9 @@ sourceSets {
     test {
         compileClasspath += transform.output
     }
+    main {
+        compileClasspath += transform.output
+    }
 }
 configurations {
     transformCompileOnly.extendsFrom(minecraft)
@@ -106,14 +109,20 @@ dependencies {
 
 tasks.named('compileGroovy', GroovyCompile) {
     source(project(':Common').sourceSets.main.allGroovy)
-    source(project(':Common').sourceSets.transform.allGroovy)
     source(project(':Common').sourceSets.extension.allGroovy)
+}
+
+tasks.named('compileTransformGroovy', GroovyCompile) {
+    source(project(':Common').sourceSets.transform.allGroovy)
 }
 
 tasks.named('compileJava', JavaCompile) {
     source(project(':Common').sourceSets.main.allJava)
-    source(project(':Common').sourceSets.transform.allJava)
     source(project(':Common').sourceSets.extension.allJava)
+}
+
+tasks.named('compileTransformJava', JavaCompile) {
+    source(project(':Common').sourceSets.transform.allJava)
 }
 
 processResources {
@@ -123,6 +132,7 @@ processResources {
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     classifier 'partial'
     finalizedBy('reobfJar')
     from('LICENSE') {

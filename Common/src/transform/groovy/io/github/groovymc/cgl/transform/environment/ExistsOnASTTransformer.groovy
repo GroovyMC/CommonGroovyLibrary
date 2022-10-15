@@ -29,9 +29,9 @@ import static org.codehaus.groovy.ast.ClassHelper.makeWithoutCaching
 class ExistsOnASTTransformer extends AbstractASTTransformation {
     static final ClassNode MY_TYPE = makeWithoutCaching(ExistsOn)
 
-    static final ExistsOnProcessor PROCESSOR = ServiceLoader.load(ExistsOnProcessor)
+    static final ExistsOnProcessor PROCESSOR = ServiceLoader.load(ExistsOnProcessor, ExistsOnASTTransformer.class.classLoader)
             .findFirst()
-            .orElseThrow({ -> new NullPointerException("Failed to load service for ${ExistsOnProcessor.name}") })
+            .orElse(null)
 
     @Override
     void visit(ASTNode[] nodes, SourceUnit source) {
@@ -40,10 +40,10 @@ class ExistsOnASTTransformer extends AbstractASTTransformation {
         AnnotationNode anno = (AnnotationNode) nodes[0]
         if (MY_TYPE != anno.getClassNode()) return
 
-        Side side = parseSingleExpr<Side>(anno.getMember('value'), Side::valueOf)
-        List<Platform> platforms = getMemberValues<Platform>(anno, 'applyOn', Platform::valueOf)
+        Side side = ExistsOnASTTransformer.<Side>parseSingleExpr(anno.getMember('value'), Side::valueOf)
+        List<Platform> platforms = ExistsOnASTTransformer.<Platform>getMemberValues(anno, 'applyOn', Platform::valueOf)
 
-        PROCESSOR.process(parent, side, platforms)
+        PROCESSOR?.process(parent, side, platforms)
     }
 
     static <T extends Enum> List<T> getMemberValues(AnnotationNode anno, String name, Function<String,T> getter) {
