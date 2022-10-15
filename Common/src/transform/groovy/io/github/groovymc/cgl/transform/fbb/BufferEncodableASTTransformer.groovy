@@ -14,10 +14,12 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.codehaus.groovy.transform.TransformWithPriority
+import org.jetbrains.annotations.ApiStatus
 import org.objectweb.asm.Opcodes
 
 @CompileStatic
 @GroovyASTTransformation
+@ApiStatus.Internal
 final class BufferEncodableASTTransformer extends AbstractASTTransformation implements TransformWithPriority {
 
     public static final ClassNode BUF_TYPE = ClassHelper.make(FriendlyByteBuf)

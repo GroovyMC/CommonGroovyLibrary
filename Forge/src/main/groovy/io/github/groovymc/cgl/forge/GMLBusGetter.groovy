@@ -10,8 +10,10 @@ import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.reg.forge.ForgeBusGetter
 import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.ModContainer
+import org.jetbrains.annotations.ApiStatus
 
 @CompileStatic
+@ApiStatus.Internal
 class GMLBusGetter implements ForgeBusGetter {
     @Override
     IEventBus getModEventBus(ModContainer modContainer) {

@@ -18,11 +18,13 @@ import org.codehaus.groovy.ast.expr.ClosureExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.PropertyExpression
 import org.codehaus.groovy.ast.tools.GeneralUtils
+import org.jetbrains.annotations.ApiStatus
 import org.objectweb.asm.Opcodes
 
 import java.util.function.Supplier
 
 @CompileStatic
+@ApiStatus.Internal
 class BlockItemAddonTransformer implements RegistroidAddon {
     public static final ClassNode ANNOTATION_TYPE = ClassHelper.make(BlockItemAddon)
     public static final ClassNode BLOCK_ITEM_TYPE = ClassHelper.make(BlockItem)

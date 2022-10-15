@@ -14,11 +14,13 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.codehaus.groovy.transform.stc.StaticTypeCheckingSupport
+import org.jetbrains.annotations.ApiStatus
 
 import static org.codehaus.groovy.ast.ClassHelper.makeWithoutCaching
 
 @CompileStatic
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
+@ApiStatus.Internal
 class ExposeCodecTransformation extends AbstractASTTransformation {
 
     static final ClassNode MY_TYPE = makeWithoutCaching(io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposeCodec)
