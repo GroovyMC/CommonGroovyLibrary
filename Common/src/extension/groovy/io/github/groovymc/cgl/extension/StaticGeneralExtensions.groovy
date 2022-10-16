@@ -29,6 +29,24 @@ class StaticGeneralExtensions {
         }
     }
 
+    static <T> T oneAndOnly(ServiceLoader loader, Class<T> clazz, ClassLoader classLoader = Thread.currentThread().getContextClassLoader()) {
+        final iterator = ServiceLoader.load(clazz, classLoader)
+            .iterator()
+        if (!iterator.hasNext()) {
+            throw new NullPointerException("No implementation of $clazz was found!")
+        }
+        final oneAndOnly = iterator.next()
+        if (iterator.hasNext()) {
+            throw new IllegalArgumentException("More than one implementation of $clazz was found")
+        }
+        return oneAndOnly
+    }
+
+    static <T> List<T> loadToList(ServiceLoader self, Class<T> clazz, ClassLoader classLoader = Thread.currentThread().getContextClassLoader(), List<T> list = new ArrayList<>()) {
+        ServiceLoader.load(clazz, classLoader).forEach { list.add(it) }
+        return list
+    }
+
     // region ClickEvents
     static ClickEvent openUrl(ClickEvent self, String url) {
         new ClickEvent(ClickEvent.Action.OPEN_URL, url)

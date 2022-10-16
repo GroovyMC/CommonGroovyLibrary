@@ -16,10 +16,12 @@ import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.PropertyNode
 import org.codehaus.groovy.ast.expr.PropertyExpression
 import org.codehaus.groovy.ast.tools.GeneralUtils
+import org.jetbrains.annotations.ApiStatus
 
 import java.util.function.Supplier
 
 @CompileStatic
+@ApiStatus.Internal
 class RecipeTypeAddonTransformer implements RegistroidAddon {
     private static final ClassNode RECIPE_TYPE_TYPE = ClassHelper.make(RecipeType)
     private static final ClassNode RL_TYPE = ClassHelper.make(ResourceLocation)

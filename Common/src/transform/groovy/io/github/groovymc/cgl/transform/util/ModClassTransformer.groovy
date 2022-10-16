@@ -12,9 +12,7 @@ import org.codehaus.groovy.control.SourceUnit
 
 @CompileStatic
 class ModClassTransformer {
-    private static final List<Helper> HELPERS = [].tap {
-        ServiceLoader.load(Helper, ModClassTransformer.class.classLoader).each(it.&add)
-    }
+    private static final List<Helper> HELPERS = ServiceLoader.<Helper>loadToList(Helper, ModClassTransformer.class.classLoader)
 
     static void registerTransformer(String modId, Transformer transformer) {
         HELPERS.each { it.addTransformer(modId, transformer) }

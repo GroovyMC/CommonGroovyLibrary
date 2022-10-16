@@ -22,6 +22,7 @@ import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.codehaus.groovy.transform.TransformWithPriority
 import org.codehaus.groovy.transform.stc.StaticTypeCheckingSupport
+import org.jetbrains.annotations.ApiStatus
 
 import java.lang.reflect.Modifier
 import java.nio.ByteBuffer
@@ -32,6 +33,7 @@ import static org.codehaus.groovy.ast.ClassHelper.makeWithoutCaching
 
 @CompileStatic
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
+@ApiStatus.Internal
 class CodecSerializableTransformation extends AbstractASTTransformation implements TransformWithPriority {
 
     static final ClassNode MY_TYPE = makeWithoutCaching(CodecSerializable)
