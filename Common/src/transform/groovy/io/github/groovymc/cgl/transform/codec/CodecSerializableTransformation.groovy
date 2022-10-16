@@ -22,6 +22,7 @@ import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.codehaus.groovy.transform.TransformWithPriority
 import org.codehaus.groovy.transform.stc.StaticTypeCheckingSupport
+import org.jetbrains.annotations.ApiStatus
 
 import java.lang.reflect.Modifier
 import java.nio.ByteBuffer
@@ -32,6 +33,7 @@ import static org.codehaus.groovy.ast.ClassHelper.makeWithoutCaching
 
 @CompileStatic
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
+@ApiStatus.Internal
 class CodecSerializableTransformation extends AbstractASTTransformation implements TransformWithPriority {
 
     static final ClassNode MY_TYPE = makeWithoutCaching(CodecSerializable)
@@ -217,7 +219,9 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         if (!isOptional(parameter.type)) {
             PropertyNode pNode = parent.getProperty(name)
             if (pNode?.isStatic()) pNode = null
-            if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && pNode !== null && pNode.initialExpression !== null)
+            if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && parameter.initialExpression !== null)
+                fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), parameter.initialExpression))
+            else if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && pNode !== null && pNode.initialExpression !== null)
                 fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), pNode.initialExpression))
             else
                 fieldOf = new MethodCallExpression(baseCodec, 'fieldOf', new ArgumentListExpression(new ConstantExpression(fieldName)))

@@ -27,6 +27,7 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.codehaus.groovy.transform.TransformWithPriority
+import org.jetbrains.annotations.ApiStatus
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
 
@@ -35,6 +36,7 @@ import java.util.function.Supplier
 
 @CompileStatic
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
+@ApiStatus.Internal
 final class RegistroidASTTransformer extends AbstractASTTransformation implements TransformWithPriority {
     public static final List<ClassNode> REGISTERED_CLASSES = []
 

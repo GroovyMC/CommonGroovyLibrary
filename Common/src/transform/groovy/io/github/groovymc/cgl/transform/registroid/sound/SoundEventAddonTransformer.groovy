@@ -19,10 +19,12 @@ import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.ConstructorCallExpression
 import org.codehaus.groovy.ast.expr.PropertyExpression
 import org.codehaus.groovy.ast.tools.GeneralUtils
+import org.jetbrains.annotations.ApiStatus
 
 import java.util.function.Supplier
 
 @CompileStatic
+@ApiStatus.Internal
 class SoundEventAddonTransformer implements RegistroidAddon {
     private static final ClassNode SOUND_EVENT_TYPE = ClassHelper.make(SoundEvent)
     private static final ClassNode RL_TYPE = ClassHelper.make(ResourceLocation)

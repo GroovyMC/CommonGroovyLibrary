@@ -17,6 +17,7 @@ import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.Statement
 import org.codehaus.groovy.ast.tools.GeneralUtils
+import org.jetbrains.annotations.ApiStatus
 import org.objectweb.asm.Opcodes
 
 import javax.annotation.Nullable
@@ -24,6 +25,7 @@ import javax.annotation.Nullable
 import static org.objectweb.asm.Opcodes.*
 
 @CompileStatic
+@ApiStatus.Internal
 class TransformUtils {
     static final AnnotationNode GENERATED_ANNOTATION = new AnnotationNode(ClassHelper.make(Generated))
 
