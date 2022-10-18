@@ -19,11 +19,12 @@ import java.lang.annotation.Target
 
 /**
  * An annotation that can be used to specify that a class, field, method, or constructor is only available on a specific
- * loader. This annotation will be replaced with either {@link net.fabricmc.api.Environment} or
- * {@link net.minecraftforge.api.distmarker.OnlyIn} depending on the loader.
+ * loader. This annotation will be replaced with {@link org.quiltmc.loader.api.minecraft.ClientOnly} or
+ * {@link org.quiltmc.loader.api.minecraft.DedicatedServerOnly} on Quilt, or
+ * {@link net.minecraftforge.api.distmarker.OnlyIn} on Forge.
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target([ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE])
+@Target([ElementType.TYPE, ElementType.TYPE_USE, ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE])
 @GroovyASTTransformationClass('io.github.groovymc.cgl.transform.environment.ExistsOnASTTransformer')
 @CompileStatic
 @interface ExistsOn {
