@@ -9,7 +9,7 @@ import groovy.transform.CompileStatic
 import org.jetbrains.annotations.Nullable
 
 /**
- * An object that provides comments for a {@link io.github.groovymc.cgl.api.codec.comments.CommentedCodec}.
+ * An object that provides comments for a {@link io.github.groovymc.cgl.api.codec.comments.MapCommentSpec}.
  */
 @CompileStatic
 interface CommentSpec {

@@ -14,7 +14,6 @@ import com.mojang.serialization.DynamicOps
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.codec.comments.CommentSpec
 import io.github.groovymc.cgl.api.codec.comments.CommentingOps
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ObjectOps
 
 import java.util.stream.Stream
 
