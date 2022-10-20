@@ -125,7 +125,7 @@ final class CommandExtensions {
             strategy = DELEGATE_FIRST
     ) @ClosureParams(
             value = FromString,
-            options = 'io.github.groovymc.cgl.extension.brigadier.ArgumentGetter<S,X>'
+            options = 'io.github.groovymc.cgl.api.extension.brigadier.ArgumentGetter<S,X>'
     ) Closure closure) {
         final argument = RequiredArgumentBuilder.<S, Z> argument(name, argumentType)
         closure.delegate = argument
@@ -154,7 +154,7 @@ final class CommandExtensions {
             strategy = DELEGATE_FIRST
     ) @ClosureParams(
             value = FromString,
-            options = 'io.github.groovymc.cgl.extension.brigadier.ArgumentGetter<S,Z>'
+            options = 'io.github.groovymc.cgl.api.extension.brigadier.ArgumentGetter<S,Z>'
     ) Closure closure) {
         argument(self, name, argumentType, nm -> new ArgumentGetter<S, Z>() {
             @Override

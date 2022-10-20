@@ -28,7 +28,7 @@ import java.lang.annotation.*
 @CompileStatic
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.FIELD, ElementType.TYPE])
-@GroovyASTTransformationClass(value = 'io.github.groovymc.cgl.transform.registroid.RegistroidASTTransformer')
+@GroovyASTTransformationClass(value = 'io.github.groovymc.cgl.impl.transform.registroid.RegistroidASTTransformer')
 @interface Registroid {
     /**
      * If objects from inner classes should be transformed as well. <br>

@@ -22,7 +22,7 @@ import net.minecraft.network.chat.Style
 class StyleExtension {
     static Style of(Style type,
                     @DelegatesTo(value = StyleBuilder, strategy = Closure.DELEGATE_FIRST)
-                    @ClosureParams(value = SimpleType, options = 'io.github.lukebemish.groovyduvet.wrapper.minecraft.api.chat.StyleBuilder')
+                    @ClosureParams(value = SimpleType, options = 'io.github.groovymc.cgl.api.chat.StyleBuilder')
                     Closure closure) {
         final builder = new StyleBuilder()
         closure.delegate = builder
