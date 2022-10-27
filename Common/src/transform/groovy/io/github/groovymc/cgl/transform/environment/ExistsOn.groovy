@@ -30,7 +30,7 @@ import java.lang.annotation.Target
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.TYPE, ElementType.TYPE_USE, ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE])
-@GroovyASTTransformationClass('io.github.groovymc.cgl.transform.environment.ExistsOnASTTransformer')
+@GroovyASTTransformationClass(['io.github.groovymc.cgl.transform.environment.ExistsOnAnnotationTransformer','io.github.groovymc.cgl.transform.environment.ExistsOnRemovalTransformer'])
 @CompileStatic
 @interface ExistsOn {
     /**

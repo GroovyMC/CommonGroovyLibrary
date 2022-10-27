@@ -15,7 +15,6 @@ import org.codehaus.groovy.ast.expr.*
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
-import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.jetbrains.annotations.ApiStatus
 
 import java.util.function.Function
@@ -24,11 +23,10 @@ import static org.codehaus.groovy.ast.ClassHelper.makeWithoutCaching
 
 @CompileStatic
 @ApiStatus.Internal
-@GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
-class ExistsOnASTTransformer extends AbstractASTTransformation {
+abstract class AbstractExistsOnASTTransformer extends AbstractASTTransformation {
     static final ClassNode MY_TYPE = makeWithoutCaching(ExistsOn)
 
-    static final ExistsOnProcessor PROCESSOR = ServiceLoader.load(ExistsOnProcessor, ExistsOnASTTransformer.class.classLoader)
+    static final ExistsOnProcessor PROCESSOR = ServiceLoader.load(ExistsOnProcessor, AbstractExistsOnASTTransformer.class.classLoader)
             .findFirst()
             .orElse(null)
 
@@ -40,10 +38,12 @@ class ExistsOnASTTransformer extends AbstractASTTransformation {
         if (MY_TYPE != anno.getClassNode()) return
 
         //noinspection UnnecessaryQualifiedReference
-        List<Platform> platforms = ExistsOnASTTransformer.<Platform>getMemberValues(anno, 'value', Platform::valueOf)
+        List<Platform> platforms = AbstractExistsOnASTTransformer.<Platform>getMemberValues(anno, 'value', Platform::valueOf)
 
-        PROCESSOR?.process(parent, platforms, source.AST)
+        PROCESSOR?.process(parent, platforms, source.AST, phase)
     }
+
+    abstract CompilePhase getPhase();
 
     static <T extends Enum> List<T> getMemberValues(AnnotationNode anno, String name, Function<String,T> getter) {
         Expression expr = anno.getMember(name)
