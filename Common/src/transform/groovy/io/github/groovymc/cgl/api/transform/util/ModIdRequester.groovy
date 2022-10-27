@@ -10,7 +10,9 @@ import org.jetbrains.annotations.Nullable
 
 @CompileStatic
 class ModIdRequester {
-    private static final List<Helper> HELPERS = ServiceLoader.<Helper>loadToList(Helper, ModIdRequester.classLoader)
+    private static final List<Helper> HELPERS = [].tap {
+        ServiceLoader.load(Helper, ModIdRequester.class.classLoader).each(it.&add)
+    }
 
     @Nullable
     static String getModId(String packageName) {

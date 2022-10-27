@@ -20,6 +20,16 @@ repositories {
     }
 }
 
+sourceSets {
+    transform {}
+    main {
+        compileClasspath += transform.output
+    }
+}
+configurations {
+    transformCompileOnly.extendsFrom(compileClasspath)
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.layered() {
@@ -36,6 +46,9 @@ dependencies {
 
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(path: ':Common', configuration: 'namedElements')
+
+    transformCompileOnly project(path: ':Common', configuration: 'extensionOut')
+    compileOnly project(path: ':Common', configuration: 'extensionOut')
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
@@ -68,25 +81,34 @@ processResources {
     from project(':Common').sourceSets.extension.resources
 }
 
-tasks.withType(GroovyCompile) {
-    it.source(project(':Common').sourceSets.main.allGroovy)
-    it.source(project(':Common').sourceSets.transform.allGroovy)
-    it.source(project(':Common').sourceSets.extension.allGroovy)
+tasks.named('compileGroovy', GroovyCompile) {
+    source(project(':Common').sourceSets.main.allGroovy)
+    source(project(':Common').sourceSets.extension.allGroovy)
 }
 
-tasks.withType(JavaCompile) {
+tasks.named('compileTransformGroovy', GroovyCompile) {
+    source(project(':Common').sourceSets.transform.allGroovy)
+}
+
+tasks.named('compileJava', JavaCompile) {
     source(project(':Common').sourceSets.main.allJava)
-    source(project(':Common').sourceSets.transform.allJava)
     source(project(':Common').sourceSets.extension.allJava)
 }
 
+tasks.named('compileTransformJava', JavaCompile) {
+    source(project(':Common').sourceSets.transform.allJava)
+}
+
 jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from('LICENSE') {
         rename { "${it}_${mod_name}"}
     }
+    from sourceSets.transform.output
 }
 
 sourcesJar {
+    from sourceSets.transform.allSource
     from project(':Common').sourceSets.main.allSource
     from project(':Common').sourceSets.transform.allSource
     from project(':Common').sourceSets.extension.allSource

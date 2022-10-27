@@ -13,13 +13,18 @@ import groovyjarjarasm.asm.Handle
 import groovyjarjarasm.asm.MethodVisitor
 import groovyjarjarasm.asm.Type as JarType
 import org.codehaus.groovy.ast.*
+import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.Expression
+import org.codehaus.groovy.ast.expr.ListExpression
+import org.codehaus.groovy.ast.expr.PropertyExpression
+import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.Statement
 import org.codehaus.groovy.ast.tools.GeneralUtils
 import org.objectweb.asm.Opcodes
 
 import javax.annotation.Nullable
+import java.util.function.Function
 
 import static org.objectweb.asm.Opcodes.*
 
@@ -155,5 +160,35 @@ class TransformUtils {
             case ClassHelper.char_TYPE -> JarType.CHAR_TYPE
             default -> JarType.getObjectType(getInternalName(classNode))
         }
+    }
+
+    static <T extends Enum> List<T> getMemberValues(AnnotationNode anno, String name, Function<String,T> getter) {
+        Expression expr = anno.getMember(name)
+        if (expr == null) {
+            return []
+        }
+        if (expr instanceof ListExpression) {
+            List<T> list = new ArrayList<>()
+            for (Expression itemExpr : expr.getExpressions()) {
+                T value = parseSingleExpr(itemExpr, getter)
+                if (value != null) list.add(value)
+            }
+            return list
+        }
+        T single = parseSingleExpr(expr, getter)
+        return single==null?([]):([single])
+    }
+
+    static <T extends Enum> T parseSingleExpr(Expression itemExpr, Function<String,T> getter) {
+        if (itemExpr instanceof VariableExpression) {
+            return getter.apply(itemExpr.text)
+        } else if (itemExpr instanceof PropertyExpression) {
+            return getter.apply(itemExpr.propertyAsString)
+        } else if (itemExpr instanceof ConstantExpression) {
+            if (itemExpr.value instanceof Enum)
+                return getter.apply(((Enum) itemExpr.value).name())
+            return getter.apply(itemExpr.value.toString())
+        }
+        return null
     }
 }
