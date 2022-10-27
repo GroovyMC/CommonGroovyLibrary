@@ -87,10 +87,6 @@ subprojects {
         it.groovyOptions.optimizationOptions.groovydoc = true
         it.exclude('mods.groovy')
     }
-    if (tasks.findByName('compileExtensionGroovy'))
-        tasks.named('compileExtensionGroovy', GroovyCompile) {
-
-        }
 
     // Disables Gradle's custom module metadata from being published to maven. The
     // metadata includes mapped dependencies which are not reasonably consumable by
