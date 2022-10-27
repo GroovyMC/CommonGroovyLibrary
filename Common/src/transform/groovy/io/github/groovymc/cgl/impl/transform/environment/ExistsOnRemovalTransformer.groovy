@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-package io.github.groovymc.cgl.transform.environment
+package io.github.groovymc.cgl.impl.transform.environment
 
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.control.CompilePhase

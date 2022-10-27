@@ -11,6 +11,7 @@ import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.groovymc.cgl.api.transform.codec.ExposesCodec
 import io.github.groovymc.cgl.api.transform.codec.WithCodec
 import io.github.groovymc.cgl.api.transform.codec.WithCodecPath
+import io.github.groovymc.cgl.impl.transform.TransformUtils
 import org.apache.groovy.util.BeanUtils
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.expr.*
@@ -25,6 +26,7 @@ import org.codehaus.groovy.transform.stc.StaticTypeCheckingSupport
 
 import java.lang.reflect.Modifier
 import java.nio.ByteBuffer
+import java.util.function.Function
 import java.util.stream.IntStream
 import java.util.stream.LongStream
 
@@ -264,41 +266,12 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             return member
     }
 
-    static List<WithCodecPath> getMemberCodecPath(AnnotationNode anno, String name) {
-        Expression expr = anno.getMember(name)
-        if (expr == null) {
-            return []
-        }
-        if (expr instanceof ListExpression) {
-            final ListExpression listExpression = (ListExpression) expr
-            List<WithCodecPath> list = new ArrayList<>();
-            for (Expression itemExpr : listExpression.getExpressions()) {
-                if (itemExpr instanceof ConstantExpression) {
-                    WithCodecPath value = parseSingleExpr(itemExpr)
-                    if (value != null) list.add(value)
-                }
-            }
-            return list
-        }
-        WithCodecPath single = parseSingleExpr(expr)
-        return single==null?([]):([single])
-    }
-
-    static WithCodecPath parseSingleExpr(Expression itemExpr) {
-        if (itemExpr instanceof VariableExpression) {
-            return WithCodecPath.valueOf(itemExpr.text)
-        } else if (itemExpr instanceof PropertyExpression) {
-            return WithCodecPath.valueOf(itemExpr.propertyAsString)
-        }
-        return null
-    }
-
     Expression getCodecFromType(ClassNode clazz, List<AnnotationNode> context, List<WithCodecPath> path) {
         List<Expression> specifiedClosure = new ArrayList<>(context.findAll {it.getClassNode() == WITH_TYPE }
-                .findAll {getMemberCodecPath(it, 'path') == path}
+                .findAll { TransformUtils.<WithCodecPath>getMemberValues(it, 'path', WithCodecPath::forName as Function<String, WithCodecPath>) == path}
                 .collect {getMemberClassValue(it, 'value')}.findAll {it !== null}.unique().collect {new ConstructorCallExpression(it, new ArgumentListExpression())})
         specifiedClosure.addAll(context.findAll {it.getClassNode() == WITH_TYPE }
-                .findAll {getMemberCodecPath(it, 'path') == path}
+                .findAll {TransformUtils.<WithCodecPath>getMemberValues(it, 'path', WithCodecPath::forName as Function<String, WithCodecPath>) == path}
                 .collect {getMemberClosureLambdaExpressionValue(it, 'value')}.findAll {it !== null}.unique())
         if (specifiedClosure.size() == 1) {
             Expression closure = specifiedClosure[0]

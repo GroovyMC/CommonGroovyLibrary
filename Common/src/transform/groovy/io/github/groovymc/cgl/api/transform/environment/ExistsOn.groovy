@@ -5,7 +5,7 @@
 
 //file:noinspection GroovyDocCheck
 
-package io.github.groovymc.cgl.transform.environment
+package io.github.groovymc.cgl.api.transform.environment
 
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.environment.Platform
@@ -30,7 +30,7 @@ import java.lang.annotation.Target
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.TYPE, ElementType.TYPE_USE, ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE])
-@GroovyASTTransformationClass(['io.github.groovymc.cgl.transform.environment.ExistsOnAnnotationTransformer','io.github.groovymc.cgl.transform.environment.ExistsOnRemovalTransformer'])
+@GroovyASTTransformationClass(['io.github.groovymc.cgl.impl.transform.environment.ExistsOnAnnotationTransformer','io.github.groovymc.cgl.impl.transform.environment.ExistsOnRemovalTransformer'])
 @CompileStatic
 @interface ExistsOn {
     /**
