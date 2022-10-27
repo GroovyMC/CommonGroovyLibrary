@@ -7,11 +7,10 @@ package io.github.groovymc.cgl.quilt.transform.environment
 
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.environment.Loader
+import io.github.groovymc.cgl.api.environment.Platform
 import io.github.groovymc.cgl.api.environment.Side
 import io.github.groovymc.cgl.transform.environment.ExistsOnProcessor
-import org.codehaus.groovy.ast.AnnotatedNode
-import org.codehaus.groovy.ast.AnnotationNode
-import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.*
 import org.jetbrains.annotations.ApiStatus
 import org.quiltmc.loader.api.minecraft.ClientOnly
 import org.quiltmc.loader.api.minecraft.DedicatedServerOnly
@@ -25,8 +24,10 @@ class ExistsOnProcessorImpl implements ExistsOnProcessor {
     static final ClassNode SERVER_ONLY = makeWithoutCaching(DedicatedServerOnly)
 
     @Override
-    void process(AnnotatedNode node, Side side, List<Loader> loaders) {
-        if (loaders.contains(Loader.QUILT)) {
+    void process(AnnotatedNode node, List<Platform> platforms, ModuleNode ast) {
+        List<Side> sides = platforms.findAll {it.loader === Loader.QUILT}.collect {it.side}.unique()
+        if (sides.size() === 1) {
+            Side side = sides[0]
             switch (side) {
                 case Side.CLIENT:
                     node.addAnnotation(new AnnotationNode(CLIENT_ONLY))
@@ -34,6 +35,19 @@ class ExistsOnProcessorImpl implements ExistsOnProcessor {
                 case Side.SERVER:
                     node.addAnnotation(new AnnotationNode(SERVER_ONLY))
                     break
+            }
+        } else if (sides.size() === 0) {
+            if (node instanceof MethodNode) {
+                node.declaringClass.removeMethod(node)
+            } else if (node instanceof FieldNode) {
+                node.declaringClass.removeField(node.name)
+            } else if (node instanceof ConstructorNode) {
+                node.declaringClass.removeConstructor(node)
+            } else if (node instanceof PackageNode) {
+                ast.classes.removeAll()
+                ast.setPackage(new PackageNode(node.name))
+            } else if (node instanceof ClassNode) {
+                ast.classes.remove(node)
             }
         }
     }

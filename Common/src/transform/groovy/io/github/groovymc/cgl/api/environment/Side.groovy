@@ -5,9 +5,12 @@
 
 package io.github.groovymc.cgl.api.environment
 
+import groovy.transform.CompileStatic
+
 /**
  * Represents a physical side that the game can exist on.
  */
+@CompileStatic
 enum Side {
     SERVER,
     CLIENT

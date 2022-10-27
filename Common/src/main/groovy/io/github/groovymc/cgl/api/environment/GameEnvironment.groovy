@@ -31,4 +31,8 @@ interface GameEnvironment {
      * Returns true if the game is running in production, or false if it is running in a development environment.
      */
     boolean isProduction()
+
+    default Platform getPlatform() {
+        return Platform.getForLoaderAndSide(loader, side)
+    }
 }
