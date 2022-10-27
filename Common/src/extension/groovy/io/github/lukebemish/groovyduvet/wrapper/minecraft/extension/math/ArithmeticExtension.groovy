@@ -2,7 +2,6 @@
  * Copyright (C) 2022 GroovyMC and contributors
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
-
 //file:noinspection unused
 
 package io.github.lukebemish.groovyduvet.wrapper.minecraft.extension.math
@@ -19,6 +18,7 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
+
 /**
  * Arithmetic extensions for Minecraft vectors.
  * @author CommonGroovyLibrary

@@ -2,7 +2,6 @@
  * Copyright (C) 2022 GroovyMC and contributors
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
-
 //file:noinspection unused
 
 package io.github.lukebemish.groovyduvet.wrapper.minecraft.extension.chat
