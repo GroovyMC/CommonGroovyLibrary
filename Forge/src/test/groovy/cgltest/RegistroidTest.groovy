@@ -10,11 +10,11 @@ package cgltest
 
 import groovy.transform.CompileStatic
 import groovy.transform.stc.POJO
-import io.github.groovymc.cgl.transform.Registroid
-import io.github.groovymc.cgl.transform.registroid.RegistrationName
-import io.github.groovymc.cgl.transform.registroid.blockitem.BlockItemAddon
-import io.github.groovymc.cgl.transform.registroid.recipetype.RecipeTypeAddon
-import io.github.groovymc.cgl.transform.registroid.sound.SoundEventAddon
+import io.github.groovymc.cgl.api.transform.registroid.Registroid
+import io.github.groovymc.cgl.api.transform.registroid.RegistrationName
+import io.github.groovymc.cgl.api.transform.registroid.BlockItemAddon
+import io.github.groovymc.cgl.api.transform.registroid.RecipeTypeAddon
+import io.github.groovymc.cgl.api.transform.registroid.SoundEventAddon
 import net.minecraft.core.Registry
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.Item

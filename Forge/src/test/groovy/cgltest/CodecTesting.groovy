@@ -7,7 +7,7 @@ package cgltest
 
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
+import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 
 @CompileStatic
 @CodecSerializable(property = "CODEC_GOES_HERE")
