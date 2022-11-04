@@ -28,10 +28,10 @@ import static groovy.lang.Closure.DELEGATE_FIRST
 @CompileStatic
 final class CommandExtensions {
     /**
-     * Registers and configures brigadier under the {@code name}.
+     * Registers and configures a command under the {@code name}.
      * @param dispatcher the dispatcher to register to
-     * @param name the name of the brigadier
-     * @param closure a {@linkplain Closure} that configures the brigadier
+     * @param name the name of the command
+     * @param closure a {@linkplain Closure} that configures the command
      */
     static <S> void register(CommandDispatcher<S> dispatcher, String name, @DelegatesTo(
             type = 'com.mojang.brigadier.builder.LiteralArgumentBuilder<S>',
@@ -46,7 +46,7 @@ final class CommandExtensions {
 
     /**
      * Creates and configures a {@linkplain LiteralArgumentBuilder}.
-     * @param name the name of the brigadier
+     * @param name the name of the command
      * @param closure a {@linkplain Closure} that configures the command
      * @return the configured builder
      */
@@ -64,7 +64,7 @@ final class CommandExtensions {
 
     /**
      * Creates and configures and appends a {@linkplain LiteralArgumentBuilder}.
-     * @param name the name of the brigadier
+     * @param name the name of the command
      * @param closure a {@linkplain Closure} that configures the sub-command
      */
     static <S, T extends ArgumentBuilder<S, T>> T then(ArgumentBuilder<S, T> self, String name, @DelegatesTo(
@@ -165,7 +165,7 @@ final class CommandExtensions {
     }
 
     /**
-     * Creates an factory for ArgumentGetters that returns the same object as the argument's type.
+     * Creates a factory for ArgumentGetters that returns the same object as the argument's type.
      */
     static <A, B> Function<String, ArgumentGetter<A, B>> defaultGetter() {
         return (String nm) -> new ArgumentGetter<A, B>() {
