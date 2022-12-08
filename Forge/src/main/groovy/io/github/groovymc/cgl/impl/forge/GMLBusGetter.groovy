@@ -5,6 +5,7 @@
 
 package io.github.groovymc.cgl.impl.forge
 
+import com.google.auto.service.AutoService
 import com.matyrobbrt.gml.GModContainer
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.reg.forge.ForgeBusGetter
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.ApiStatus
 
 @CompileStatic
 @ApiStatus.Internal
+@AutoService(ForgeBusGetter.class)
+@SuppressWarnings('unused')
 class GMLBusGetter implements ForgeBusGetter {
     @Override
     IEventBus getModEventBus(ModContainer modContainer) {

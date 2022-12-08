@@ -55,7 +55,7 @@ import java.lang.annotation.*
      * This value is optional, and when not specified, it will behave like an empty list.
      */
     @SuppressWarnings('GroovyDocCheck')
-    Class<? extends Closure<?>> value() default {}
+    Class<? extends Closure> value() default {}
 
     /**
      * The modId to use for automatic {@linkplain io.github.groovymc.cgl.reg.RegistrationProvider} generation. <br>

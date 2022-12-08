@@ -5,21 +5,18 @@
 
 package cgltest
 
-
 import groovy.transform.CompileStatic
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.ChatScreen
-import net.minecraft.core.HolderSet
-import net.minecraft.core.Registry
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.StringTag
 import net.minecraft.nbt.Tag
-import net.minecraftforge.common.Tags
 
 @CompileStatic
 class ExtensionTest {
     private static void doTest() {
-        assert Registry.ITEM[Tags.Items.SAND] instanceof HolderSet
+        // TODO: this test probably needs a LevelStem or something because of how registries work in 1.19.3
+        // assert Registry.ITEM[Tags.Items.SAND] instanceof HolderSet
 
         Minecraft.instance << new ChatScreen('yes')
 

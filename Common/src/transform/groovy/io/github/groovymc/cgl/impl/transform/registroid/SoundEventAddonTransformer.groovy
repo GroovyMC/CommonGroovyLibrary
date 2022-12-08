@@ -15,8 +15,8 @@ import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.PropertyNode
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
-import org.codehaus.groovy.ast.expr.ConstructorCallExpression
 import org.codehaus.groovy.ast.expr.PropertyExpression
+import org.codehaus.groovy.ast.expr.StaticMethodCallExpression
 import org.codehaus.groovy.ast.tools.GeneralUtils
 
 import java.util.function.Supplier
@@ -30,14 +30,13 @@ class SoundEventAddonTransformer implements RegistroidAddon {
     void process(AnnotationNode registroidAnnotation, ClassNode targetClass, PropertyNode property, RegistroidASTTransformer transformer, Supplier<String> modId) {
         if (property.field.initialValueExpression === null) {
             property.field.setInitialValueExpression(
-                    GeneralUtils.ctorX(SOUND_EVENT_TYPE, GeneralUtils.ctorX(
+                    GeneralUtils.callX(SOUND_EVENT_TYPE, 'createVariableRangeEvent', GeneralUtils.ctorX(
                             RL_TYPE, GeneralUtils.args(
                             GeneralUtils.constX(modId.get()), GeneralUtils.constX(transformer.getRegName(property))
-                        )
-                    ))
+                    )))
             )
-        } else if (property.field.initialValueExpression instanceof ConstructorCallExpression) {
-            final ctorExpr = ((ConstructorCallExpression) property.field.initialValueExpression)
+        } else if (property.field.initialValueExpression instanceof StaticMethodCallExpression) {
+            final ctorExpr = ((StaticMethodCallExpression) property.field.initialValueExpression)
             final args = ctorExpr.arguments
             if (args instanceof ArgumentListExpression && args.size() >= 1) {
                 final arg0 = args[0]

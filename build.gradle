@@ -85,14 +85,15 @@ subprojects {
         it.groovyOptions.encoding = 'UTF-8'
         it.groovyOptions.optimizationOptions.indy = true
         it.groovyOptions.optimizationOptions.groovydoc = true
+        it.groovyOptions.javaAnnotationProcessing = true
         it.exclude('mods.groovy')
     }
 
     // Disables Gradle's custom module metadata from being published to maven. The
     // metadata includes mapped dependencies which are not reasonably consumable by
     // other mod developers.
-    tasks.withType(GenerateModuleMetadata) {
-        enabled = false
+    tasks.withType(GenerateModuleMetadata).configureEach {
+        it.enabled = false
     }
 
     configurations {

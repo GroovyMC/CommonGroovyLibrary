@@ -8,6 +8,7 @@ package io.github.groovymc.cgl.api.extension
 import groovy.transform.CompileStatic
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.Container
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeType
 
@@ -19,7 +20,7 @@ import java.nio.file.Path
  */
 @CompileStatic
 class StaticGeneralExtensions {
-    static <T extends Recipe> RecipeType<T> simple(RecipeType self, ResourceLocation name) {
+    static <T extends Recipe<? extends Container>> RecipeType<T> simple(RecipeType self, ResourceLocation name) {
         final actualName = name.toString()
         return new RecipeType<T>() {
             @Override

@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2022 GroovyMC and contributors
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ */
+
 package io.github.groovymc.cgl.api.codec
 
 import blue.endless.jankson.*
@@ -40,13 +45,13 @@ class JanksonOps implements CommentingOps<JsonElement> {
     }
 
     @Override
-    public <U> U convertTo(DynamicOps<U> outOps, JsonElement input) {
+    <U> U convertTo(DynamicOps<U> outOps, JsonElement input) {
         if (input instanceof JsonObject)
             return convertMap(outOps, input)
         if (input instanceof JsonArray)
             return convertList(outOps, input)
         if (input instanceof JsonNull)
-            return outOps.empty();
+            return outOps.empty()
         if (input instanceof JsonPrimitive) {
             Object value = input.getValue()
             if (value instanceof String)
@@ -189,7 +194,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
             String toString() {
                 return "MapLike[$object]"
             }
-        });
+        })
     }
 
     @Override
@@ -201,7 +206,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
 
     @Override
     JsonElement createMap(Stream<Pair<JsonElement, JsonElement>> map) {
-        JsonObject result = new JsonObject();
+        JsonObject result = new JsonObject()
         map.forEach(p -> {
             if (!(p.getFirst() instanceof JsonPrimitive && ((JsonPrimitive)p.getFirst()).getValue() instanceof String))
                 throw new UnsupportedOperationException(p.getFirst().getClass().getSimpleName())

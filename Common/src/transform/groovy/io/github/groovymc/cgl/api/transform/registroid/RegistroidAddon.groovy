@@ -8,6 +8,7 @@ package io.github.groovymc.cgl.api.transform.registroid
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.impl.transform.registroid.RegistroidASTTransformer
 import net.minecraft.core.Registry
+import net.minecraft.core.registries.Registries
 import org.codehaus.groovy.ast.AnnotationNode
 import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.ClassNode
@@ -31,7 +32,7 @@ import java.util.function.Supplier
  */
 @CompileStatic
 interface RegistroidAddon {
-    ClassNode REGISTRY_TYPE = ClassHelper.make(Registry)
+    ClassNode REGISTRIES_TYPE = ClassHelper.make(Registries)
 
     /**
      * Processes a property of one of the {@linkplain #getSupportedTypes() supported types}.
@@ -51,9 +52,9 @@ interface RegistroidAddon {
 
     /**
      * A helper that creates a property expression for a registry key in {@link Registry}, in the following way:
-     * <pre>{@code GeneralUtils.propX(GeneralUtils.classX(REGISTRY_TYPE), "${name}_REGISTRY")}</pre>
+     * <pre>{@code GeneralUtils.propX(GeneralUtils.classX(REGISTRIES_TYPE), name)}</pre>
      */
     default PropertyExpression registryKeyProperty(String name) {
-        GeneralUtils.propX(GeneralUtils.classX(REGISTRY_TYPE), "${name}_REGISTRY")
+        GeneralUtils.propX(GeneralUtils.classX(REGISTRIES_TYPE), name)
     }
 }

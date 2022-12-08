@@ -10,12 +10,8 @@ package cgltest
 
 import groovy.transform.CompileStatic
 import groovy.transform.stc.POJO
-import io.github.groovymc.cgl.api.transform.registroid.Registroid
-import io.github.groovymc.cgl.api.transform.registroid.RegistrationName
-import io.github.groovymc.cgl.api.transform.registroid.BlockItemAddon
-import io.github.groovymc.cgl.api.transform.registroid.RecipeTypeAddon
-import io.github.groovymc.cgl.api.transform.registroid.SoundEventAddon
-import net.minecraft.core.Registry
+import io.github.groovymc.cgl.api.transform.registroid.*
+import net.minecraft.core.registries.Registries
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.RecipeType
@@ -28,17 +24,17 @@ import net.minecraftforge.registries.ForgeRegistries
 @POJO
 @CompileStatic
 @SoundEventAddon
-@Registroid({ [ForgeRegistries.BLOCKS, Registry.SOUND_EVENT_REGISTRY] })
+@Registroid({ [ForgeRegistries.BLOCKS, Registries.SOUND_EVENT] })
 class RegistroidTest {
     static final Block SOME_TEST = new Block(BlockBehaviour.Properties.of(Material.DIRT))
     static final SoundEvent TEST_SOUND
-    static final SoundEvent TEST_SOUND_2 = new SoundEvent(null)
+    static final SoundEvent TEST_SOUND_2 = SoundEvent.createVariableRangeEvent(null)
 
     @Registroid
-    static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registry.ITEM_REGISTRY, 'groovylicioustest')
+    static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, 'groovylicioustest')
     static final Item SOME_ITEM = new Item(new Item.Properties())
 
-    @Registroid({ Registry.BLOCK_REGISTRY })
+    @Registroid({ Registries.BLOCK })
     @BlockItemAddon({ new Item.Properties().setNoRepair() })
     static final class BlockItems {
         @RegistrationName('hello_world')
@@ -46,12 +42,12 @@ class RegistroidTest {
     }
 
     @RecipeTypeAddon
-    @Registroid({ Registry.RECIPE_TYPE })
+    @Registroid({ Registries.RECIPE_TYPE })
     static final class Recipes {
         static final RecipeType HELLO_WORLD
     }
 
-    @Registroid(value = { Registry.ITEM }, includeInnerClasses = true)
+    @Registroid(value = { Registries.ITEM }, includeInnerClasses = true)
     static final class InnersTest {
         static final class Inner1 {
             static final Item IT = new Item(new Item.Properties())
