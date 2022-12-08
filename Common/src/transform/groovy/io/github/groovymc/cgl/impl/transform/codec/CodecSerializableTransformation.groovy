@@ -91,7 +91,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         Expression[] grouping = new Expression[assembler.parameters.size()]
 
         for (int i = 0; i < assembler.parameters.size(); i++) {
-            grouping[i] = assembleExpression(anno, parent, assembler.parameters[i], getMemberBooleanValue(anno, 'camelToSnake', false))
+            grouping[i] = assembleExpression(anno, parent, assembler.parameters[i], getMemberBooleanValue(anno, 'camelToSnake', true))
         }
 
         // Parse and merge comments
@@ -217,7 +217,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         if (!isOptional(parameter.type)) {
             PropertyNode pNode = parent.getProperty(name)
             if (pNode?.isStatic()) pNode = null
-            if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && parameter.initialExpression !== null)
+            if (getMemberBooleanValue(anno, 'allowDefaultValues', true) && parameter.initialExpression !== null)
                 fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), parameter.initialExpression))
             else if (getMemberBooleanValue(anno, 'allowDefaultValues', false) && pNode !== null && pNode.initialExpression !== null)
                 fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), pNode.initialExpression))
@@ -271,7 +271,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         }
         if (expr instanceof ListExpression) {
             final ListExpression listExpression = (ListExpression) expr
-            List<WithCodecPath> list = new ArrayList<>();
+            List<WithCodecPath> list = new ArrayList<>()
             for (Expression itemExpr : listExpression.getExpressions()) {
                 if (itemExpr instanceof ConstantExpression) {
                     WithCodecPath value = parseSingleExpr(itemExpr)

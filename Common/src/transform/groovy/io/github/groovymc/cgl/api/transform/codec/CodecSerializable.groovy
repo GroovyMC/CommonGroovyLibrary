@@ -44,13 +44,12 @@ import java.lang.annotation.Target
 
     /**
      * Whether properties of names in camel case ({@code propertyName}) should be converted into snake case
-     * ({@code property_name}). Note: this default will be switched to true in 1.20.
+     * ({@code property_name}).
      */
-    boolean camelToSnake() default false
+    boolean camelToSnake() default true
 
     /**
-     * Whether setting a default value for a field should make the matching constructor parameter optional. Note: this
-     * default will be switched to true in 1.20.
+     * Whether setting a default value for a field should make the matching constructor parameter optional.
      */
-    boolean allowDefaultValues() default false
+    boolean allowDefaultValues() default true
 }
