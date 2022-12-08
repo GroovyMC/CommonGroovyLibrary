@@ -50,14 +50,6 @@ class ArithmeticExtension {
         return switch (type) {
             case Vec3, Position ->
                 (T) new Vec3(self.x, self.y, self.z)
-            case Vector3d ->
-                (T) new Vector3d(self.x, self.y, self.z)
-            case Vector3f ->
-                (T) new Vector3f(self.x, self.y, self.z)
-            case Quaternion ->
-                (T) Quaternion.fromXYZ(self.x, self.y, self.z)
-            case Vector4f ->
-                (T) new Vector4f(self.x, self.y, self.z, 1f)
             default ->
                 (T) DefaultGroovyMethods.asType(self, type)
         }
@@ -89,14 +81,6 @@ class ArithmeticExtension {
         return switch (type) {
             case Vec3, Position ->
                 (T) new Vec3(self.x, self.y, self.z)
-            case Vector3d ->
-                (T) new Vector3d(self.x, self.y, self.z)
-            case Vector3f ->
-                (T) new Vector3f(self.x, self.y, self.z)
-            case Vector4f ->
-                (T) new Vector4f(self.x, self.y, self.z, 1f)
-            case Quaternion ->
-                (T) Quaternion.fromXYZ(self.x, self.y, self.z)
             case BlockPos ->
                 (T) new BlockPos(self.x, self.y, self.z)
             default ->
@@ -134,164 +118,8 @@ class ArithmeticExtension {
         return switch (type) {
             case Vec3i ->
                 (T) new Vec3i(self.x(), self.y(), self.z())
-            case Vector3d ->
-                (T) new Vector3d(self.x(), self.y(), self.z())
-            case Vector3f ->
-                (T) new Vector3f(self.x() as float, self.y() as float, self.z() as float)
-            case Vector4f ->
-                (T) new Vector4f(self.x() as float, self.y() as float, self.z() as float, 1f)
-            case Quaternion ->
-                (T) Quaternion.fromXYZ(self.x() as float, self.y() as float, self.z() as float)
             case BlockPos ->
                 (T) new BlockPos(self.x(), self.y(), self.z())
-            default ->
-                (T) DefaultGroovyMethods.asType(self, type)
-        }
-    }
-    // endregion
-
-    // region Vector3d
-    static Vector3d plus(Vector3d self, Vector3d other) {
-        return new Vector3d(self.x+other.x, self.y+other.y, self.z+other.z)
-    }
-
-    static Vector3d multiply(Vector3d self, double other) {
-        return new Vector3d(self.x*other, self.y*other, self.z*other)
-    }
-
-    static Vector3d negative(Vector3d self) {
-        return multiply(self,-1)
-    }
-
-    static Vector3d div(Vector3d self, double other) {
-        return new Vector3d(self.x/other as double, self.y/other as double, self.z/other as double)
-    }
-
-    static Vector3d minus(Vector3d self, Vector3d other) {
-        return new Vector3d(self.x-other.x, self.y-other.y, self.z-other.z)
-    }
-
-    static Vector3d multiply(double self, Vector3d pos) {
-        return multiply(pos,self)
-    }
-
-    static <T> T asType(Vector3d self, Class<T> type) {
-        return switch (type) {
-            case Vec3i ->
-                (T) new Vec3i(self.x, self.y, self.z)
-            case Vec3, Position ->
-                (T) new Vec3(self.x, self.y, self.z)
-            case Vector3f ->
-                (T) new Vector3f(self.x as float, self.y as float, self.z as float)
-            case Vector4f ->
-                (T) new Vector4f(self.x as float, self.y as float, self.z as float, 1f)
-            case Quaternion ->
-                (T) Quaternion.fromXYZ(self.x as float, self.y as float, self.z as float)
-            case BlockPos ->
-                (T) new BlockPos(self.x, self.y, self.z)
-            default ->
-                (T) DefaultGroovyMethods.asType(self, type)
-        }
-    }
-    // endregion
-
-    // region Vector3f
-    static Vector3f plus(Vector3f self, Vector3f other) {
-        return new Vector3f(self.x()+other.x() as float, self.y()+other.y() as float, self.z()+other.z() as float)
-    }
-
-    static Vector3f multiply(Vector3f self, double other) {
-        return new Vector3f(self.x()*other as float, self.y()*other as float, self.z()*other as float)
-    }
-
-    static Vector3f negative(Vector3f self) {
-        return multiply(self,-1)
-    }
-
-    static Vector3f div(Vector3f self, double other) {
-        return new Vector3f(self.x()/other as float, self.y()/other as float, self.z()/other as float)
-    }
-
-    static Vector3f minus(Vector3f self, Vector3f other) {
-        return new Vector3f(self.x()-other.x() as float, self.y()-other.y() as float, self.z()-other.z() as float)
-    }
-
-    static Vector3f multiply(double self, Vector3f pos) {
-        return multiply(pos,self)
-    }
-
-    static <T> T asType(Vector3f self, Class<T> type) {
-        return switch (type) {
-            case Vec3i ->
-                (T) new Vec3i(self.x(), self.y(), self.z())
-            case Vec3, Position ->
-                (T) new Vec3(self.x(), self.y(), self.z())
-            case Vector3d ->
-                (T) new Vector3d(self.x(), self.y(), self.z())
-            case Vector4f ->
-                (T) new Vector4f(self.x() as float, self.y() as float, self.z() as float, 1f)
-            case Quaternion ->
-                (T) Quaternion.fromXYZ(self.x(), self.y(), self.z())
-            case BlockPos ->
-                (T) new BlockPos(self.x(), self.y(), self.z())
-            default ->
-                (T) DefaultGroovyMethods.asType(self, type)
-        }
-    }
-    // endregion
-
-    // region Vector4f
-    static Vector4f plus(Vector4f self, Vector4f other) {
-        return new Vector4f(self.x()+other.x() as float, self.y()+other.y() as float, self.z()+other.z() as float, self.w()+other.w() as float)
-    }
-
-    static Vector4f multiply(Vector4f self, double other) {
-        return new Vector4f(self.x()*other as float, self.y()*other as float, self.z()*other as float, self.w()*other as float)
-    }
-
-    static Vector4f negative(Vector4f self) {
-        return multiply(self,-1)
-    }
-
-    static Vector4f div(Vector4f self, double other) {
-        return new Vector4f(self.x()/other as float, self.y()/other as float, self.z()/other as float, self.w()/other as float)
-    }
-
-    static Vector4f minus(Vector4f self, Vector4f other) {
-        return new Vector4f(self.x()-other.x() as float, self.y()-other.y() as float, self.z()-other.z() as float, self.w()-other.w() as float)
-    }
-
-    static Vector4f multiply(double self, Vector4f pos) {
-        return multiply(pos,self)
-    }
-
-    static <T> T asType(Vector4f self, Class<T> type) {
-        return switch (type) {
-            case Vec3i ->
-                (T) new Vec3i(self.x(), self.y(), self.z())
-            case Vec3, Position ->
-                (T) new Vec3(self.x(), self.y(), self.z())
-            case Vector3d ->
-                (T) new Vector3d(self.x(), self.y(), self.z())
-            case Vector3f ->
-                (T) new Vector3f(self.x() as float, self.y() as float, self.z() as float)
-            case BlockPos ->
-                (T) new BlockPos(self.x(), self.y(), self.z())
-            default ->
-                (T) DefaultGroovyMethods.asType(self, type)
-        }
-    }
-    // endregion
-
-    // region Quaternion
-    static <T> T asType(Quaternion self, Class<T> type) {
-        return switch (type) {
-            case Vec3, Position, Vector3d, Vector3f, Vec3i, BlockPos ->
-                (T) self.toXYZ().asType(type)
-            case Matrix3f ->
-                (T) new Matrix3f(self)
-            case Matrix4f ->
-                (T) new Matrix4f(self)
             default ->
                 (T) DefaultGroovyMethods.asType(self, type)
         }
@@ -327,16 +155,8 @@ class ArithmeticExtension {
         return switch (type) {
             case Vec3i ->
                 (T) new Vec3i(self.x, self.y, 0)
-            case Vector3d ->
-                (T) new Vector3d(self.x, self.y, 0)
             case Vec3, Position ->
                 (T) new Vec3(self.x, self.y, 0)
-            case Vector3f ->
-                (T) new Vector3f(self.x, self.y, 0)
-            case Vector4f ->
-                (T) new Vector4f(self.x, self.y, 0, 0)
-            case Quaternion ->
-                (T) Quaternion.fromXYZ(self.x, self.y, 0)
             case BlockPos ->
                 (T) new BlockPos(self.x, self.y, 0)
             default ->
@@ -377,17 +197,6 @@ class ArithmeticExtension {
     }
     // endregion
 
-    // region Matrix4f
-    static <T> T asType(Matrix4f self, Class<T> type) {
-        return switch (type) {
-            case Transformation ->
-                (T) new Transformation(self)
-            default ->
-                (T) DefaultGroovyMethods.asType(self, type)
-        }
-    }
-    // endregion
-
     // region SymmetricGroup3
     static int getAt(SymmetricGroup3 self, int p) {
         return self.permutation(p)
@@ -407,15 +216,6 @@ class ArithmeticExtension {
                 self
         }
     }
-
-    static <T> T asType(SymmetricGroup3 self, Class<T> type) {
-        return switch (type) {
-            case Matrix3f ->
-                (T) self.transformation()
-            default ->
-                (T) DefaultGroovyMethods.asType(self, type)
-        }
-    }
     // endregion
 
     // region OctahedralGroup
@@ -426,15 +226,6 @@ class ArithmeticExtension {
     static OctahedralGroup negative(OctahedralGroup self) {
         return self.inverse()
     }
-
-    static <T> T asType(OctahedralGroup self, Class<T> type) {
-        return switch (type) {
-            case Matrix3f ->
-                (T) self.transformation()
-            default ->
-                (T) DefaultGroovyMethods.asType(self, type)
-        }
-    }
     // endregion
 
     // region Transformation
@@ -444,15 +235,6 @@ class ArithmeticExtension {
 
     static Transformation negative(Transformation self) {
         return self.inverse()
-    }
-
-    static <T> T asType(Transformation self, Class<T> type) {
-        return switch (type) {
-            case Matrix4f ->
-                (T) self.matrix
-            default ->
-                (T) DefaultGroovyMethods.asType(self, type)
-        }
     }
     // endregion
 }
