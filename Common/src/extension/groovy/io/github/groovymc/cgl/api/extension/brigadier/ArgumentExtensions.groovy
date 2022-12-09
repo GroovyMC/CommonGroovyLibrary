@@ -20,14 +20,15 @@ import net.minecraft.commands.arguments.blocks.BlockStateArgument
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument
 import net.minecraft.commands.arguments.item.ItemArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
-import net.minecraft.core.registries.Registries
+import net.minecraft.core.Holder
+import net.minecraft.core.Registry
+import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
 
-import static groovy.lang.Closure.DELEGATE_FIRST
 import static CommandExtensions.argument
 import static CommandExtensions.defaultGetter
-
+import static groovy.lang.Closure.DELEGATE_FIRST
 /**
  * Extension methods for easier creation of default command arguments.
  * @author CommonGroovyLoader
@@ -247,15 +248,21 @@ final class ArgumentExtensions {
     // endregion
 
     // region Registries
-    static <S, T extends ArgumentBuilder<S, T>> T effect(ArgumentBuilder<S, T> self, String name,
-                                                         CommandBuildContext context, @DelegatesTo(
-            type = 'com.mojang.brigadier.builder.RequiredArgumentBuilder<S,net.minecraft.world.effect.MobEffect>',
+    static <S, T extends ArgumentBuilder<S, T>, R> T registered(ArgumentBuilder<S, T> self, String name,
+                                                                CommandBuildContext context, ResourceKey<? extends Registry<R>> registry,
+                                                                @DelegatesTo(
+            type = 'com.mojang.brigadier.builder.RequiredArgumentBuilder<S,R>',
             strategy = DELEGATE_FIRST
     ) @ClosureParams(
             value = FromString,
-            options = 'io.github.groovymc.cgl.api.extension.brigadier.ArgumentGetter<S,net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect>>'
+            options = 'io.github.groovymc.cgl.api.extension.brigadier.ArgumentGetter<S,R>'
     ) Closure closure) {
-        argument(self, name, ResourceArgument.resource(context, Registries.MOB_EFFECT), defaultGetter(), closure)
+        argument(self, name, ResourceArgument.resource(context, registry), nm -> new ArgumentGetter<S, R>() {
+            @Override
+            R call(CommandContext<S> ctx) {
+                return ((Holder.Reference<R>) ctx.getArgument(nm, Object)).value()
+            }
+        }, closure)
     }
 
     static <S, T extends ArgumentBuilder<S, T>> T item(ArgumentBuilder<S, T> self, String name,

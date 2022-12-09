@@ -232,7 +232,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
         // ResourceKey<Registry<T>>
         final type = registryField.type.genericsTypes[0].type.genericsTypes[0].type
         return new FieldNode(
-                registryField.name.replace('_REGISTRY', 'S').toUpperCase(Locale.ROOT),
+                (registryField.name + 'S').toUpperCase(Locale.ROOT),
                 Opcodes.ACC_STATIC | Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL,
                 GenericsUtils.makeClassSafeWithGenerics(RegistrationProvider, type), targetClass,
                 GeneralUtils.callX(
