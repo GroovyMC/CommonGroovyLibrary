@@ -68,13 +68,14 @@ processResources {
     from project(':Common').sourceSets.extension.resources
 }
 
-tasks.withType(GroovyCompile) {
+tasks.withType(GroovyCompile).configureEach {
     it.source(project(':Common').sourceSets.main.allGroovy)
     it.source(project(':Common').sourceSets.transform.allGroovy)
     it.source(project(':Common').sourceSets.extension.allGroovy)
+    it.groovyOptions.optimizationOptions.groovydoc = true
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     source(project(':Common').sourceSets.main.allJava)
     source(project(':Common').sourceSets.transform.allJava)
     source(project(':Common').sourceSets.extension.allJava)
@@ -90,10 +91,6 @@ sourcesJar {
     from project(':Common').sourceSets.main.allSource
     from project(':Common').sourceSets.transform.allSource
     from project(':Common').sourceSets.extension.allSource
-}
-
-tasks.withType(GroovyCompile) {
-    it.groovyOptions.optimizationOptions.groovydoc = true
 }
 
 publishing {
