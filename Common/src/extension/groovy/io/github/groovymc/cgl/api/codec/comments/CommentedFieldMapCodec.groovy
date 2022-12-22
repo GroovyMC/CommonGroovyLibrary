@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2022 GroovyMC and contributors
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ */
+
 package io.github.groovymc.cgl.api.codec.comments
 
 import com.mojang.serialization.*
@@ -18,17 +23,17 @@ class CommentedFieldMapCodec<O> extends MapCodec<O> {
     final CommentSpec comments
 
     @Override
-    def <T> Stream<T> keys(DynamicOps<T> ops) {
+    <T> Stream<T> keys(DynamicOps<T> ops) {
         return delegate.keys(ops)
     }
 
     @Override
-    def <T> DataResult<O> decode(DynamicOps<T> ops, MapLike<T> input) {
+    <T> DataResult<O> decode(DynamicOps<T> ops, MapLike<T> input) {
         return delegate.decode(ops, input)
     }
 
     @Override
-    def <T> RecordBuilder<T> encode(O input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+    <T> RecordBuilder<T> encode(O input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
         prefix = delegate.encode(input, ops, prefix)
 
         return new RecordBuilder<T>() {

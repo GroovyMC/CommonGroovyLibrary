@@ -17,7 +17,7 @@ apply plugin: 'org.spongepowered.mixin'
 archivesBaseName = "cgl-${minecraft_version}-forge"
 
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+    mappings channel: 'parchment', version: "${parchment_minecraft_version}-${parchment_version}-${minecraft_version}"
     
     if (project.hasProperty('forge_ats_enabled') && project.findProperty('forge_ats_enabled').toBoolean()) {
         // This location is hardcoded in Forge and can not be changed.
@@ -86,6 +86,8 @@ dependencies {
 
     compileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
     annotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
+    transformCompileOnly group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
+    transformAnnotationProcessor group:'com.google.auto.service', name:'auto-service', version:'1.0.1'
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 

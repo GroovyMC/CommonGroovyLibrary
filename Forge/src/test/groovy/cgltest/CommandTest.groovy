@@ -6,6 +6,7 @@
 package cgltest
 
 import com.matyrobbrt.gml.bus.EventBusSubscriber
+import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.Level
@@ -16,6 +17,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent
 class CommandTest {
     @SubscribeEvent
     static void test(RegisterCommandsEvent event) {
+        event.dispatcher.register('echo') {
+            then registered('name', event.buildContext, Registries.ITEM) {argument ->
+                executes {
+                    player?.sendSystemMessage(Component.literal(argument(it).getDescriptionId()))
+                }
+            }
+        }
+
         event.dispatcher.register('no') {
             requires admin
             executes {

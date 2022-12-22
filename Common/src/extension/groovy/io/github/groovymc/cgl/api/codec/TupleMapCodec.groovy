@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2022 GroovyMC and contributors
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ */
+
 package io.github.groovymc.cgl.api.codec
 
 import com.mojang.serialization.*
@@ -73,7 +78,7 @@ class TupleMapCodec<O> extends MapCodec<O> {
             }
             return result.resultOrPartial({}).orElse(null)
         }.toArray()
-        O obj = null
+        O obj
         try {
             obj = (args.inject(assembler) {cl, arg -> cl.curry(arg)} as Closure<O>).call()
         } catch (Exception e) {
