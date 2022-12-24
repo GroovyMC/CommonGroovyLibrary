@@ -71,4 +71,20 @@ class StaticGeneralExtensions {
         new ClickEvent(ClickEvent.Action.CHANGE_PAGE, pageNumber.toString())
     }
     // endregion
+
+    // region LogUtils
+    /**
+     * @return An SLF4J logger for the given class
+     */
+    static Logger getLogger(LogUtils self, Class <?> clazz) {
+        return LoggerFactory.getLogger(clazz)
+    }
+
+    /**
+     * @return An SLF4J logger with the given name
+     */
+    static Logger getLogger(LogUtils self, String name) {
+        return LoggerFactory.getLogger(name)
+    }
+    // endregion
 }
