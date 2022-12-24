@@ -48,7 +48,7 @@ ModsDotGroovy.make {
             init = [
                 adapted {
                     adapter = 'groovyduvet'
-                    value = 'io.github.groovymc.cgl.quilt.CGLQuilt'
+                    value = 'io.github.groovymc.cgl.impl.quilt.CGLQuilt'
                 }
             ]
         }
