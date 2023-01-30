@@ -5,12 +5,15 @@
 
 package io.github.groovymc.cgl.api.extension
 
+import com.mojang.logging.LogUtils
 import groovy.transform.CompileStatic
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.Container
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeType
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import java.nio.file.Path
 
@@ -30,6 +33,7 @@ class StaticGeneralExtensions {
         }
     }
 
+    // region ServiceLoaders
     static <T> T oneAndOnly(ServiceLoader loader, Class<T> clazz, ClassLoader classLoader = Thread.currentThread().getContextClassLoader()) {
         final iterator = ServiceLoader.load(clazz, classLoader)
             .iterator()
@@ -47,6 +51,7 @@ class StaticGeneralExtensions {
         ServiceLoader.load(clazz, classLoader).forEach { list.add(it) }
         return list
     }
+    // endregion
 
     // region ClickEvents
     static ClickEvent openUrl(ClickEvent self, String url) {
