@@ -5,14 +5,17 @@
 
 package io.github.groovymc.cgl.api.codec
 
+
 import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
+import com.mojang.serialization.MapLike
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.runtime.NullObject
 
+import java.util.function.BiConsumer
+import java.util.function.Consumer
 import java.util.stream.Stream
-
 /**
  * A DynamicOps for converting to/from the formats used by groovy's JSON and TOML libraries - {@link Map}, {@link List},
  * {@link Number}, {@link Boolean}, {@link String}, {@link Date}, and null.
@@ -114,10 +117,53 @@ class ObjectOps implements DynamicOps<Object> {
     DataResult<Stream<Pair<Object, Object>>> getMapValues(Object input) {
         if (!(input instanceof Map))
             return DataResult.error("Not a map: " + input)
-        final Map config = input as Map
-        return DataResult.success(config.entrySet().stream().map {
-            return Pair.of(it.key, it.value)
+        return DataResult.success(input.entrySet().stream().map {
+            return Pair.of(it.key, it.value instanceof NullObject ? null : it.value)
         })
+    }
+
+    @Override
+    DataResult<Consumer<BiConsumer<Object, Object>>> getMapEntries(Object input) {
+        if (!(input instanceof Map))
+            return DataResult.error("Not a map: " + input)
+        return DataResult.<Consumer<BiConsumer<Object, Object>>>success {
+            for (final Map.Entry<Object,Object> entry : input.entrySet()) {
+                it.accept(entry.key, entry.value instanceof NullObject ? null : entry.value)
+            }
+        }
+    }
+
+    @Override
+    DataResult<MapLike<Object>> getMap(Object input) {
+        if (input instanceof Map) {
+            Map map = (Map) input
+            return DataResult.success(new MapLike<Object>() {
+                @Override
+                Object get(Object key) {
+                    Object found = map.get(key)
+                    return found instanceof NullObject ? null : found
+                }
+
+                @Override
+                Object get(String key) {
+                    Object found = map.get(key)
+                    return found instanceof NullObject ? null : found
+                }
+
+                @Override
+                Stream<Pair<Object, Object>> entries() {
+                    map.entrySet().stream().map {
+                        return Pair.of(it.key, it.value instanceof NullObject ? null : it.value)
+                    }
+                }
+
+                @Override
+                String toString() {
+                    return "MapLike[${input}]"
+                }
+            })
+        }
+        return DataResult.error("Not a map: " + input)
     }
 
     @Override
@@ -135,7 +181,19 @@ class ObjectOps implements DynamicOps<Object> {
         {
             @SuppressWarnings("unchecked")
             List list = input as List
-            return DataResult.success(list.stream())
+            return DataResult.success(list.stream().map {it instanceof NullObject ? null : it})
+        }
+        return DataResult.error("Not a list: " + input)
+    }
+
+    @Override
+    DataResult<Consumer<Consumer<Object>>> getList(Object input) {
+        if (input instanceof List) {
+            return DataResult.<Consumer<Consumer<Object>>>success {
+                for (final Object element : input) {
+                    it.accept(element instanceof NullObject ? null : element)
+                }
+            }
         }
         return DataResult.error("Not a list: " + input)
     }
