@@ -1,9 +1,10 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'groovy'
     id 'io.github.groovymc.modsdotgroovy' version '1.1.2'
     id 'com.matyrobbrt.mc.registrationutils' version '1.19.3-1.0.0'
     id 'org.cadixdev.licenser' version '0.6.1'
+    id 'org.quiltmc.loom' version '1.1.+' apply false
 }
 
 registrationUtils {
@@ -86,6 +87,7 @@ subprojects {
         it.groovyOptions.optimizationOptions.indy = true
         it.groovyOptions.optimizationOptions.groovydoc = true
         it.groovyOptions.javaAnnotationProcessing = true
+        it.groovyOptions.keepStubs = true
         it.exclude('mods.groovy')
     }
 

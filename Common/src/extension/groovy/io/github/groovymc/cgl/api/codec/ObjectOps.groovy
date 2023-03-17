@@ -58,7 +58,7 @@ class ObjectOps implements DynamicOps<Object> {
     DataResult<Number> getNumberValue(Object i) {
         return i instanceof Number
                 ? DataResult.success(i)
-                : DataResult.error("Not a number: " + i) as DataResult<Number>
+                : DataResult.<Number>error {->"Not a number: " + i}
     }
 
     @Override
@@ -71,7 +71,7 @@ class ObjectOps implements DynamicOps<Object> {
         if (input instanceof Date)
             return DataResult.success(input.format("yyyy-MM-dd'T'HH:mm:ssZ"))
         return (input instanceof Map || input instanceof List) ?
-                DataResult.error("Not a string: " + input) as DataResult<String> :
+                DataResult.<String>error {->"Not a string: " + input} :
                 DataResult.success(String.valueOf(input))
     }
 
@@ -83,7 +83,7 @@ class ObjectOps implements DynamicOps<Object> {
     @Override
     DataResult<Object> mergeToList(Object list, Object value) {
         if (!(list instanceof List) && list != this.empty())
-            return DataResult.error("mergeToList called with not a list: " + list, list)
+            return DataResult.error({->"mergeToList called with not a list: " + list}, list)
         final List result = []
         if (list != this.empty()) {
             List listAsCollection = list as List
@@ -96,12 +96,12 @@ class ObjectOps implements DynamicOps<Object> {
     @Override
     DataResult<Object> mergeToMap(Object map, Object key, Object value) {
         if (!(map instanceof Map) && map != this.empty()) {
-            return DataResult.error("mergeToMap called with not a map: " + map, map)
+            return DataResult.error({->"mergeToMap called with not a map: " + map}, map)
         }
         DataResult<String> stringResult = this.getStringValue(key)
         Optional<DataResult.PartialResult<String>> badResult = stringResult.error()
         if (badResult.isPresent())
-            return DataResult.error("key is not a string: " + key, map)
+            return DataResult.error({->"key is not a string: " + key}, map)
         return stringResult.flatMap{
             final Map output = [:]
             if (map != this.empty()) {
@@ -116,8 +116,8 @@ class ObjectOps implements DynamicOps<Object> {
     @Override
     DataResult<Stream<Pair<Object, Object>>> getMapValues(Object input) {
         if (!(input instanceof Map))
-            return DataResult.error("Not a map: " + input)
-        return DataResult.success(input.entrySet().stream().map {
+            return DataResult.error {->"Not a map: " + input}
+        return DataResult.success(((Map)input).entrySet().stream().map {
             return Pair.of(it.key, it.value instanceof NullObject ? null : it.value)
         })
     }
@@ -125,9 +125,9 @@ class ObjectOps implements DynamicOps<Object> {
     @Override
     DataResult<Consumer<BiConsumer<Object, Object>>> getMapEntries(Object input) {
         if (!(input instanceof Map))
-            return DataResult.error("Not a map: " + input)
-        return DataResult.<Consumer<BiConsumer<Object, Object>>>success {
-            for (final Map.Entry<Object,Object> entry : input.entrySet()) {
+            return DataResult.error {->"Not a map: " + input}
+        return DataResult.<Consumer<BiConsumer<Object, Object>>>success {BiConsumer<Object, Object> it ->
+            for (final Map.Entry<Object,Object> entry : ((Map)input).entrySet()) {
                 it.accept(entry.key, entry.value instanceof NullObject ? null : entry.value)
             }
         }
@@ -137,7 +137,7 @@ class ObjectOps implements DynamicOps<Object> {
     DataResult<MapLike<Object>> getMap(Object input) {
         if (input instanceof Map) {
             Map map = (Map) input
-            return DataResult.success(new MapLike<Object>() {
+            return DataResult.<MapLike<Object>>success(new MapLike<Object>() {
                 @Override
                 Object get(Object key) {
                     Object found = map.get(key)
@@ -163,7 +163,7 @@ class ObjectOps implements DynamicOps<Object> {
                 }
             })
         }
-        return DataResult.error("Not a map: " + input)
+        return DataResult.error {->"Not a map: " + input}
     }
 
     @Override
@@ -183,19 +183,19 @@ class ObjectOps implements DynamicOps<Object> {
             List list = input as List
             return DataResult.success(list.stream().map {it instanceof NullObject ? null : it})
         }
-        return DataResult.error("Not a list: " + input)
+        return DataResult.error {->"Not a list: " + input}
     }
 
     @Override
     DataResult<Consumer<Consumer<Object>>> getList(Object input) {
         if (input instanceof List) {
-            return DataResult.<Consumer<Consumer<Object>>>success {
+            return DataResult.<Consumer<Consumer<Object>>>success {Consumer<Object> it ->
                 for (final Object element : input) {
                     it.accept(element instanceof NullObject ? null : element)
                 }
             }
         }
-        return DataResult.error("Not a list: " + input)
+        return DataResult.error {->"Not a list: " + input}
     }
 
     @Override

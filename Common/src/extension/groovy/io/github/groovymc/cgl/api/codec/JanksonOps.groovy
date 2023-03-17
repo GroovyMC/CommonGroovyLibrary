@@ -73,7 +73,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
             if (value instanceof Boolean)
                 return DataResult.<Number>success(Boolean.TRUE == value ? 1 : 0)
         }
-        return DataResult.error("Not a number: $input")
+        return DataResult.<Number>error {->"Not a number: $input"}
     }
 
     @Override
@@ -88,7 +88,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
             if (value instanceof String)
                 return DataResult.success(value)
         }
-        return DataResult.error("Not a string: $input")
+        return DataResult.<String>error {->"Not a string: $input"}
     }
 
     @Override
@@ -107,7 +107,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
             result.add(value)
             return DataResult.<JsonElement>success(result)
         }
-        return DataResult.error("mergeToList called with not a list: $list", list)
+        return DataResult.<JsonElement>error({->"mergeToList called with not a list: $list"}, list)
     }
 
     @Override
@@ -120,15 +120,15 @@ class JanksonOps implements CommentingOps<JsonElement> {
             result.addAll(values)
             return DataResult.<JsonElement>success(result)
         }
-        return DataResult.error("mergeToList called with not a list: $list", list)
+        return DataResult.<JsonElement>error({->"mergeToList called with not a list: $list"}, list)
     }
 
     @Override
     DataResult<JsonElement> mergeToMap(JsonElement map, JsonElement key, JsonElement value) {
         if (!(map instanceof JsonObject) && map != empty())
-            return DataResult.error("mergeToMap called with not a map: $map", map)
+            return DataResult.<JsonElement>error({->"mergeToMap called with not a map: $map"}, map)
         if (!(key instanceof JsonPrimitive) || !(((JsonPrimitive)key).getValue() instanceof String))
-            return DataResult.error("key is not a string: $key", map)
+            return DataResult.<JsonElement>error({->"key is not a string: $key"}, map)
         JsonObject output = new JsonObject()
         if (map != empty()) {
             JsonObject jsonObject = (JsonObject) map
@@ -141,7 +141,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
     @Override
     DataResult<JsonElement> mergeToMap(JsonElement map, MapLike<JsonElement> values) {
         if (!(map instanceof JsonObject) && map != empty())
-            return DataResult.error("mergeToMap called with not a map: $map", map)
+            return DataResult.<JsonElement>error({->"mergeToMap called with not a map: $map"}, map)
         JsonObject output = new JsonObject()
         if (map != empty())
             output.putAll((JsonObject) map)
@@ -154,7 +154,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
         })
 
         if (!missed.isEmpty()) {
-            return DataResult.<JsonElement>error("some keys are not strings: $missed", output)
+            return DataResult.<JsonElement>error({->"some keys are not strings: $missed"}, output)
         }
 
         return DataResult.<JsonElement>success(output)
@@ -163,7 +163,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
     @Override
     DataResult<MapLike<JsonElement>> getMap(final JsonElement input) {
         if (!(input instanceof JsonObject)) {
-            return DataResult.error("Not a JSON object: $input")
+            return DataResult.<MapLike<JsonElement>>error {->"Not a JSON object: $input"}
         }
         var object = (JsonObject) input
         return DataResult.<MapLike<JsonElement>>success(new MapLike<JsonElement>() {
@@ -201,7 +201,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
     DataResult<Stream<Pair<JsonElement, JsonElement>>> getMapValues(JsonElement input) {
         if (input instanceof JsonObject)
             return DataResult.<Stream<Pair<JsonElement,JsonElement>>>success(input.entrySet().stream().<Pair<JsonElement,JsonElement>>map {entry -> Pair.of(new JsonPrimitive(entry.key), entry.value instanceof JsonNull ? null : entry.value) })
-        return DataResult.error("Not a JSON object: $input")
+        return DataResult.error {->"Not a JSON object: $input"}
     }
 
     @Override
@@ -220,7 +220,7 @@ class JanksonOps implements CommentingOps<JsonElement> {
         if (input instanceof JsonArray) {
             return DataResult.success(input.stream().map {e -> e instanceof JsonNull ? null : e })
         }
-        return DataResult.error("Not a json array: " + input)
+        return DataResult.error {->"Not a json array: " + input}
     }
 
     @Override

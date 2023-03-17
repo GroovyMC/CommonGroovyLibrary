@@ -1,7 +1,8 @@
 plugins {
     id 'maven-publish'
-    id 'org.quiltmc.loom' version '0.12.+'
 }
+
+apply plugin: 'org.quiltmc.loom'
 
 archivesBaseName = "cgl-${minecraft_version}"
 

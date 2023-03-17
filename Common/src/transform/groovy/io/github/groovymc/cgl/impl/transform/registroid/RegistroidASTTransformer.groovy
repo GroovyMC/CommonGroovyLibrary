@@ -42,8 +42,8 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
     public static final List<ClassNode> REGISTERED_CLASSES = []
 
     public static final ClassNode REGISTRATION_NAME_TYPE = ClassHelper.make(RegistrationName)
-    public static final String REGISTER_DESC = Type.getMethodDescriptor(Type.getType(RegistryObject), Type.getType(String), Type.getType(Supplier))
-    public static final String DR_REGISTER_DESC = Type.getMethodDescriptor(Type.getObjectType('net/minecraftforge/registries/RegistryObject'), Type.getType(String), Type.getType(Supplier))
+    static final String REGISTER_DESC = Type.getMethodDescriptor(Type.getType(RegistryObject), Type.getType(String), Type.getType(Supplier))
+    static final String DR_REGISTER_DESC = Type.getMethodDescriptor(Type.getObjectType('net/minecraftforge/registries/RegistryObject'), Type.getType(String), Type.getType(Supplier))
     public static final ClassNode RESOURCE_KEY_TYPE = ClassHelper.make(ResourceKey)
     public static final Supplier<ClassNode> FORGE_REGISTRY_TYPE = Suppliers.memoize { ClassHelper.make('net.minecraftforge.registries.IForgeRegistry') }
     public static final Supplier<ClassNode> FORGE_RO_TYPE = Suppliers.memoize { ClassHelper.make('net.minecraftforge.registries.RegistryObject') }
@@ -52,7 +52,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
     public static final ClassNode ADDON_CLASS_TYPE = ClassHelper.make(RegistroidAddonClass)
     public static final ClassNode REGISTRY_TYPE = ClassHelper.make(Registry)
 
-    public static final String REG_OBJECT_INTERNAL = Type.getInternalName(RegistryObject)
+    static final String REG_OBJECT_INTERNAL = Type.getInternalName(RegistryObject)
     @Override
     void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source) // ensure that nodes is [AnnotationNode, AnnotatedNode]

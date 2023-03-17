@@ -82,9 +82,9 @@ class TupleMapCodec<O> extends MapCodec<O> {
         try {
             obj = (args.inject(assembler) {cl, arg -> cl.curry(arg)} as Closure<O>).call()
         } catch (Exception e) {
-            return DataResult.error(e.message)
+            return DataResult.error {->e.message}
         }
-        return error.get()==null?DataResult.success(obj):DataResult.error(error.get(), obj)
+        return error.get()==null?DataResult.success(obj):DataResult.error(error::get, obj)
     }
 
     @Override

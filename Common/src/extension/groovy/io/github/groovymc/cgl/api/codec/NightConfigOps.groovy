@@ -51,12 +51,12 @@ abstract class NightConfigOps extends ObjectOps implements CommentingOps<Object>
     @Override
     DataResult<Object> mergeToMap(Object map, Object key, Object value) {
         if (!(map instanceof Config) && map != this.empty()) {
-            return DataResult.error("mergeToMap called with not a map: " + map, map)
+            return DataResult.error({->"mergeToMap called with not a map: " + map}, map)
         }
         DataResult<String> stringResult = this.getStringValue(key)
         Optional<DataResult.PartialResult<String>> badResult = stringResult.error()
         if (badResult.isPresent())
-            return DataResult.error("key is not a string: " + key, map)
+            return DataResult.error({->"key is not a string: " + key}, map)
         return stringResult.flatMap{
             final Config output = newConfig()
             if (map != this.empty()) {
@@ -71,7 +71,7 @@ abstract class NightConfigOps extends ObjectOps implements CommentingOps<Object>
     @Override
     DataResult<Stream<Pair<Object, Object>>> getMapValues(Object input) {
         if (!(input instanceof Config))
-            return DataResult.error("Not a map: " + input)
+            return DataResult.error {->"Not a map: " + input}
         final Config config = input as Config
         return DataResult.success(config.entrySet().stream().map {
             return Pair.<Object, Object>of(it.key, it.value)
@@ -104,7 +104,7 @@ abstract class NightConfigOps extends ObjectOps implements CommentingOps<Object>
     @Override
     DataResult<String> getStringValue(Object input) {
         if (input instanceof Config)
-                return DataResult.<String>error("Not a string: " + input)
+                return DataResult.<String>error {->"Not a string: " + input}
         return super.getStringValue(input)
     }
 

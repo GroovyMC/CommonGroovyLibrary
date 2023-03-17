@@ -114,17 +114,6 @@ class ArithmeticExtension {
     static Vec3 multiply(double self, Position pos) {
         return multiply(pos,self)
     }
-
-    static <T> T asType(Position self, Class<T> type) {
-        return switch (type) {
-            case Vec3i ->
-                (T) new Vec3i(self.x(), self.y(), self.z())
-            case BlockPos ->
-                (T) new BlockPos(self.x(), self.y(), self.z())
-            default ->
-                (T) DefaultGroovyMethods.asType(self, type)
-        }
-    }
     // endregion
 
     // region Vec2
@@ -154,12 +143,8 @@ class ArithmeticExtension {
 
     static <T> T asType(Vec2 self, Class<T> type) {
         return switch (type) {
-            case Vec3i ->
-                (T) new Vec3i(self.x, self.y, 0)
             case Vec3, Position ->
                 (T) new Vec3(self.x, self.y, 0)
-            case BlockPos ->
-                (T) new BlockPos(self.x, self.y, 0)
             default ->
                 (T) DefaultGroovyMethods.asType(self, type)
         }
