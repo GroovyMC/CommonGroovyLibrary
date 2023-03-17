@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'groovy'
     id 'io.github.groovymc.modsdotgroovy' version '1.1.2'
-    id 'com.matyrobbrt.mc.registrationutils' version '1.19.3-1.0.0'
+    id 'com.matyrobbrt.mc.registrationutils' version '1.19.3-2.0.1'
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'org.quiltmc.loom' version '1.1.+' apply false
 }
