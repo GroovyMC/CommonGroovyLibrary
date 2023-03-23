@@ -47,5 +47,17 @@ import java.lang.annotation.Target
     @Deprecated(forRemoval = true)
     WithCodecPath[] path() default []
 
+    /**
+     * A series of indices defining the path of the codec which should be replaced. For instance, in the following:
+     * <pre>
+     *     {@literal @}WithCodec(value = { IntProvider.NON_NEGATIVE_CODEC },
+     *                 target = [0,0])
+     *     List{@literal <}Pair{@literal <}IntProvider,Boolean{@literal >>} getPairs() {
+     *         ...
+     *     }
+     * </pre>
+     * The {@code IntProvider} within the {@code Pair} within the {@code List} is targetted, and the transformer is told
+     * to use the closure to replace the codec. The provided indices correspond to the indices of the type parameters..
+     */
     int[] target() default []
 }
