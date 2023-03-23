@@ -9,6 +9,10 @@ import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
 
+/**
+ * Marks a class as having a factory that can be used to provide codecs for members of that class parameterized by
+ * specific type parameters.
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
