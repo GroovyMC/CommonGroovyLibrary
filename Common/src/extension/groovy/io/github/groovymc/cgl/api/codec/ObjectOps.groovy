@@ -126,11 +126,11 @@ class ObjectOps implements DynamicOps<Object> {
     DataResult<Consumer<BiConsumer<Object, Object>>> getMapEntries(Object input) {
         if (!(input instanceof Map))
             return DataResult.error {->"Not a map: " + input}
-        return DataResult.<Consumer<BiConsumer<Object, Object>>>success {BiConsumer<Object, Object> it ->
+        return DataResult.<Consumer<BiConsumer<Object, Object>>>success({BiConsumer<Object, Object> it ->
             for (final Map.Entry<Object,Object> entry : ((Map)input).entrySet()) {
                 it.accept(entry.key, entry.value instanceof NullObject ? null : entry.value)
             }
-        }
+        } as Consumer<BiConsumer<Object, Object>>)
     }
 
     @Override
@@ -189,11 +189,11 @@ class ObjectOps implements DynamicOps<Object> {
     @Override
     DataResult<Consumer<Consumer<Object>>> getList(Object input) {
         if (input instanceof List) {
-            return DataResult.<Consumer<Consumer<Object>>>success {Consumer<Object> it ->
+            return DataResult.<Consumer<Consumer<Object>>>success({Consumer<Object> it ->
                 for (final Object element : input) {
                     it.accept(element instanceof NullObject ? null : element)
                 }
-            }
+            } as Consumer<Consumer<Object>>)
         }
         return DataResult.error {->"Not a list: " + input}
     }
