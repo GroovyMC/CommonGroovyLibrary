@@ -7,10 +7,7 @@ package io.github.groovymc.cgl.impl.transform.codec
 
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.codec.comments.Comment
-import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
-import io.github.groovymc.cgl.api.transform.codec.ExposesCodec
-import io.github.groovymc.cgl.api.transform.codec.WithCodec
-import io.github.groovymc.cgl.api.transform.codec.WithCodecPath
+import io.github.groovymc.cgl.api.transform.codec.*
 import org.apache.groovy.util.BeanUtils
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.expr.*
@@ -18,6 +15,7 @@ import org.codehaus.groovy.ast.stmt.ReturnStatement
 import org.codehaus.groovy.ast.tools.GeneralUtils
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.codehaus.groovy.transform.TransformWithPriority
@@ -36,15 +34,13 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
 
     static final ClassNode MY_TYPE = makeWithoutCaching(CodecSerializable)
     static final ClassNode EXPOSES_TYPE = makeWithoutCaching(ExposesCodec)
+    static final ClassNode EXPOSES_FACTORY_TYPE = makeWithoutCaching(ExposesCodecFactory)
     static final ClassNode WITH_TYPE = makeWithoutCaching(WithCodec)
     static final ClassNode COMMENT = makeWithoutCaching(Comment)
     static final ClassNode TUPLE_MAP_CODEC = makeWithoutCaching('io.github.groovymc.cgl.api.codec.TupleMapCodec')
     static final ClassNode MAP_COMMENT_SPEC = makeWithoutCaching('io.github.groovymc.cgl.api.codec.comments.MapCommentSpec')
     static final String CODEC = 'com.mojang.serialization.Codec'
     static final ClassNode CODEC_NODE = makeWithoutCaching(CODEC)
-    static final String RECORD_CODEC_BUILDER = 'com.mojang.serialization.codecs.RecordCodecBuilder'
-    static final String INSTANCE = 'com.mojang.serialization.codecs.RecordCodecBuilder$Instance'
-    static final ClassNode INSTANCE_NODE = makeWithoutCaching(INSTANCE)
     static final ClassNode OPTIONAL = makeWithoutCaching(Optional)
 
     static final ClassNode BYTE_BUFFER = makeWithoutCaching(ByteBuffer)
@@ -211,15 +207,16 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         annotations.addAll(field?.annotations?:[])
         annotations.addAll(getter?.annotations?:[])
         List<WithCodecPath> path = (isOptional(parameter.type))?([WithCodecPath.OPTIONAL]):([])
-        Expression baseCodec = getCodecFromType(unresolveOptional(parameter.type),annotations,path)
+        List<Integer> target = (isOptional(parameter.type))?([0]):([])
+        Expression baseCodec = getCodecFromType(unresolveOptional(parameter.type),annotations,path,target)
         Expression fieldOf
         String fieldName = camelToSnake? toSnakeCase(name) : name
         if (!isOptional(parameter.type)) {
             PropertyNode pNode = parent.getProperty(name)
             if (pNode?.isStatic()) pNode = null
-            if (getMemberBooleanValue(anno, 'allowDefaultValues', true) && parameter.initialExpression !== null)
+            if (getMemberBooleanValue(anno, 'allowDefaultValues', true) && !checkNull(parameter.initialExpression))
                 fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), parameter.initialExpression))
-            else if (getMemberBooleanValue(anno, 'allowDefaultValues', true) && pNode !== null && pNode.initialExpression !== null)
+            else if (getMemberBooleanValue(anno, 'allowDefaultValues', true) && !checkNull(pNode?.initialExpression))
                 fieldOf = new MethodCallExpression(baseCodec, 'optionalFieldOf', new ArgumentListExpression(new ConstantExpression(fieldName), pNode.initialExpression))
             else
                 fieldOf = new MethodCallExpression(baseCodec, 'fieldOf', new ArgumentListExpression(new ConstantExpression(fieldName)))
@@ -237,6 +234,14 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
 
         Expression forGetter = new StaticMethodCallExpression(TUPLE_MAP_CODEC, 'forGetter', new ArgumentListExpression(fieldOf, forGetterArg))
         return forGetter
+    }
+
+    static boolean checkNull(Expression expr) {
+        if (expr === null) return true
+        if (expr instanceof ConstantExpression) {
+            return expr.value == null
+        }
+        return false
     }
 
     static ClassNode unresolveOptional(ClassNode toResolve) {
@@ -293,16 +298,54 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         return null
     }
 
-    Expression getCodecFromType(ClassNode clazz, List<AnnotationNode> context, List<WithCodecPath> path) {
-        List<Expression> specifiedClosure = new ArrayList<>(context.findAll {it.getClassNode() == WITH_TYPE }
-                .findAll {getMemberCodecPath(it, 'path') == path}
-                .collect {getMemberClassValue(it, 'value')}.findAll {it !== null}.unique().collect {new ConstructorCallExpression(it, new ArgumentListExpression())})
-        specifiedClosure.addAll(context.findAll {it.getClassNode() == WITH_TYPE }
-                .findAll {getMemberCodecPath(it, 'path') == path}
-                .collect {getMemberClosureLambdaExpressionValue(it, 'value')}.findAll {it !== null}.unique())
+    static List<Integer> getMemberCodecTarget(AnnotationNode anno, String name) {
+        Expression expr = anno.getMember(name)
+        if (expr == null) {
+            return []
+        }
+        if (expr instanceof ListExpression) {
+            final ListExpression listExpression = (ListExpression) expr
+            List<Integer> list = new ArrayList<>()
+            for (Expression itemExpr : listExpression.getExpressions()) {
+                if (itemExpr instanceof ConstantExpression) {
+                    Integer value = parseSingleTargetExpr(itemExpr)
+                    if (value != null) list.add(value)
+                }
+            }
+            return list
+        }
+        Integer single = parseSingleTargetExpr(expr)
+        return single==null?([]):([single])
+    }
+
+    static Integer parseSingleTargetExpr(Expression itemExpr) {
+        if (itemExpr instanceof ConstantExpression) {
+            try {
+                return itemExpr.getValue() as Integer
+            } catch (GroovyCastException ignored) {}
+        }
+        return null
+    }
+
+    Expression getCodecFromType(ClassNode clazz, List<AnnotationNode> context, List<WithCodecPath> path, List<Integer> target) {
+        List<AnnotationNode> withTypes = context.findAll {it.getClassNode() == WITH_TYPE }
+                .findAll {
+                    var aTarget = getMemberCodecTarget(it, 'target')
+                    var aPath = getMemberCodecPath(it, 'path')
+                    return (aPath == path && !aPath.empty) || (aTarget == target && !aTarget.isEmpty()) || (aTarget.isEmpty() && aPath.isEmpty() && target.isEmpty()) }
+        List<Expression> specifiedClosure = new ArrayList<>(withTypes.collect {
+            getMemberClassValue(it, 'value')
+        }.findAll {it !== null}.unique().collect {new ConstructorCallExpression(it, new ArgumentListExpression())})
+        specifiedClosure.addAll(withTypes.collect {
+            getMemberClosureLambdaExpressionValue(it, 'value')
+        }.findAll {it !== null}.unique())
+        specifiedClosure = specifiedClosure.unique()
+
         if (specifiedClosure.size() == 1) {
             Expression closure = specifiedClosure[0]
             return new MethodCallExpression(closure, 'call', new ArgumentListExpression())
+        } else if (specifiedClosure.size() > 1) {
+            throw new RuntimeException("Multiple @WithType annotations with matching targets found: ${withTypes.collect {it.text}}")
         }
         if (clazz == ClassHelper.boolean_TYPE || clazz == ClassHelper.Boolean_TYPE)
             return GeneralUtils.attrX(new ClassExpression(CODEC_NODE), GeneralUtils.constX('BOOL'))
@@ -331,7 +374,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
                 throw new RuntimeException('Constructor parameters and their matching fields in codec-serializable classes may not use a raw List')
             }
             ClassNode child = clazz.genericsTypes[0].type
-            Expression childExpression = getCodecFromType(child,context,path+[WithCodecPath.LIST])
+            Expression childExpression = getCodecFromType(child,context,path+[WithCodecPath.LIST],target+[0])
             return new MethodCallExpression(childExpression, 'commentFirstListOf', new ArgumentListExpression())
         }
         if (clazz == ClassHelper.MAP_TYPE) {
@@ -340,8 +383,8 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             }
             ClassNode key = clazz.genericsTypes[0].type
             ClassNode value = clazz.genericsTypes[1].type
-            Expression keyExpression = getCodecFromType(key,context,path+[WithCodecPath.MAP_KEY])
-            Expression valueExpression = getCodecFromType(value,context,path+[WithCodecPath.MAP_VAL])
+            Expression keyExpression = getCodecFromType(key,context,path+[WithCodecPath.MAP_KEY],target+[0])
+            Expression valueExpression = getCodecFromType(value,context,path+[WithCodecPath.MAP_VAL],target+[1])
             return new StaticMethodCallExpression(CODEC_NODE, 'unboundedMap', new ArgumentListExpression(
                     keyExpression, valueExpression
             ))
@@ -352,8 +395,8 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             }
             ClassNode left = clazz.genericsTypes[0].type
             ClassNode right = clazz.genericsTypes[1].type
-            Expression leftExpression = getCodecFromType(left,context,path+[WithCodecPath.PAIR_FIRST])
-            Expression rightExpression = getCodecFromType(right,context,path+[WithCodecPath.PAIR_SECOND])
+            Expression leftExpression = getCodecFromType(left,context,path+[WithCodecPath.PAIR_FIRST],target+[0])
+            Expression rightExpression = getCodecFromType(right,context,path+[WithCodecPath.PAIR_SECOND],target+[1])
             return new StaticMethodCallExpression(CODEC_NODE, 'pair', new ArgumentListExpression(
                     leftExpression, rightExpression
             ))
@@ -364,8 +407,8 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             }
             ClassNode left = clazz.genericsTypes[0].type
             ClassNode right = clazz.genericsTypes[1].type
-            Expression leftExpression = getCodecFromType(left,context,path+[WithCodecPath.EITHER_LEFT])
-            Expression rightExpression = getCodecFromType(right,context,path+[WithCodecPath.EITHER_RIGHT])
+            Expression leftExpression = getCodecFromType(left,context,path+[WithCodecPath.EITHER_LEFT],target+[0])
+            Expression rightExpression = getCodecFromType(right,context,path+[WithCodecPath.EITHER_RIGHT],target+[1])
             return new StaticMethodCallExpression(CODEC_NODE, 'either', new ArgumentListExpression(
                     leftExpression, rightExpression
             ))
@@ -376,6 +419,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         }
         List<String> givenFields = clazz.annotations.findAll {it.getClassNode() == MY_TYPE }.collect {getMemberStringValue(it, 'property', DEFAULT_CODEC_PROPERTY)}
         givenFields.addAll clazz.annotations.findAll { it.getClassNode() == EXPOSES_TYPE }.collect { getMemberStringValue(it, 'value', '') }.findAll {it != ''}
+        givenFields.addAll(getExposes(clazz))
 
         if (givenFields.size() >= 1) {
             return new PropertyExpression(new ClassExpression(clazz), givenFields[0]).tap {
@@ -394,7 +438,53 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         if (codecFields.size() == 1) {
             return GeneralUtils.attrX(new ClassExpression(clazz), GeneralUtils.constX(codecFields[0].name))
         }
+
+        List<AnnotationNode> annotationFactories = clazz.annotations.findAll { it.getClassNode() == EXPOSES_FACTORY_TYPE }
+        annotationFactories.addAll(getFactories(clazz))
+        if (annotationFactories.size() >= 1) {
+            var factory = annotationFactories[0]
+            var factoryName = getMemberStringValue(factory, 'value', '')
+            if (factoryName.empty) {
+                throw new RuntimeException("The @ExposesFactory annotation on ${clazz.name} must have a value.")
+            }
+            List<Expression> subExpressions = new ArrayList<>()
+            if (clazz.usingGenerics) {
+                var parameters = clazz.genericsTypes.collect { it.type }
+                for (int i = 0; i < parameters.size(); i++) {
+                    subExpressions.add(getCodecFromType(parameters[i], context, path + [WithCodecPath.FACTORY_PARAMETER], target + [i]))
+                }
+            }
+            return GeneralUtils.callX(new ClassExpression(clazz), factoryName, GeneralUtils.args(subExpressions))
+        }
+
         throw new RuntimeException("A codec cannot be found for type ${clazz.toString(false)}.")
+    }
+
+    static final ClassNode EXPOSE_FACTORY_TYPE = makeWithoutCaching(ExposeCodecFactory)
+    static List<AnnotationNode> getFactories(ClassNode classNode) {
+        List<AnnotationNode> factories = new ArrayList<>()
+        for (MethodNode method : classNode.methods) {
+            factories.addAll(method.annotations.findAll {
+                it.getClassNode() == EXPOSE_FACTORY_TYPE
+            }.collect {
+                new AnnotationNode(EXPOSES_FACTORY_TYPE).tap {
+                    addMember('value', new ConstantExpression(method.name))
+                    addMember('parameters', new ConstantExpression(method.parameters.length))
+                }
+            })
+        }
+        return factories
+    }
+    
+    static final ClassNode EXPOSE_CODEC_TYPE = makeWithoutCaching(ExposeCodec)
+    static List<String> getExposes(ClassNode classNode) {
+        List<String> exposes = new ArrayList<>()
+        for (PropertyNode property : classNode.properties) {
+            if (property.annotations.any { it.getClassNode() == EXPOSE_CODEC_TYPE }) {
+                exposes.add(property.name)
+            }
+        }
+        return exposes
     }
 
     @Override

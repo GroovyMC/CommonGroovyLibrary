@@ -30,4 +30,9 @@ class MapCommentSpec implements CommentSpec {
     String getComment(String mapKey) {
         return values.get(mapKey)
     }
+
+    @Override
+    String toString() {
+        return "MapCommentSpec[${String.join('; ',values.collect {key, val -> "$key: '$val'"})}]"
+    }
 }

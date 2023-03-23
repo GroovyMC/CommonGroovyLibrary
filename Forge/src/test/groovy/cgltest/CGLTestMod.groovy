@@ -11,4 +11,7 @@ import groovy.transform.CompileStatic
 @GMod('cgltest')
 @CompileStatic
 class CGLTestMod {
+    CGLTestMod() {
+        CodecTesting.yes()
+    }
 }

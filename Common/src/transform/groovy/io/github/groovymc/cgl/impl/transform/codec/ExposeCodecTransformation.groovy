@@ -15,17 +15,17 @@ import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
+import org.codehaus.groovy.transform.TransformWithPriority
 import org.codehaus.groovy.transform.stc.StaticTypeCheckingSupport
 
 import static org.codehaus.groovy.ast.ClassHelper.makeWithoutCaching
 
 @CompileStatic
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
-class ExposeCodecTransformation extends AbstractASTTransformation {
+class ExposeCodecTransformation extends AbstractASTTransformation implements TransformWithPriority {
 
     static final ClassNode MY_TYPE = makeWithoutCaching(ExposeCodec)
     static final ClassNode TARGET_TYPE = makeWithoutCaching(ExposesCodec)
-    static final ClassNode CODEC_NODE = makeWithoutCaching('com.mojang.serialization.Codec')
 
     @Override
     void visit(ASTNode[] nodes, SourceUnit source) {
@@ -60,7 +60,9 @@ class ExposeCodecTransformation extends AbstractASTTransformation {
     }
 
     static void doApply(ClassNode parent, ClassNode type, String name) {
-        if (!StaticTypeCheckingSupport.implementsInterfaceOrIsSubclassOf(type, CODEC_NODE)) {
+        var parameterizedCodec = makeWithoutCaching('com.mojang.serialization.Codec')
+        parameterizedCodec.setGenericsTypes(new GenericsType[]{new GenericsType(parent)})
+        if (!StaticTypeCheckingSupport.implementsInterfaceOrIsSubclassOf(type, parameterizedCodec)) {
             throw new RuntimeException("ExposeCodec used in ${parent.name} must annotate either a field of type Codec<${parent.nameWithoutPackage}> or a getter that return Codec<${parent.nameWithoutPackage}>. Current detected type is ${type.toString(false)}")
         }
         if (parent.annotations*.classNode.find {it == TARGET_TYPE}) {
@@ -69,5 +71,10 @@ class ExposeCodecTransformation extends AbstractASTTransformation {
         parent.addAnnotation(new AnnotationNode(TARGET_TYPE).tap {
             addMember('value', new ConstantExpression(name))
         })
+    }
+
+    @Override
+    int priority() {
+        return 0
     }
 }

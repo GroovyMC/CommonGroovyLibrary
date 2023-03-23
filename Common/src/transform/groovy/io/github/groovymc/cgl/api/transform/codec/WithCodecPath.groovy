@@ -9,7 +9,10 @@ import groovy.transform.CompileStatic
 
 /**
  * These path elements can be used with {@link WithCodec} to target individual nested type parameters with a codec.
+ *
+ * @deprecated Use {@link WithCodec#target()} instead.
  */
+@Deprecated(forRemoval = true)
 @CompileStatic
 enum WithCodecPath {
     /**
@@ -43,5 +46,9 @@ enum WithCodecPath {
     /**
      * Targets the type of the right value of a {@link com.mojang.datafixers.util.Either}.
      */
-    EITHER_RIGHT
+    EITHER_RIGHT,
+    /**
+     * Targets every type parameter of any type using an exposed codec factory
+     */
+    FACTORY_PARAMETER
 }

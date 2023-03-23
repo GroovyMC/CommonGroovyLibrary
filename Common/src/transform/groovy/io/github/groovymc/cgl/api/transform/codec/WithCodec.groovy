@@ -8,17 +8,19 @@ package io.github.groovymc.cgl.api.transform.codec
 import com.mojang.serialization.Codec
 
 import java.lang.annotation.ElementType
+import java.lang.annotation.Repeatable
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
 /**
  * Allows codecs to be specified for types which {@link CodecSerializable} would otherwise not be able to use. This
- * annotation takes two arguments; a closure which provides the annotation to use, and an optional list that defines
- * where the parameter being annotated is. This annotation can be placed on either the parameter in the constructor or
- * this field or getter for the property matching the parameter.
+ * annotation takes two arguments; a closure which provides the codec to use, and an optional list that defines where
+ * the parameter being annotated is. This annotation can be placed on either the parameter in the constructor or this
+ * field or getter for the property matching the parameter.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target([ElementType.PARAMETER,ElementType.FIELD,ElementType.METHOD])
+@Repeatable(WithCodecs)
 @interface WithCodec {
     /**
      * A closure that returns the codec to use for the targeted elements.
@@ -39,6 +41,11 @@ import java.lang.annotation.Target
      * to use the closure to provide the codec.
      *
      * This parameter is optional; if not present or an empty list, the root type is targeted.
+     *
+     * @deprecated Use {@link WithCodec#target()} instead.
      */
+    @Deprecated(forRemoval = true)
     WithCodecPath[] path() default []
+
+    int[] target() default []
 }

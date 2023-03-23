@@ -155,5 +155,15 @@ class TupleMapCodec<O> extends MapCodec<O> {
             this.codec = codec
             this.getter = getter
         }
+
+        @Override
+        String toString() {
+            codec.toString()
+        }
+    }
+
+    @Override
+    String toString() {
+        return "TupleMapCodec[codecs=${Arrays.toString(codecs)} spec=${spec}]"
     }
 }
