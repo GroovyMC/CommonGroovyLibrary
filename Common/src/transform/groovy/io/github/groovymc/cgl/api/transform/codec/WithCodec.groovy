@@ -5,13 +5,8 @@
 
 package io.github.groovymc.cgl.api.transform.codec
 
-import com.mojang.serialization.Codec
 
-import java.lang.annotation.ElementType
-import java.lang.annotation.Repeatable
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-import java.lang.annotation.Target
+import java.lang.annotation.*
 /**
  * Allows codecs to be specified for types which {@link CodecSerializable} would otherwise not be able to use. This
  * annotation takes two arguments; a closure which provides the codec to use, and an optional list that defines where
@@ -25,7 +20,7 @@ import java.lang.annotation.Target
     /**
      * A closure that returns the codec to use for the targeted elements.
      */
-    Class<? extends Closure<Codec>> value()
+    Class<? extends Closure> value()
 
     /**
      * The path to the type to target within the type parameter structure of the annotated element. For instance, in the
