@@ -55,7 +55,7 @@ final class CommandExtensions {
             type = 'com.mojang.brigadier.builder.LiteralArgumentBuilder<S>',
             strategy = DELEGATE_FIRST
     ) Closure closure) {
-        final command = LiteralArgumentBuilder.<S> literal(name)
+        final command = LiteralArgumentBuilder.<S>literal(name)
         closure.delegate = command
         closure.resolveStrategy = DELEGATE_FIRST
         closure(command)
@@ -71,7 +71,7 @@ final class CommandExtensions {
             type = 'com.mojang.brigadier.builder.LiteralArgumentBuilder<S>',
             strategy = DELEGATE_FIRST
     ) Closure closure) {
-        final command = LiteralArgumentBuilder.<S> literal(name)
+        final command = LiteralArgumentBuilder.<S>literal(name)
         closure.delegate = command
         closure.resolveStrategy = DELEGATE_FIRST
         closure(command)
