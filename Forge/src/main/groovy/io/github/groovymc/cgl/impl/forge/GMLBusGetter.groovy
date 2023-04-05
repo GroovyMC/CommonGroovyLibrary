@@ -23,6 +23,6 @@ class GMLBusGetter implements ForgeBusGetter {
         if (modContainer instanceof GModContainer) {
             return modContainer.modBus
         }
-        return null
+        null
     }
 }
