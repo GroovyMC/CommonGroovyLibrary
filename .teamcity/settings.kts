@@ -87,7 +87,7 @@ object GroovyMC_CommonGroovyLibrary_PullRequests : BuildType({
 
     triggers {
         vcs {
-            branchFilter = "-refs/heads/*"
+            branchFilter = "+:*"
         }
     }
 
