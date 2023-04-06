@@ -5,6 +5,7 @@ plugins {
     id 'com.matyrobbrt.mc.registrationutils' version '1.19.3-2.0.1'
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'org.quiltmc.loom' version '1.1.+' apply false
+    id 'io.github.groovymc.simpleci' version '0.1.+'
 }
 
 registrationUtils {
@@ -15,6 +16,20 @@ registrationUtils {
         Forge {}
     }
 }
+
+versioning {
+    fromTag.set('0.2.5')
+}
+changelog {
+    start.set('0.2.5')
+}
+final calculatedVersion = versioning.calculatedVersion
+allprojects { Project project ->
+    println("${project.name} version: ${project.version = calculatedVersion}")
+}
+
+project.ext.mavenUser = (System.getenv('MAVEN_USER') ?: findProperty('inquisitionMavenUser')) ?: ''
+project.ext.mavenPassword = (System.getenv('MAVEN_PASSWORD') ?: findProperty('inquisitionMavenPassword')) ?: ''
 
 group = 'io.github.groovymc.cgl'
 

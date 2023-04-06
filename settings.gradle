@@ -13,10 +13,6 @@ pluginManagement {
             url = 'https://maven.quiltmc.org/repository/snapshot'
         }
         maven {
-            name 'ModdingInquisition (Release)'
-            url 'https://maven.moddinginquisition.org/releases/'
-        }
-        maven {
             name = 'Minecraft Forge'
             url = 'https://maven.minecraftforge.net/'
         }
@@ -26,6 +22,24 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+
+        final moddingInquisition = maven {
+            name 'ModdingInquisition (Release)'
+            url 'https://maven.moddinginquisition.org/releases/'
+        }
+        exclusiveContent {
+            forRepositories(moddingInquisition)
+            filter {
+                includeGroupByRegex('io\\.github\\.groovymc.*')
+            }
+        }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.toString() == 'org.spongepowered.mixin') {
+                useModule("org.spongepowered:mixingradle:${requested.version}")
+            }
+        }
     }
 }
 

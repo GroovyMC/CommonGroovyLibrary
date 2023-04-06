@@ -1,18 +1,9 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.spongepowered:mixingradle:0.7.+'
-    }
-}
 plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
-apply plugin: 'org.spongepowered.mixin'
 
 archivesBaseName = "cgl-${minecraft_version}-forge"
 
@@ -171,8 +162,8 @@ publishing {
             name = 'ModdingInquisitionMavenRepo'
             url = 'https://maven.moddinginquisition.org/releases'
             credentials {
-                username = findProperty('inquisitionMavenUser') ?: ''
-                password = findProperty('inquisitionMavenPassword') ?: ''
+                username = rootProject.ext.mavenUser
+                password = rootProject.ext.mavenPassword
             }
         }
     }
