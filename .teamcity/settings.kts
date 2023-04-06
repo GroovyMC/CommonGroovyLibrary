@@ -24,6 +24,7 @@ version = "2022.10"
 
 project {
     buildType(GroovyMC_CommonGroovyLibrary_Build)
+    buildType(GroovyMC_CommonGroovyLibrary_PullRequests)
 }
 
 object GroovyMC_CommonGroovyLibrary_Build : BuildType({
@@ -72,6 +73,43 @@ object GroovyMC_CommonGroovyLibrary_Build : BuildType({
         gradle {
             name = "Publish Gradle Project"
             tasks = "publish"
+        }
+    }
+})
+
+object GroovyMC_CommonGroovyLibrary_PullRequests : BuildType({
+    id("PullRequests")
+    name = "PullRequests"
+
+    vcs {
+        root(DslContext.settingsRoot)
+    }
+
+    features {
+        swabra {
+            filesCleanup = Swabra.FilesCleanup.BEFORE_BUILD
+            lockingProcesses = Swabra.LockingProcessPolicy.KILL
+        }
+        commitStatusPublisher {
+            publisher = github {
+                githubUrl = "https://api.github.com"
+                authType = personalToken {
+                    token = "%commit_status_publisher%"
+                }
+            }
+        }
+        pullRequests {
+            provider = github {
+                authType = vcsRoot()
+                filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+            }
+        }
+    }
+
+    steps {
+        gradle {
+            name = "Build Gradle Project"
+            tasks = "build"
         }
     }
 })
