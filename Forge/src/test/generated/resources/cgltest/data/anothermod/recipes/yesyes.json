@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:blasting",
+  "category": "blocks",
+  "cookingtime": 2000,
+  "experience": 12.0,
+  "ingredient": {
+    "item": "minecraft:acacia_boat"
+  },
+  "result": "minecraft:allium"
+}

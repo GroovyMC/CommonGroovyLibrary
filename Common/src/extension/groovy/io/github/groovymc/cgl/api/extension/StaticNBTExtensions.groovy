@@ -45,6 +45,7 @@ final class StaticNBTExtensions {
             case Collection -> new ListTag().tap { list ->
                 toConvert.each { list.add(from(null, it)) }
             }
+            case Map -> of(null, toConvert as Map)
             default -> (Tag) null
         }
     }

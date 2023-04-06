@@ -46,13 +46,13 @@ minecraft {
 
         data {
             ideaModule "${rootProject.name}.${project.name}.main"
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', mod_id, '--mod', 'cgltest', '--all', '--output', file('src/test/generated/resources/'), '--existing', file('src/main/resources/')
             taskName 'Data'
         }
     }
 }
 
-sourceSets.main.resources.srcDir 'src/generated/resources'
+sourceSets.main.resources.srcDir 'src/test/generated/resources'
 
 sourceSets {
     transform {}
