@@ -106,12 +106,16 @@ tasks.register('groovydocJar', Jar) {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        register('mavenJava', MavenPublication) {
             groupId = 'io.github.groovymc.cgl'
             artifactId = "cgl-${minecraft_version}"
             version = project.version
             from components.java
             artifact groovydocJar
+            it.artifact(rootProject.changelog.output.get().asFile) {
+                classifier = 'changelog'
+                extension = 'txt'
+            }
         }
     }
     repositories {
