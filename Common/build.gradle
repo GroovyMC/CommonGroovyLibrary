@@ -115,6 +115,7 @@ publishing {
             it.artifact(rootProject.changelog.output.get().asFile) {
                 classifier = 'changelog'
                 extension = 'txt'
+                builtBy(rootProject.changelog)
             }
         }
     }
