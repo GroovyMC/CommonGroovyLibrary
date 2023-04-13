@@ -42,6 +42,15 @@ class GCookingRecipeBuilder implements SimpleRecipeBuilder<GCookingRecipeBuilder
         this.serializer = serializer
     }
 
+    GCookingRecipeBuilder serializer(RecipeSerializer<? extends AbstractCookingRecipe> serializer) {
+        return setSerializer(serializer)
+    }
+
+    GCookingRecipeBuilder setSerializer(RecipeSerializer<? extends AbstractCookingRecipe> serializer) {
+        this.serializer = serializer
+        return this
+    }
+
     GCookingRecipeBuilder ingredient(Ingredient ingredient) {
         return setIngredient(ingredient)
     }
@@ -72,7 +81,7 @@ class GCookingRecipeBuilder implements SimpleRecipeBuilder<GCookingRecipeBuilder
     @Requires({ ingredient && serializer && cookingTime > 0 })
     void save(Consumer<FinishedRecipe> finishedRecipeConsumer, ResourceLocation recipeId) {
         this.advancement.parent(ROOT_RECIPE_ADVANCEMENT).addCriterion('has_the_recipe', RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(RequirementsStrategy.OR);
-        finishedRecipeConsumer.accept(new Result(recipeId, this.group == null ? '' : this.group, this.bookCategory ?: determineRecipeCategory(this.serializer, this.result), this.ingredient, this.result, this.experience, this.cookingTime, this.advancement, recipeId.withPrefix("recipes/" + this.category.getFolderName() + "/"), this.serializer));
+        finishedRecipeConsumer.accept(new Result(recipeId, this.group ?: '', this.bookCategory ?: determineRecipeCategory(this.serializer, this.result), this.ingredient, this.result, this.experience, this.cookingTime, this.advancement, recipeId.withPrefix("recipes/" + this.category.getFolderName() + "/"), this.serializer));
     }
 
     private static CookingBookCategory determineRecipeCategory(RecipeSerializer<? extends AbstractCookingRecipe> serializer, ItemLike result) {

@@ -80,6 +80,11 @@ class Datagen extends GRecipeProvider {
             experience 4f
         }
 
+        stonecutting {
+            result Items.END_STONE_BRICK_SLAB
+            ingredient Items.PINK_CANDLE.ingredient()
+        } save 'test_stonecutting'
+
         saveForgotten()
     }
 }

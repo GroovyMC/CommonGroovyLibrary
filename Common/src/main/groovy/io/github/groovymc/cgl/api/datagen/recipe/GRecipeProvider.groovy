@@ -65,6 +65,14 @@ abstract class GRecipeProvider extends RecipeProvider {
         }
     }
 
+    protected GSingleItemRecipeBuilder stonecutting(@DelegatesTo(value = GSingleItemRecipeBuilder, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType, options = 'io.github.groovymc.cgl.api.datagen.GSingleItemRecipeBuilder') Closure clos) {
+        recipe(new GSingleItemRecipeBuilder(RecipeSerializer.STONECUTTER), clos)
+    }
+
+    protected GSingleItemRecipeBuilder singleItem(@DelegatesTo(value = GSingleItemRecipeBuilder, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType, options = 'io.github.groovymc.cgl.api.datagen.GSingleItemRecipeBuilder') Closure clos) {
+        recipe(new GSingleItemRecipeBuilder(), clos)
+    }
+
     protected GCookingRecipeBuilder smelting(@DelegatesTo(value = GCookingRecipeBuilder, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType, options = 'io.github.groovymc.cgl.api.datagen.GCookingRecipeBuilder') Closure clos) {
         recipe(new GCookingRecipeBuilder(), clos)
     }
