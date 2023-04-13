@@ -6,12 +6,16 @@
 package io.github.groovymc.cgl.api.extension
 
 import groovy.transform.CompileStatic
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Position
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.ItemLike
+import net.minecraft.world.phys.Vec3
+import org.codehaus.groovy.runtime.DefaultGroovyMethods
 
 @CompileStatic
 class ItemExtensions {
@@ -48,5 +52,21 @@ class ItemExtensions {
 
     static Ingredient ingredient(TagKey<Item> tag) {
         return Ingredient.of(tag)
+    }
+
+    static <T> T asType(ItemStack self, Class<T> type) {
+        return switch (type) {
+            case Ingredient -> (T) ingredient(self.item)
+            case ItemLike -> (T) self.item
+            default -> (T) DefaultGroovyMethods.asType(self, type)
+        }
+    }
+
+    static <T> T asType(ItemLike self, Class<T> type) {
+        return switch (type) {
+            case Ingredient -> (T) ingredient(self.asItem())
+            case ItemStack -> (T) self.asItem().defaultInstance
+            default -> (T) DefaultGroovyMethods.asType(self, type)
+        }
     }
 }

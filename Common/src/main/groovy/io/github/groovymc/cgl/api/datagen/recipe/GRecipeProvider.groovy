@@ -9,11 +9,11 @@ import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.FirstParam
 import groovy.transform.stc.SimpleType
+import groovy.util.logging.Slf4j
 import net.minecraft.advancements.Advancement
 import net.minecraft.advancements.CriterionTriggerInstance
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.PackOutput
-import net.minecraft.data.recipes.CraftingRecipeBuilder
 import net.minecraft.data.recipes.FinishedRecipe
 import net.minecraft.data.recipes.RecipeBuilder
 import net.minecraft.data.recipes.RecipeCategory
@@ -21,16 +21,19 @@ import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.CraftingBookCategory
+import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.ItemLike
 import org.jetbrains.annotations.Nullable
 
 import java.util.function.Consumer
 
+@Slf4j
 @CompileStatic
 abstract class GRecipeProvider extends RecipeProvider {
     public Consumer<FinishedRecipe> writer
     protected final String defaultNamespace
+
+    protected final List<SaveableRecipe> forgottenRecipes = []
     GRecipeProvider(PackOutput packOutput, String defaultNamespace = 'minecraft') {
         super(packOutput)
         this.defaultNamespace = defaultNamespace
@@ -41,9 +44,42 @@ abstract class GRecipeProvider extends RecipeProvider {
         this.writer = writer
         this.buildRecipes()
         this.writer = null
+
+        if (!forgottenRecipes.isEmpty()) {
+            log.error("It seems like ${forgottenRecipes.size()} recipes created in provider ${this} have not been saved. You may save them automatically by calling GRecipeProvider#saveForgotten in buildRecipes().")
+            throw new RuntimeException("${forgottenRecipes.size()} recipes have not been saved!")
+        }
     }
 
     protected abstract void buildRecipes()
+
+    /**
+     * Saves all forgotten recipes of type {@link BaseRecipeBuilder}. <br>
+     * Note that this means the recipes will be saved to a path representing the result's registry name.
+     */
+    protected void saveForgotten() {
+        List.copyOf(this.forgottenRecipes).each {
+            if (it instanceof BaseRecipeBuilder) {
+                it.save()
+            }
+        }
+    }
+
+    protected GCookingRecipeBuilder smelting(@DelegatesTo(value = GCookingRecipeBuilder, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType, options = 'io.github.groovymc.cgl.api.datagen.GCookingRecipeBuilder') Closure clos) {
+        recipe(new GCookingRecipeBuilder(), clos)
+    }
+
+    protected GCookingRecipeBuilder blasting(@DelegatesTo(value = GCookingRecipeBuilder, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType, options = 'io.github.groovymc.cgl.api.datagen.GCookingRecipeBuilder') Closure clos) {
+        recipe(new GCookingRecipeBuilder(RecipeSerializer.BLASTING_RECIPE), clos)
+    }
+
+    protected GCookingRecipeBuilder campfireCooking(@DelegatesTo(value = GCookingRecipeBuilder, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType, options = 'io.github.groovymc.cgl.api.datagen.GCookingRecipeBuilder') Closure clos) {
+        recipe(new GCookingRecipeBuilder(RecipeSerializer.CAMPFIRE_COOKING_RECIPE), clos)
+    }
+
+    protected GCookingRecipeBuilder smoking(@DelegatesTo(value = GCookingRecipeBuilder, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType, options = 'io.github.groovymc.cgl.api.datagen.GCookingRecipeBuilder') Closure clos) {
+        recipe(new GCookingRecipeBuilder(RecipeSerializer.SMOKING_RECIPE), clos)
+    }
 
     protected GShapedRecipeBuilder shaped(@DelegatesTo(value = GShapedRecipeBuilder, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType, options = 'io.github.groovymc.cgl.api.datagen.GShapedRecipeBuilder') Closure clos) {
         recipe(new GShapedRecipeBuilder(), clos)
@@ -62,6 +98,7 @@ abstract class GRecipeProvider extends RecipeProvider {
         clos.resolveStrategy = Closure.DELEGATE_FIRST
         clos.delegate = recipe
         clos(recipe)
+        forgottenRecipes.add(recipe)
         return recipe
     }
 
@@ -72,6 +109,7 @@ abstract class GRecipeProvider extends RecipeProvider {
         return new SaveableRecipe() {
             @Override
             void save(ResourceLocation location) {
+                forgottenRecipes.remove(this)
                 recipe.save(getProvider().writer, location)
             }
 
@@ -126,6 +164,7 @@ trait BaseRecipeBuilder extends SaveableRecipe implements RecipeBuilder {
     }
 
     void save(ResourceLocation location) {
+        provider.forgottenRecipes.remove(this)
         this.save(this.getProvider().writer, location)
     }
 }

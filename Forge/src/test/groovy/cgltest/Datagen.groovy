@@ -17,6 +17,7 @@ import net.minecraft.data.recipes.SimpleCookingRecipeBuilder
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
+import net.minecraft.world.item.crafting.Ingredient
 import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 
@@ -65,5 +66,20 @@ class Datagen extends GRecipeProvider {
         )) {
             unlockedBy('yes', has(Items.ALLIUM))
         } save new ResourceLocation('anothermod:yesyes')
+
+        campfireCooking {
+            result Items.ACACIA_LOG
+            ingredient Items.AZALEA as Ingredient
+            category RecipeCategory.BREWING
+        }
+
+        smelting {
+            result Items.IRON_AXE
+            ingredient Items.BAMBOO.ingredient()
+            cookingTime 150
+            experience 4f
+        }
+
+        saveForgotten()
     }
 }
