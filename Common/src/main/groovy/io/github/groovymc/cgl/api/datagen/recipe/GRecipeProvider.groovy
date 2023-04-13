@@ -27,6 +27,23 @@ import org.jetbrains.annotations.Nullable
 
 import java.util.function.Consumer
 
+/**
+ * A {@link RecipeProvider} with a few additions that better support Groovy. <br>
+ * All the G-recipe builders do <strong>not</strong> require an advancement criterion, unlike the vanilla recipe builders. <br>
+ * They are designed to be used along side closure and parenthesis-less calls to make them easier to both read and write. <br>
+ * An example of how a {@link GShapelessRecipeBuilder} is inteded to be used:
+ * <pre>
+ * {@code
+ * shapeless {
+ *      result Items.SPRUCE_BUTTON * 12
+ *      requires Items.AZALEA
+ *
+ *      category RecipeCategory.DECORATIONS
+ *      group 'spruce_stuff'
+ * } save 'sprucex12'
+ * }
+ * </pre>
+ */
 @Slf4j
 @CompileStatic
 abstract class GRecipeProvider extends RecipeProvider {
@@ -34,6 +51,10 @@ abstract class GRecipeProvider extends RecipeProvider {
     protected final String defaultNamespace
 
     protected final List<SaveableRecipe> forgottenRecipes = []
+
+    /**
+     * @param defaultNamespace the default namespace to be used by {@link SaveableRecipe#save(java.lang.String)}
+     */
     GRecipeProvider(PackOutput packOutput, String defaultNamespace = 'minecraft') {
         super(packOutput)
         this.defaultNamespace = defaultNamespace
@@ -51,6 +72,11 @@ abstract class GRecipeProvider extends RecipeProvider {
         }
     }
 
+    /**
+     * Override this method to build your recipes. <br>
+     * You may use the {@link #writer} as a {@code Consumer<FinishedRecipe>}, but it is not usually necessary as there are methods such as {@link #normal(net.minecraft.data.recipes.RecipeBuilder)}
+     * which allow you to more easily save recipes.
+     */
     protected abstract void buildRecipes()
 
     /**
@@ -138,10 +164,16 @@ abstract class GRecipeProvider extends RecipeProvider {
 trait SaveableRecipe {
     GRecipeProvider provider
 
+    /**
+     * Saves this recipe to the given {@code location}, using the provider's {@link GRecipeProvider#defaultNamespace  default namespace}.
+     */
     void save(String location) {
         this.save(location.contains(':') ? new ResourceLocation(location) : new ResourceLocation(provider.defaultNamespace, location))
     }
 
+    /**
+     * Saves this recipe to the given {@code location}.
+     */
     abstract void save(ResourceLocation location)
 }
 
@@ -167,10 +199,16 @@ trait BaseRecipeBuilder extends SaveableRecipe implements RecipeBuilder {
         return this.@result
     }
 
+    /**
+     * Saves this recipe to a location representing the {@link #getResult() result's} registry name.
+     */
     void save() {
         this.save(BuiltInRegistries.ITEM.getKey(getResult()))
     }
 
+    /**
+     * {@inheritDoc}
+     */
     void save(ResourceLocation location) {
         provider.forgottenRecipes.remove(this)
         this.save(this.getProvider().writer, location)
