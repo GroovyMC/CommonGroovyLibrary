@@ -7,6 +7,7 @@ package io.github.groovymc.cgl.api.extension
 
 import groovy.transform.CompileStatic
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Holder
 import net.minecraft.core.Position
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.tags.TagKey
@@ -57,7 +58,8 @@ class ItemExtensions {
     static <T> T asType(ItemStack self, Class<T> type) {
         return switch (type) {
             case Ingredient -> (T) ingredient(self.item)
-            case ItemLike -> (T) self.item
+            case ItemLike, Item -> (T) self.item
+            case Holder<Item> -> (T) self.itemHolder
             default -> (T) DefaultGroovyMethods.asType(self, type)
         }
     }

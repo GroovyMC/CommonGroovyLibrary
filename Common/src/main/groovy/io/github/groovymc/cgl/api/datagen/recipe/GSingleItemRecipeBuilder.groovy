@@ -34,21 +34,21 @@ class GSingleItemRecipeBuilder implements SimpleRecipeBuilder<GSingleItemRecipeB
     }
 
     GSingleItemRecipeBuilder ingredient(Ingredient ingredient) {
-        return setIngredient(ingredient)
+        setIngredient(ingredient)
+        return this
     }
 
-    GSingleItemRecipeBuilder setIngredient(Ingredient ingredient) {
+    void setIngredient(Ingredient ingredient) {
         this.ingredient = ingredient
-        return this
     }
 
     GSingleItemRecipeBuilder type(RecipeSerializer type) {
-        return setType(type)
+        setType(type)
+        return this
     }
 
-    GSingleItemRecipeBuilder setType(RecipeSerializer type) {
+    void setType(RecipeSerializer type) {
         this.type = type
-        return this
     }
 
     @Requires({ this.ingredient && this.type })

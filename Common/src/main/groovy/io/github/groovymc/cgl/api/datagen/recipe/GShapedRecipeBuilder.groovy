@@ -55,6 +55,10 @@ class GShapedRecipeBuilder extends CraftingRecipeBuilder implements SimpleRecipe
         }
     }
 
+    GShapedRecipeBuilder pattern(String pattern) {
+        this.pattern(pattern.stripIndent().split('\n'))
+    }
+
     GShapedRecipeBuilder pattern(String... patterns) {
         patterns.each { pattern ->
             if (!this.rows.isEmpty() && pattern.length() !== this.rows[0].length()) {
@@ -67,13 +71,12 @@ class GShapedRecipeBuilder extends CraftingRecipeBuilder implements SimpleRecipe
     }
 
     GShapedRecipeBuilder showNotification(boolean showNotification) {
-        this.@showNotification = showNotification
+        this.setShowNotification(showNotification)
         return this
     }
 
-    GShapedRecipeBuilder setShowNotification(boolean showNotification) {
+    void setShowNotification(boolean showNotification) {
         this.@showNotification = showNotification
-        return this
     }
 
     void save(Consumer<FinishedRecipe> finishedRecipeConsumer, ResourceLocation recipeId) {

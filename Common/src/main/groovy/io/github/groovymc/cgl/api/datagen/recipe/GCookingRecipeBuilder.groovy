@@ -52,30 +52,30 @@ class GCookingRecipeBuilder implements SimpleRecipeBuilder<GCookingRecipeBuilder
     }
 
     GCookingRecipeBuilder ingredient(Ingredient ingredient) {
-        return setIngredient(ingredient)
+        setIngredient(ingredient)
+        return this
     }
 
-    GCookingRecipeBuilder setIngredient(Ingredient ingredient) {
+    void setIngredient(Ingredient ingredient) {
         this.ingredient = ingredient
-        return this
     }
 
-    GCookingRecipeBuilder setExperience(float exp) {
+    void setExperience(float exp) {
         this.experience = exp
-        return this
     }
 
     GCookingRecipeBuilder experience(float exp) {
-        return setExperience(exp)
-    }
-
-    GCookingRecipeBuilder setCookingTime(int cookingTime) {
-        this.cookingTime = cookingTime
+        setExperience(exp)
         return this
     }
 
+    void setCookingTime(int cookingTime) {
+        this.cookingTime = cookingTime
+    }
+
     GCookingRecipeBuilder cookingTime(int cookingTime) {
-        return setCookingTime(cookingTime)
+        setCookingTime(cookingTime)
+        return this
     }
 
     @Requires({ ingredient && serializer && cookingTime > 0 })

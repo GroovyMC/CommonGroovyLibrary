@@ -28,9 +28,9 @@ import org.jetbrains.annotations.Nullable
 import java.util.function.Consumer
 
 /**
- * A {@link RecipeProvider} with a few additions that better support Groovy. <br>
- * All the G-recipe builders do <strong>not</strong> require an advancement criterion, unlike the vanilla recipe builders. <br>
- * They are designed to be used along side closure and parenthesis-less calls to make them easier to both read and write. <br>
+ * <p>A {@link RecipeProvider} with a few additions that better support Groovy.</p>
+ * <p> All the G-recipe builders do <strong>not</strong> require an advancement criterion, unlike the vanilla recipe builders. </p>
+ * <p> They are designed to be used along side closure and parenthesis-less calls to make them easier to both read and write. </p>
  * An example of how a {@link GShapelessRecipeBuilder} is inteded to be used:
  * <pre>
  * {@code
@@ -157,101 +157,5 @@ abstract class GRecipeProvider extends RecipeProvider {
 
             }
         }
-    }
-}
-
-@CompileStatic
-trait SaveableRecipe {
-    GRecipeProvider provider
-
-    /**
-     * Saves this recipe to the given {@code location}, using the provider's {@link GRecipeProvider#defaultNamespace  default namespace}.
-     */
-    void save(String location) {
-        this.save(location.contains(':') ? new ResourceLocation(location) : new ResourceLocation(provider.defaultNamespace, location))
-    }
-
-    /**
-     * Saves this recipe to the given {@code location}.
-     */
-    abstract void save(ResourceLocation location)
-}
-
-@CompileStatic
-trait BaseRecipeBuilder extends SaveableRecipe implements RecipeBuilder {
-    ItemStack result
-
-    ItemStack result(ItemLike result) {
-        this.result = result.asItem().getDefaultInstance()
-        return this.result
-    }
-
-    ItemStack result(ItemStack result) {
-        this.result = result
-        return this.result
-    }
-
-    Item getResult() {
-        return this.@result.item
-    }
-
-    ItemStack getResultStack() {
-        return this.@result
-    }
-
-    /**
-     * Saves this recipe to a location representing the {@link #getResult() result's} registry name.
-     */
-    void save() {
-        this.save(BuiltInRegistries.ITEM.getKey(getResult()))
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    void save(ResourceLocation location) {
-        provider.forgottenRecipes.remove(this)
-        this.save(this.getProvider().writer, location)
-    }
-}
-
-@CompileStatic
-trait SimpleRecipeBuilder<T extends SimpleRecipeBuilder> extends BaseRecipeBuilder {
-    private RecipeCategory category = RecipeCategory.MISC
-    @Nullable
-    private String group
-    private final Advancement.Builder advancement = Advancement.Builder.advancement()
-
-    RecipeCategory getCategory() {
-        return this.@category
-    }
-    T setCategory(RecipeCategory category) {
-        this.@category = category
-        return (T) this
-    }
-
-    T category(RecipeCategory category) {
-        return setCategory(category)
-    }
-
-    String getGroup() {
-        return this.@group
-    }
-    T setGroup(String group) {
-        this.@group = group
-        return (T) this
-    }
-
-    T group(String group) {
-        return setGroup(group)
-    }
-
-    T unlockedBy(String criterionName, CriterionTriggerInstance criterionTrigger) {
-        this.@advancement.addCriterion(criterionName, criterionTrigger)
-        return (T) this
-    }
-
-    Advancement.Builder getAdvancement() {
-        return this.@advancement
     }
 }
