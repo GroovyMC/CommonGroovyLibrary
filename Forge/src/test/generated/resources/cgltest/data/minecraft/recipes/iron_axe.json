@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 260,
+  "experience": 4.0,
+  "ingredient": {
+    "item": "minecraft:bamboo"
+  },
+  "result": "minecraft:iron_axe"
+}
