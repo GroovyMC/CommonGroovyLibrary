@@ -7,6 +7,7 @@ package io.github.groovymc.cgl.api.datagen.recipe
 
 import com.google.gson.JsonObject
 import groovy.contracts.Requires
+import groovy.time.TimeDuration
 import groovy.transform.CompileStatic
 import net.minecraft.advancements.Advancement
 import net.minecraft.advancements.AdvancementRewards
@@ -74,6 +75,15 @@ class GCookingRecipeBuilder implements SimpleRecipeBuilder<GCookingRecipeBuilder
     }
 
     GCookingRecipeBuilder cookingTime(int cookingTime) {
+        setCookingTime(cookingTime)
+        return this
+    }
+
+    void setCookingTime(TimeDuration cookingTime) {
+        this.cookingTime = cookingTime.seconds * 20
+    }
+
+    GCookingRecipeBuilder cookingTime(TimeDuration cookingTime) {
         setCookingTime(cookingTime)
         return this
     }

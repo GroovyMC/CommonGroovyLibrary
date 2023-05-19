@@ -7,6 +7,8 @@ package cgltest
 
 import com.matyrobbrt.gml.bus.EventBusSubscriber
 import com.matyrobbrt.gml.bus.type.ModBus
+import groovy.time.TimeCategory
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import io.github.groovymc.cgl.api.datagen.recipe.GRecipeProvider
@@ -73,18 +75,25 @@ class Datagen extends GRecipeProvider {
             category RecipeCategory.BREWING
         }
 
-        smelting {
-            result Items.IRON_AXE
-            ingredient Items.BAMBOO.ingredient()
-            cookingTime 150
-            experience 4f
-        }
-
         stonecutting {
             result Items.END_STONE_BRICK_SLAB
             ingredient Items.PINK_CANDLE.ingredient()
         } save 'test_stonecutting'
 
+        dynamic()
+
         saveForgotten()
+    }
+
+    @CompileDynamic
+    private void dynamic() {
+        smelting {
+            result Items.IRON_AXE
+            ingredient Items.BAMBOO.ingredient()
+            use (TimeCategory) {
+                cookingTime 13.seconds
+            }
+            experience 4f
+        }
     }
 }

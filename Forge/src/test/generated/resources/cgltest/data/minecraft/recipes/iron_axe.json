@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smelting",
   "category": "misc",
-  "cookingtime": 150,
+  "cookingtime": 260,
   "experience": 4.0,
   "ingredient": {
     "item": "minecraft:bamboo"
