@@ -2,14 +2,14 @@ plugins {
     id 'java-library'
     id 'groovy'
     id 'io.github.groovymc.modsdotgroovy' version '1.1.2'
-    id 'com.matyrobbrt.mc.registrationutils' version '1.19.3-2.0.1'
+    id 'com.matyrobbrt.mc.registrationutils' version '1.20-1.0.0'
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'org.quiltmc.loom' version '1.1.+' apply false
-    id 'io.github.groovymc.simpleci' version '0.1.+'
+    id 'org.groovymc.simpleci' version '0.2.+'
 }
 
 registrationUtils {
-    group 'io.github.groovymc.cgl.reg'
+    group 'org.groovymc.cgl.reg'
     projects {
         Common {}
         Quilt {}
@@ -18,10 +18,10 @@ registrationUtils {
 }
 
 versioning {
-    fromTag.set('0.2.5')
+    fromTag.set('0.3.0')
 }
 changelog {
-    start.set('0.2.5')
+    start.set('0.3.0')
 }
 final calculatedVersion = versioning.calculatedVersion
 allprojects { Project project ->
@@ -31,7 +31,7 @@ allprojects { Project project ->
 project.ext.mavenUser = (System.getenv('MAVEN_USER') ?: findProperty('inquisitionMavenUser')) ?: ''
 project.ext.mavenPassword = (System.getenv('MAVEN_PASSWORD') ?: findProperty('inquisitionMavenPassword')) ?: ''
 
-group = 'io.github.groovymc.cgl'
+group = 'org.groovymc.cgl'
 
 modsDotGroovy {
     dslVersion = '1.2.1'
@@ -63,7 +63,6 @@ subprojects {
                 'Implementation-Title'    : 'CommonGroovyLibrary-' + project.name,
                 'Implementation-Version'  : project.jar.archiveVersion,
                 'Implementation-Vendor'   : mod_author,
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'Timestampe'              : System.currentTimeMillis(),
                 'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
                 'Built-on-Minecraft'      : minecraft_version,

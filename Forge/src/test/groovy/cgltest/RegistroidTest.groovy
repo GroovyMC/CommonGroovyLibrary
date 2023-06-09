@@ -10,7 +10,6 @@ package cgltest
 
 import groovy.transform.CompileStatic
 import groovy.transform.stc.POJO
-import io.github.groovymc.cgl.api.transform.registroid.*
 import net.minecraft.core.registries.Registries
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.Item
