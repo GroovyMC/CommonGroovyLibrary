@@ -9,7 +9,7 @@ import com.matyrobbrt.gml.BaseGMod
 import com.matyrobbrt.gml.GMod
 import groovy.transform.CompileStatic
 import groovy.transform.stc.POJO
-import io.github.groovymc.cgl.impl.CommonGroovyLibrary
+import org.groovymc.cgl.impl.CommonGroovyLibrary
 import org.jetbrains.annotations.ApiStatus
 
 @POJO

@@ -15,17 +15,23 @@ import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
-import net.minecraft.world.level.material.Material
+import net.minecraft.world.level.material.MapColor
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
+import org.groovymc.cgl.api.transform.registroid.BlockItemAddon
+import org.groovymc.cgl.api.transform.registroid.RecipeTypeAddon
+import org.groovymc.cgl.api.transform.registroid.RegistrationName
+import org.groovymc.cgl.api.transform.registroid.Registroid
+import org.groovymc.cgl.api.transform.registroid.SoundEventAddon
 
 @POJO
 @CompileStatic
 @SoundEventAddon
 @Registroid({ [ForgeRegistries.BLOCKS, Registries.SOUND_EVENT] })
 class RegistroidTest {
-    static final Block SOME_TEST = new Block(BlockBehaviour.Properties.of(Material.DIRT))
+    static final Block SOME_TEST = new Block(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).sound(SoundType.ROOTED_DIRT))
     static final SoundEvent TEST_SOUND
     static final SoundEvent TEST_SOUND_2 = SoundEvent.createVariableRangeEvent(null)
 
@@ -37,7 +43,7 @@ class RegistroidTest {
     @BlockItemAddon({ new Item.Properties().setNoRepair() })
     static final class BlockItems {
         @RegistrationName('hello_world')
-        static final Block A_BLOCK_WITH_BLOCK_ITEM = new Block(Block.Properties.of(Material.BUBBLE_COLUMN))
+        static final Block A_BLOCK_WITH_BLOCK_ITEM = new Block(Block.Properties.of().mapColor(MapColor.COLOR_BLACK))
     }
 
     @RecipeTypeAddon

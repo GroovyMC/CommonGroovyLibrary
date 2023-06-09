@@ -9,10 +9,10 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
-import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
-import io.github.groovymc.cgl.api.transform.codec.ExposeCodecFactory
-import io.github.groovymc.cgl.api.transform.codec.WithCodec
+import org.groovymc.cgl.api.transform.codec.CodecSerializable
+import org.groovymc.cgl.api.transform.codec.ExposeCodec
+import org.groovymc.cgl.api.transform.codec.ExposeCodecFactory
+import org.groovymc.cgl.api.transform.codec.WithCodec
 import net.minecraft.resources.ResourceLocation
 
 import java.util.function.Supplier

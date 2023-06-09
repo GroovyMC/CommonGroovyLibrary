@@ -5,6 +5,6 @@
 
 package org.groovymc.cgl.impl.quilt
 
-import io.github.groovymc.cgl.impl.CommonGroovyLibrary
+import org.groovymc.cgl.impl.CommonGroovyLibrary
 
 CommonGroovyLibrary.LOGGER.info('CGL Quilt initialised')
