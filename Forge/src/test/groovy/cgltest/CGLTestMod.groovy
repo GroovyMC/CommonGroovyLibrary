@@ -5,8 +5,8 @@
 
 package cgltest
 
-import com.matyrobbrt.gml.GMod
 import groovy.transform.CompileStatic
+import org.groovymc.gml.GMod
 
 @GMod('cgltest')
 @CompileStatic

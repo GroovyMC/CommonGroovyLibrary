@@ -82,8 +82,8 @@ dependencies {
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    compileOnly "com.matyrobbrt.gml:gml:${gml_version}"
-    runtimeOnly("com.matyrobbrt.gml:gml:${gml_version}:all") {
+    compileOnly "org.groovymc.gml:gml:${gml_version}"
+    runtimeOnly("org.groovymc.gml:gml:${gml_version}:all") {
         exclude module: 'transform'
     }
 

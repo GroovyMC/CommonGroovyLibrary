@@ -6,9 +6,9 @@
 package org.groovymc.cgl.impl.transform.forge
 
 import com.google.auto.service.AutoService
-import com.matyrobbrt.gml.transform.api.ModRegistry
 import groovy.transform.CompileStatic
 import org.groovymc.cgl.api.transform.util.ModIdRequester
+import org.groovymc.gml.transform.api.ModRegistry
 
 @CompileStatic
 @AutoService(ModIdRequester.Helper.class)

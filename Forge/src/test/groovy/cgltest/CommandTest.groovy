@@ -5,15 +5,15 @@
 
 package cgltest
 
-import com.matyrobbrt.gml.bus.EventBusSubscriber
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.Level
 import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.fml.common.Mod
 
-@EventBusSubscriber
+@Mod.EventBusSubscriber
 class CommandTest {
     @SubscribeEvent
     static void test(RegisterCommandsEvent event) {
