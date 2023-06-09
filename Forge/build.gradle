@@ -144,7 +144,7 @@ sourcesJar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId = 'io.github.groovymc.cgl'
+            groupId = 'org.groovymc.cgl'
             artifactId = "cgl-${minecraft_version}-forge"
             version = project.version
 

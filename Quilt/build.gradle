@@ -97,7 +97,7 @@ sourcesJar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId = 'io.github.groovymc.cgl'
+            groupId = 'org.groovymc.cgl'
             artifactId = "cgl-${minecraft_version}-quilt"
             version = project.version
             from components.java
