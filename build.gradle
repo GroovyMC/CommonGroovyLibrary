@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'groovy'
-    id 'io.github.groovymc.modsdotgroovy' version '1.1.2'
+    id 'org.groovymc.modsdotgroovy' version '1.4.1'
     id 'com.matyrobbrt.mc.registrationutils' version '1.20-1.0.0'
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'org.quiltmc.loom' version '1.1.+' apply false
@@ -34,7 +34,7 @@ project.ext.mavenPassword = (System.getenv('MAVEN_PASSWORD') ?: findProperty('in
 group = 'org.groovymc.cgl'
 
 modsDotGroovy {
-    dslVersion = '1.2.1'
+    dslVersion = '1.5.0'
     platform 'multiloader'
 }
 
