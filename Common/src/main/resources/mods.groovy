@@ -35,7 +35,7 @@ ModsDotGroovy.make {
 
             onQuilt {
                 mod('groovyduvet_core') {
-                    versionRange = ">=${this.buildProperties['groovyduvet_version']}"
+                    versionRange = ">=${this.buildProperties['groovyduvet_core_version']}"
                 }
             }
 
