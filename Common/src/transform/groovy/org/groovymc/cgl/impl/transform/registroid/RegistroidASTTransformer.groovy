@@ -51,6 +51,8 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
     public static final ClassNode REG_OBJECT_TYPE = ClassHelper.make(RegistryObject)
     public static final ClassNode ADDON_CLASS_TYPE = ClassHelper.make(RegistroidAddonClass)
     public static final ClassNode REGISTRY_TYPE = ClassHelper.make(Registry)
+    public static final Supplier<ClassNode> MODLIST = Suppliers.memoize { ClassHelper.make('net.minecraftforge.fml.ModList') }
+    public static final Supplier<ClassNode> FORGEBUS_GETTER = Suppliers.memoize { ClassHelper.make('org.groovymc.cgl.reg.forge.ForgeBusGetter') }
 
     static final String REG_OBJECT_INTERNAL = Type.getInternalName(RegistryObject)
     @Override
@@ -282,14 +284,6 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
             addError('@Registroid can only be applied to fields of either the type DeferredRegister or RegistrationProvider', targetField)
             return
         }
-        // Make the DR public, if it isn't
-        if (!targetField.isPublic()) {
-            final wasFinal = targetField.isFinal()
-            targetField.modifiers = Opcodes.ACC_STATIC | Opcodes.ACC_PUBLIC
-            if (wasFinal) {
-                targetField.modifiers = targetField.modifiers | Opcodes.ACC_FINAL
-            }
-        }
 
         final baseType = targetField.type.genericsTypes.size() == 0 ? ClassHelper.OBJECT_TYPE : targetField.type.genericsTypes[0].type
 
@@ -311,7 +305,19 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
         }
 
         // And finally, if the annotation wants us to register the DR to the bus, do it
-        if ((getMemberValue(annotation, 'registerToBus') ?: true) && modId) {
+        final registerAutomatically = getMemberValue(annotation, 'registerAutomatically')
+        if ((registerAutomatically === null || registerAutomatically === true) && modId) {
+            if (isForge) {
+                targetClass.addStaticInitializerStatements([GeneralUtils.stmt(
+                        GeneralUtils.callX(GeneralUtils.fieldX(targetField), 'register', GeneralUtils.args(
+                                GeneralUtils.callX(
+                                        FORGEBUS_GETTER.get(),
+                                        'getBus',
+                                        GeneralUtils.callX(GeneralUtils.callX(GeneralUtils.callX(MODLIST.get(), 'get'), 'getModContainerById', GeneralUtils.constX(modId)), 'orElseThrow')
+                                )
+                        ))
+                )], false)
+            }
             if (targetField.owner !in REGISTERED_CLASSES) {
                 ModClassTransformer.registerTransformer(modId) { classNode, annotationNode, source ->
                     targetField.owner.methods.find {
@@ -410,13 +416,20 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
         clazz.removeField(property.field.name)
 
         // And now set the code of the getter, to use RegistryObject#get
+        // Because the property is set to `private`, the default getter will be private, so manually add one instead
         // For optimization purposes, this is raw bytecode
-        property.setGetterBlock(GeneralUtils.stmt(GeneralUtils.bytecodeX(property.type) {
-            // (MyFieldType) MyClass.$registryObjectForMY_PROPERTY.get()
-            it.visitFieldInsn(Opcodes.GETSTATIC, classInternal, field.name, Type.getDescriptor(RegistryObject))
-            it.visitMethodInsn(isForge ? Opcodes.INVOKEVIRTUAL : Opcodes.INVOKEINTERFACE, REG_OBJECT_INTERNAL, 'get', '()Ljava/lang/Object;', !isForge)
-            it.visitTypeInsn(Opcodes.CHECKCAST, getInternalName(property.type))
-        }))
+        TransformUtils.addStaticMethod([
+                targetClassNode: clazz,
+                methodName: property.getterNameOrDefault,
+                returnType: property.type,
+                code: GeneralUtils.stmt(GeneralUtils.bytecodeX(property.type) {
+                    // (MyFieldType) MyClass.$registryObjectForMY_PROPERTY.get()
+                    it.visitFieldInsn(Opcodes.GETSTATIC, classInternal, field.name, Type.getDescriptor(RegistryObject))
+                    it.visitMethodInsn(isForge ? Opcodes.INVOKEVIRTUAL : Opcodes.INVOKEINTERFACE, REG_OBJECT_INTERNAL, 'get', '()Ljava/lang/Object;', !isForge)
+                    it.visitTypeInsn(Opcodes.CHECKCAST, getInternalName(property.type))
+                })
+        ])
+        property.setGetterBlock(null)
     }
 
     String getRegName(final PropertyNode propertyNode) {

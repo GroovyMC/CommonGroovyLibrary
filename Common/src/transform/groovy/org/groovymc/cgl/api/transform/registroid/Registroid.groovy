@@ -14,7 +14,7 @@ import java.lang.annotation.*
  * An annotation which transforms a class with static registrable object properties into a {@linkplain org.groovymc.cgl.reg.RegistrationProvider} + {@linkplain org.groovymc.cgl.reg.RegistryObject} + getters class. <br>
  * This annotation can be used in either field or class mode. <br><br>
  * <h2>Field mode</h2>
- * The annotation is applied on a {@linkplain org.groovymc.cgl.reg.RegistrationProvider RegistrationProvider} field. The transformer will scan all properties of the DeferredRegister's type in the field's class, and convert them to registry objects,
+ * The annotation is applied on a {@linkplain org.groovymc.cgl.reg.RegistrationProvider RegistrationProvider} field. The transformer will scan all properties of the RegistrationProvider's type in the field's class, and convert them to registry objects,
  * with getters calling {@linkplain org.groovymc.cgl.reg.RegistryObject#get()}.
  *
  * <h2>Class mode</h2>
