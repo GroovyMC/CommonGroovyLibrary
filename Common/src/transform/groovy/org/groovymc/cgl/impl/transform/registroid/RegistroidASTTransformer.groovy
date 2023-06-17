@@ -54,7 +54,6 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
     public static final Supplier<ClassNode> MODLIST = Suppliers.memoize { ClassHelper.make('net.minecraftforge.fml.ModList') }
     public static final Supplier<ClassNode> FORGEBUS_GETTER = Suppliers.memoize { ClassHelper.make('org.groovymc.cgl.reg.forge.ForgeBusGetter') }
 
-    static final String REG_OBJECT_INTERNAL = Type.getInternalName(RegistryObject)
     @Override
     void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source) // ensure that nodes is [AnnotationNode, AnnotatedNode]
@@ -424,8 +423,9 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
                 returnType: property.type,
                 code: GeneralUtils.stmt(GeneralUtils.bytecodeX(property.type) {
                     // (MyFieldType) MyClass.$registryObjectForMY_PROPERTY.get()
-                    it.visitFieldInsn(Opcodes.GETSTATIC, classInternal, field.name, Type.getDescriptor(RegistryObject))
-                    it.visitMethodInsn(isForge ? Opcodes.INVOKEVIRTUAL : Opcodes.INVOKEINTERFACE, REG_OBJECT_INTERNAL, 'get', '()Ljava/lang/Object;', !isForge)
+                    final typeInternal = getInternalName(regObjectType)
+                    it.visitFieldInsn(Opcodes.GETSTATIC, classInternal, field.name, "L$typeInternal;")
+                    it.visitMethodInsn(isForge ? Opcodes.INVOKEVIRTUAL : Opcodes.INVOKEINTERFACE, typeInternal, 'get', '()Ljava/lang/Object;', !isForge)
                     it.visitTypeInsn(Opcodes.CHECKCAST, getInternalName(property.type))
                 })
         ])
