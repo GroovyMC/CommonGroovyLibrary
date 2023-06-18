@@ -8,3 +8,5 @@ package org.groovymc.cgl.impl.quilt
 import org.groovymc.cgl.impl.CommonGroovyLibrary
 
 CommonGroovyLibrary.LOGGER.info('CGL Quilt initialised')
+
+// TODO: register listener

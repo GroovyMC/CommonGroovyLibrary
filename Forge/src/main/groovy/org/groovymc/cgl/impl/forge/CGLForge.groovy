@@ -7,7 +7,9 @@ package org.groovymc.cgl.impl.forge
 
 import groovy.transform.CompileStatic
 import groovy.transform.stc.POJO
+import net.minecraftforge.event.AddReloadListenerEvent
 import org.groovymc.cgl.impl.CommonGroovyLibrary
+import org.groovymc.cgl.impl.resources.ScriptResourceListener
 import org.groovymc.gml.GMod
 import org.jetbrains.annotations.ApiStatus
 
@@ -16,4 +18,9 @@ import org.jetbrains.annotations.ApiStatus
 @GMod(CommonGroovyLibrary.MOD_ID)
 @ApiStatus.Internal
 class CGLForge {
+    CGLForge() {
+        forgeBus.addListener(AddReloadListenerEvent) { event ->
+            event.addListener(new ScriptResourceListener())
+        }
+    }
 }
