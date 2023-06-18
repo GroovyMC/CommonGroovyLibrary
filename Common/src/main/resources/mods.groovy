@@ -22,7 +22,7 @@ ModsDotGroovy.make {
         authors = [this.buildProperties['mod_author']]
 
         dependencies {
-            minecraft = this.buildProperties['minecraft_version']
+            minecraft = this.minecraftVersionRange
 
             forge {
                 versionRange = ">=${this.forgeVersion}"
