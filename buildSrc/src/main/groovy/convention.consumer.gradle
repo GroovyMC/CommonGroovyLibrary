@@ -1,0 +1,49 @@
+plugins {
+    id 'convention.shared'
+}
+
+configurations {
+    commonJava{
+        canBeResolved = true
+    }
+    commonGroovy{
+        canBeResolved = true
+    }
+    commonResources{
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    compileOnly project(path: ':common', configuration: 'namedElements')
+    commonJava project(path: ':common', configuration: 'commonJava')
+    commonGroovy project(path: ':common', configuration: 'commonGroovy')
+    commonResources project(path: ':common', configuration: 'commonResources')
+}
+
+tasks.named('compileJava', JavaCompile) {
+    dependsOn(configurations.commonJava)
+    source(configurations.commonJava)
+}
+
+tasks.named('compileGroovy', GroovyCompile) {
+    dependsOn(configurations.commonGroovy)
+    source(configurations.commonGroovy)
+}
+
+processResources {
+    dependsOn(configurations.commonResources)
+    from(configurations.commonResources)
+}
+
+tasks.named('javadoc', Javadoc).configure {
+    dependsOn(configurations.commonJava)
+    source(configurations.commonJava)
+}
+
+tasks.named("sourcesJar", Jar) {
+    dependsOn(configurations.commonJava)
+    from(configurations.commonJava)
+    dependsOn(configurations.commonResources)
+    from(configurations.commonResources)
+}

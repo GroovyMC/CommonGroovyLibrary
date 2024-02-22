@@ -1,47 +1,38 @@
 pluginManagement {
     repositories {
         maven {
-            name = 'Sponge Snapshots'
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
         }
+
         maven {
-            name = 'Quilt (Release)'
-            url = 'https://maven.quiltmc.org/repository/release'
+            name = 'NeoForged'
+            url = 'https://maven.neoforged.net/'
         }
+
         maven {
-            name = 'Quilt (Snapshot)'
-            url = 'https://maven.quiltmc.org/repository/snapshot'
+            name = "Luke's Maven"
+            url = 'https://maven.lukebemish.dev/releases'
         }
+
         maven {
-            name = 'Minecraft Forge'
-            url = 'https://maven.minecraftforge.net/'
-        }
-        maven {
-            name = 'Parchment'
+            name = 'ParchmentMC'
             url = 'https://maven.parchmentmc.org'
         }
+
+        maven {
+            name = 'Architectury'
+            url "https://maven.architectury.dev/"
+        }
+
         mavenCentral()
         gradlePluginPortal()
-
-        final moddingInquisition = maven {
-            name 'ModdingInquisition (Release)'
-            url 'https://maven.moddinginquisition.org/releases/'
-        }
-        exclusiveContent {
-            forRepositories(moddingInquisition)
-            filter {
-                includeGroupByRegex('io\\.github\\.groovymc.*')
-            }
-        }
-    }
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.toString() == 'org.spongepowered.mixin') {
-                useModule("org.spongepowered:mixingradle:${requested.version}")
-            }
-        }
     }
 }
 
-rootProject.name = 'CommonGroovyLibrary'
-include('Common', 'Forge', 'Quilt')
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.6.0'
+}
+
+rootProject.name = 'commongroovylibrary'
+include('common', 'neoforge', 'fabric')

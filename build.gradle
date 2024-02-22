@@ -1,144 +1,52 @@
 plugins {
-    id 'java-library'
-    id 'groovy'
-    id 'org.groovymc.modsdotgroovy' version '1.4.1'
-    id 'com.matyrobbrt.mc.registrationutils' version '1.20-1.0.0'
-    id 'org.cadixdev.licenser' version '0.6.1'
-    id 'org.quiltmc.loom' version '1.1.+' apply false
-    id 'org.groovymc.simpleci' version '0.2.+'
+    alias libs.plugins.mdg apply false
+    alias libs.plugins.managedversioning
+    alias libs.plugins.architectury.loom apply false
+    alias libs.plugins.registrationutils apply false
 }
 
-registrationUtils {
-    group 'org.groovymc.cgl.reg'
-    projects {
-        Common {}
-        Quilt {}
-        Forge {}
+managedVersioning {
+    versionFile.set rootProject.file('version.properties')
+
+    gitHubActions {
+
     }
 }
 
-versioning {
-    fromTag.set('0.3.0')
-}
-changelog {
-    start.set('0.3.0')
-}
-final calculatedVersion = versioning.calculatedVersion
-allprojects { Project project ->
-    println("${project.name} version: ${project.version = calculatedVersion}")
-}
+managedVersioning.apply()
 
-project.ext.mavenUser = (System.getenv('MAVEN_USER') ?: findProperty('inquisitionMavenUser')) ?: ''
-project.ext.mavenPassword = (System.getenv('MAVEN_PASSWORD') ?: findProperty('inquisitionMavenPassword')) ?: ''
+println "Building: $version"
 
-group = 'org.groovymc.cgl'
-
-modsDotGroovy {
-    dslVersion = '1.5.0'
-    platform 'multiloader'
+configurations {
+    license {
+        canBeResolved = false
+        canBeConsumed = true
+    }
 }
 
-subprojects {
-    apply plugin: 'groovy'
+artifacts {
+    add 'license', file("LICENSE")
+}
+
+subprojects { p ->
+    apply plugin: 'maven-publish'
     apply plugin: 'java-library'
-    apply plugin: 'org.cadixdev.licenser'
+    apply plugin: libs.plugins.registrationutils.get().pluginId
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
     java.withSourcesJar()
-    afterEvaluate {
-        reg.configureSourcesJarTask('sourcesJar')
-    }
+    java.withJavadocJar()
 
-    license {
-        header = rootProject.file('header.txt')
-        exclude '**/package-info.java'
+    registrationUtils {
+        group 'org.groovymc.cgl.reg'
     }
 
     jar {
         manifest {
             attributes([
-                'Specification-Title'     : mod_name,
-                'Specification-Vendor'    : mod_author,
-                'Specification-Version'   : project.jar.archiveVersion,
-                'Implementation-Title'    : 'CommonGroovyLibrary-' + project.name,
-                'Implementation-Version'  : project.jar.archiveVersion,
-                'Implementation-Vendor'   : mod_author,
-                'Timestampe'              : System.currentTimeMillis(),
-                'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
-                'Built-on-Minecraft'      : minecraft_version,
-                'DownloadHomepage'        : 'https://github.com/GroovyMC/CommonGroovyLibrary'
+                    'Implementation-Commit-Time': managedVersioning.timestamp.get(),
+                    'Implementation-Commit': managedVersioning.hash.get()
             ])
         }
     }
-    
-    repositories {
-        mavenCentral()
-        maven {
-            name = 'Sponge / Mixin'
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-        }
-        maven {
-            name = 'ParchmentMC'
-            url = 'https://maven.parchmentmc.org'
-        }
-        maven {
-            name 'Quilt (Release)'
-            url 'https://maven.quiltmc.org/repository/release/'
-        }
-        maven {
-            name 'ModdingInquisition (Release)'
-            url 'https://maven.moddinginquisition.org/releases/'
-        }
-    }
-
-    tasks.withType(JavaCompile).configureEach {
-        it.options.encoding = 'UTF-8'
-        it.options.release = 17
-    }
-    tasks.withType(GroovyCompile).configureEach {
-        it.groovyOptions.fork = true
-        it.groovyOptions.encoding = 'UTF-8'
-        it.groovyOptions.optimizationOptions.indy = true
-        it.groovyOptions.optimizationOptions.groovydoc = true
-        it.groovyOptions.javaAnnotationProcessing = true
-        it.groovyOptions.keepStubs = true
-        it.exclude('mods.groovy')
-    }
-
-    // Disables Gradle's custom module metadata from being published to maven. The
-    // metadata includes mapped dependencies which are not reasonably consumable by
-    // other mod developers.
-    tasks.withType(GenerateModuleMetadata).configureEach {
-        it.enabled = false
-    }
-
-    configurations {
-        testCompileOnly.extendsFrom(compileOnly)
-    }
-
-    dependencies {
-        compileOnly groovyDep('stdlib')
-
-        compileOnly groovyDep('contracts')
-        compileOnly groovyDep('datetime')
-        compileOnly groovyDep('nio')
-        compileOnly groovyDep('macro')
-        compileOnly groovyDep('macro-library')
-        compileOnly groovyDep('templates')
-        compileOnly groovyDep('typecheckers')
-        compileOnly groovyDep('dateutil')
-        compileOnly groovyDep('ginq')
-        compileOnly groovyDep('toml')
-        compileOnly groovyDep('json')
-
-        compileOnly 'com.matyrobbrt.enhancedgroovy:dsl:0.2.0'
-
-        api "com.electronwill.night-config:core:$project.nightconfig_version"
-        api "com.electronwill.night-config:toml:$project.nightconfig_version"
-        api "blue.endless:jankson:$project.jankson_version"
-    }
-}
-
-String groovyDep(String name) {
-    return "org.apache.groovy:groovy${name == 'stdlib' ? '' : '-' + name}:${project.groovy_version}"
 }
