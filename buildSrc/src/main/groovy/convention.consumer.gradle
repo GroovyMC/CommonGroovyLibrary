@@ -13,7 +13,7 @@ configurations {
 }
 
 dependencies {
-    allCompileOnly project(path: ':common', configuration: 'namedElements')
+    allCompileOnly project(path: ':common', configuration: 'exportedClasses')
     for (def sourceSet in ['main', 'extension', 'transform']) {
         for (def type in ['Java', 'Groovy', 'Resources']) {
             add("${sourceSet}Common${type}", project(path: ':common', configuration: "${sourceSet}Common${type}"))

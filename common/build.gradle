@@ -15,6 +15,10 @@ configurations {
             }
         }
     }
+    exportedClasses {
+        canBeResolved = false
+        canBeConsumed = true
+    }
 }
 
 loom {
@@ -61,8 +65,14 @@ afterEvaluate {
 
 artifacts {
     for (def sourceSet in ['main', 'extension', 'transform']) {
-        add("${sourceSet}CommonJava", sourceSets.main.java.sourceDirectories.singleFile)
-        add("${sourceSet}CommonGroovy", sourceSets.main.groovy.sourceDirectories.singleFile)
-        add("${sourceSet}CommonResources", sourceSets.main.resources.sourceDirectories.singleFile)
+        add("${sourceSet}CommonJava", sourceSets.named(sourceSet).get().java.sourceDirectories.singleFile)
+        add("${sourceSet}CommonGroovy", sourceSets.named(sourceSet).get().groovy.sourceDirectories.singleFile)
+        add("${sourceSet}CommonResources", sourceSets.named(sourceSet).get().resources.sourceDirectories.singleFile)
+        def outputClasses = project.objects.directoryProperty()
+        sourceSets.named(sourceSet).get().output.classesDirs.files.each {
+            add('exportedClasses', it) {
+                builtBy tasks.named(sourceSets.named(sourceSet).get().classesTaskName)
+            }
+        }
     }
 }

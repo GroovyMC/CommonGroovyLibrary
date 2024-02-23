@@ -56,6 +56,7 @@ afterEvaluate {
     configurations.extensionCompileClasspath.extendsFrom configurations.minecraftNamedCompile
 
     dependencies {
+        compileOnly reg.loaderSpecific()
         transformCompileOnly reg.loaderSpecific()
         extensionCompileOnly reg.loaderSpecific()
     }

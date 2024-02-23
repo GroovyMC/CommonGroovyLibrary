@@ -33,10 +33,6 @@ subprojects { p ->
     apply plugin: 'java-library'
     apply plugin: libs.plugins.registrationutils.get().pluginId
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-    java.withSourcesJar()
-    java.withJavadocJar()
-
     registrationUtils {
         group 'org.groovymc.cgl.reg'
     }

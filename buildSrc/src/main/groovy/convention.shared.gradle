@@ -9,7 +9,6 @@ group = rootProject.group
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 java.withSourcesJar()
-java.withJavadocJar()
 
 sourceSets {
     extension {
@@ -102,7 +101,7 @@ processResources {
 sourcesJar {
     dependsOn(configurations.rootProjectLicense)
     from(configurations.rootProjectLicense) {
-        rename { "${it}_${artifact_id}" }
+        rename { "${it}_${rootProject.name}" }
     }
     from sourceSets.extension.allSource
     from sourceSets.transform.allSource
@@ -111,7 +110,7 @@ sourcesJar {
 jar {
     dependsOn(configurations.rootProjectLicense)
     from(configurations.rootProjectLicense) {
-        rename { "${it}_${artifact_id}" }
+        rename { "${it}_${rootProject.name}" }
     }
 
     dependsOn tasks.named(sourceSets.extension.classesTaskName)
