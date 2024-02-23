@@ -30,4 +30,12 @@ final class ScriptResourceProvider<T> {
             }
         }
     }
+
+    static <T> ScriptResourceProvider<T> registerPrefix(ResourceLocation prefix, Class<? super T> clazz) {
+        if (ScriptResourceListener.PREFIXES.containsKey(prefix)) {
+            throw new IllegalArgumentException("Prefix ${prefix} is already registered for context type ${ScriptResourceListener.PREFIXES[prefix].name}")
+        }
+        ScriptResourceListener.PREFIXES[prefix] = clazz
+        return new ScriptResourceProvider<>(prefix, clazz)
+    }
 }

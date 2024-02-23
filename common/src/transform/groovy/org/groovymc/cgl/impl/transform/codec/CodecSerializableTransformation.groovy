@@ -201,9 +201,8 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         annotations.addAll(parameter.annotations)
         annotations.addAll(field?.annotations?:[])
         annotations.addAll(getter?.annotations?:[])
-        List<WithCodecPath> path = (isOptional(parameter.type))?([WithCodecPath.OPTIONAL]):([])
         List<Integer> target = (isOptional(parameter.type))?([0]):([])
-        Expression baseCodec = getCodecFromType(unresolveOptional(parameter.type),annotations,path,target)
+        Expression baseCodec = getCodecFromType(unresolveOptional(parameter.type),annotations,target)
         Expression fieldOf
         String fieldName = camelToSnake? toSnakeCase(name) : name
         if (!isOptional(parameter.type)) {
@@ -264,35 +263,6 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             return member
     }
 
-    static List<WithCodecPath> getMemberCodecPath(AnnotationNode anno, String name) {
-        Expression expr = anno.getMember(name)
-        if (expr == null) {
-            return []
-        }
-        if (expr instanceof ListExpression) {
-            final ListExpression listExpression = (ListExpression) expr
-            List<WithCodecPath> list = new ArrayList<>()
-            for (Expression itemExpr : listExpression.getExpressions()) {
-                if (itemExpr instanceof ConstantExpression) {
-                    WithCodecPath value = parseSingleExpr(itemExpr)
-                    if (value != null) list.add(value)
-                }
-            }
-            return list
-        }
-        WithCodecPath single = parseSingleExpr(expr)
-        return single==null?([]):([single])
-    }
-
-    static WithCodecPath parseSingleExpr(Expression itemExpr) {
-        if (itemExpr instanceof VariableExpression) {
-            return WithCodecPath.valueOf(itemExpr.text)
-        } else if (itemExpr instanceof PropertyExpression) {
-            return WithCodecPath.valueOf(itemExpr.propertyAsString)
-        }
-        return null
-    }
-
     static List<Integer> getMemberCodecTarget(AnnotationNode anno, String name) {
         Expression expr = anno.getMember(name)
         if (expr == null) {
@@ -322,12 +292,11 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
         return null
     }
 
-    Expression getCodecFromType(ClassNode clazz, List<AnnotationNode> context, List<WithCodecPath> path, List<Integer> target) {
+    Expression getCodecFromType(ClassNode clazz, List<AnnotationNode> context, List<Integer> target) {
         List<AnnotationNode> withTypes = context.findAll {it.getClassNode() == WITH_TYPE }
                 .findAll {
                     var aTarget = getMemberCodecTarget(it, 'target')
-                    var aPath = getMemberCodecPath(it, 'path')
-                    return (aPath == path && !aPath.empty) || (aTarget == target && !aTarget.isEmpty()) || (aTarget.isEmpty() && aPath.isEmpty() && target.isEmpty()) }
+                    return (aTarget == target && !aTarget.isEmpty()) || (aTarget.isEmpty() && target.isEmpty()) }
         List<Expression> specifiedClosure = new ArrayList<>(withTypes.collect {
             getMemberClassValue(it, 'value')
         }.findAll {it !== null}.unique().collect {new ConstructorCallExpression(it, new ArgumentListExpression())})
@@ -369,7 +338,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
                 throw new RuntimeException('Constructor parameters and their matching fields in codec-serializable classes may not use a raw List')
             }
             ClassNode child = clazz.genericsTypes[0].type
-            Expression childExpression = getCodecFromType(child,context,path+[WithCodecPath.LIST],target+[0])
+            Expression childExpression = getCodecFromType(child,context,target+[0])
             return new MethodCallExpression(childExpression, 'commentFirstListOf', new ArgumentListExpression())
         }
         if (clazz == ClassHelper.MAP_TYPE) {
@@ -378,8 +347,8 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             }
             ClassNode key = clazz.genericsTypes[0].type
             ClassNode value = clazz.genericsTypes[1].type
-            Expression keyExpression = getCodecFromType(key,context,path+[WithCodecPath.MAP_KEY],target+[0])
-            Expression valueExpression = getCodecFromType(value,context,path+[WithCodecPath.MAP_VAL],target+[1])
+            Expression keyExpression = getCodecFromType(key,context,target+[0])
+            Expression valueExpression = getCodecFromType(value,context,target+[1])
             return new StaticMethodCallExpression(CODEC_NODE, 'unboundedMap', new ArgumentListExpression(
                     keyExpression, valueExpression
             ))
@@ -390,8 +359,8 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             }
             ClassNode left = clazz.genericsTypes[0].type
             ClassNode right = clazz.genericsTypes[1].type
-            Expression leftExpression = getCodecFromType(left,context,path+[WithCodecPath.PAIR_FIRST],target+[0])
-            Expression rightExpression = getCodecFromType(right,context,path+[WithCodecPath.PAIR_SECOND],target+[1])
+            Expression leftExpression = getCodecFromType(left,context,target+[0])
+            Expression rightExpression = getCodecFromType(right,context,target+[1])
             return new StaticMethodCallExpression(CODEC_NODE, 'pair', new ArgumentListExpression(
                     leftExpression, rightExpression
             ))
@@ -402,8 +371,8 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             }
             ClassNode left = clazz.genericsTypes[0].type
             ClassNode right = clazz.genericsTypes[1].type
-            Expression leftExpression = getCodecFromType(left,context,path+[WithCodecPath.EITHER_LEFT],target+[0])
-            Expression rightExpression = getCodecFromType(right,context,path+[WithCodecPath.EITHER_RIGHT],target+[1])
+            Expression leftExpression = getCodecFromType(left,context,target+[0])
+            Expression rightExpression = getCodecFromType(right,context,target+[1])
             return new StaticMethodCallExpression(CODEC_NODE, 'either', new ArgumentListExpression(
                     leftExpression, rightExpression
             ))
@@ -446,7 +415,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             if (clazz.usingGenerics) {
                 var parameters = clazz.genericsTypes.collect { it.type }
                 for (int i = 0; i < parameters.size(); i++) {
-                    subExpressions.add(getCodecFromType(parameters[i], context, path + [WithCodecPath.FACTORY_PARAMETER], target + [i]))
+                    subExpressions.add(getCodecFromType(parameters[i], context, target + [i]))
                 }
             }
             return GeneralUtils.callX(new ClassExpression(clazz), factoryName, GeneralUtils.args(subExpressions))

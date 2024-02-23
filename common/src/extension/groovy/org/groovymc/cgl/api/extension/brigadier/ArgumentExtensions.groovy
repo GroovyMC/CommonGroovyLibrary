@@ -1,7 +1,7 @@
 //file:noinspection UnnecessaryQualifiedReference
 package org.groovymc.cgl.api.extension.brigadier
 
-import com.mojang.brigadier.arguments.*
+
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import groovy.transform.CompileStatic
@@ -9,7 +9,6 @@ import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.FromString
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.arguments.*
 import net.minecraft.commands.arguments.blocks.BlockInput
 import net.minecraft.commands.arguments.blocks.BlockStateArgument
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument

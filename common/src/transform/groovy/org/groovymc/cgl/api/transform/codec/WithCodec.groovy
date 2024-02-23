@@ -18,26 +18,6 @@ import java.lang.annotation.*
     Class<? extends Closure> value()
 
     /**
-     * The path to the type to target within the type parameter structure of the annotated element. For instance, in the
-     * following:
-     * <pre>
-     *     {@literal @}WithCodec(value = { IntProvider.NON_NEGATIVE_CODEC },
-     *                 path = [WithCodecPath.LIST, WithCodecPath.PAIR_LEFT])
-     *     List{@literal <}Pair{@literal <}IntProvider,Boolean{@literal >>} getPairs() {
-     *         ...
-     *     }
-     * </pre>
-     * The {@code IntProvider} within the {@code Pair} within the {@code List} is targetted, and the transformer is told
-     * to use the closure to provide the codec.
-     *
-     * This parameter is optional; if not present or an empty list, the root type is targeted.
-     *
-     * @deprecated Use {@link WithCodec#target()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    WithCodecPath[] path() default []
-
-    /**
      * A series of indices defining the path of the codec which should be replaced. For instance, in the following:
      * <pre>
      *     {@literal @}WithCodec(value = { IntProvider.NON_NEGATIVE_CODEC },

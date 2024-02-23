@@ -1,0 +1,4 @@
+moduleName=CGL Extensions
+moduleVersion=0.2.0
+extensionClasses=org.groovymc.cgl.api.extension.registry.RegistryExtension,org.groovymc.cgl.api.extension.math.ArithmeticExtension,org.groovymc.cgl.api.extension.chat.ComponentExtension,org.groovymc.cgl.api.extension.TagExtensions,org.groovymc.cgl.api.extension.client.MinecraftExtensions,org.groovymc.cgl.api.extension.NBTExtensions,org.groovymc.cgl.api.extension.CodecExtensions,org.groovymc.cgl.api.extension.brigadier.CommandExtensions,org.groovymc.cgl.api.extension.brigadier.CommandContextExtensions,org.groovymc.cgl.api.extension.brigadier.ArgumentExtensions,org.groovymc.cgl.api.extension.GeneralExtensions
+staticExtensionClasses=org.groovymc.cgl.api.extension.StaticGeneralExtensions,org.groovymc.cgl.api.extension.chat.StyleExtension,org.groovymc.cgl.api.extension.StaticNBTExtensions

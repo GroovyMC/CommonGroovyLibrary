@@ -7,17 +7,13 @@ plugins {
 modsDotGroovy.multiplatform.expose()
 
 configurations {
-    commonJava {
-        canBeResolved = false
-        canBeConsumed = true
-    }
-    commonGroovy {
-        canBeResolved = false
-        canBeConsumed = true
-    }
-    commonResources {
-        canBeResolved = false
-        canBeConsumed = true
+    for (def sourceSet in ['main', 'extension', 'transform']) {
+        for (def type in ['Java', 'Groovy', 'Resources']) {
+            create("${sourceSet}Common${type}") {
+                canBeResolved = false
+                canBeConsumed = true
+            }
+        }
     }
 }
 
@@ -54,7 +50,9 @@ dependencies {
 }
 
 artifacts {
-    commonJava sourceSets.main.java.sourceDirectories.singleFile
-    commonGroovy sourceSets.main.groovy.sourceDirectories.singleFile
-    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+    for (def sourceSet in ['main', 'extension', 'transform']) {
+        add("${sourceSet}CommonJava", sourceSets.main.java.sourceDirectories.singleFile)
+        add("${sourceSet}CommonGroovy", sourceSets.main.groovy.sourceDirectories.singleFile)
+        add("${sourceSet}CommonResources", sourceSets.main.resources.sourceDirectories.singleFile)
+    }
 }

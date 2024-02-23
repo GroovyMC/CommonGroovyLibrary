@@ -3,47 +3,47 @@ plugins {
 }
 
 configurations {
-    commonJava{
-        canBeResolved = true
-    }
-    commonGroovy{
-        canBeResolved = true
-    }
-    commonResources{
-        canBeResolved = true
+    for (def sourceSet in ['main', 'extension', 'transform']) {
+        for (def type in ['Java', 'Groovy', 'Resources']) {
+            create("${sourceSet}Common${type}") {
+                canBeResolved = true
+            }
+        }
     }
 }
 
 dependencies {
-    compileOnly project(path: ':common', configuration: 'namedElements')
-    commonJava project(path: ':common', configuration: 'commonJava')
-    commonGroovy project(path: ':common', configuration: 'commonGroovy')
-    commonResources project(path: ':common', configuration: 'commonResources')
+    allCompileOnly project(path: ':common', configuration: 'namedElements')
+    for (def sourceSet in ['main', 'extension', 'transform']) {
+        for (def type in ['Java', 'Groovy', 'Resources']) {
+            add("${sourceSet}Common${type}", project(path: ':common', configuration: "${sourceSet}Common${type}"))
+        }
+    }
 }
 
-tasks.named('compileJava', JavaCompile) {
-    dependsOn(configurations.commonJava)
-    source(configurations.commonJava)
-}
-
-tasks.named('compileGroovy', GroovyCompile) {
-    dependsOn(configurations.commonGroovy)
-    source(configurations.commonGroovy)
-}
-
-processResources {
-    dependsOn(configurations.commonResources)
-    from(configurations.commonResources)
-}
-
-tasks.named('javadoc', Javadoc).configure {
-    dependsOn(configurations.commonJava)
-    source(configurations.commonJava)
+for (def sourceSet in ['main', 'extension', 'transform']) {
+    var java = sourceSets.named(sourceSet).get().getCompileTaskName('java')
+    var groovy = sourceSets.named(sourceSet).get().getCompileTaskName('groovy')
+    var resources = sourceSets.named(sourceSet).get().getProcessResourcesTaskName()
+    tasks.named(java, JavaCompile) {
+        dependsOn(configurations.named("${sourceSet}CommonJava"))
+        source(configurations.named("${sourceSet}CommonJava"))
+    }
+    tasks.named(groovy, GroovyCompile) {
+        dependsOn(configurations.named("${sourceSet}CommonGroovy"))
+        source(configurations.named("${sourceSet}CommonGroovy"))
+    }
+    tasks.named(resources, ProcessResources) {
+        dependsOn(configurations.named("${sourceSet}CommonResources"))
+        from(configurations.named("${sourceSet}CommonResources"))
+    }
 }
 
 tasks.named("sourcesJar", Jar) {
-    dependsOn(configurations.commonJava)
-    from(configurations.commonJava)
-    dependsOn(configurations.commonResources)
-    from(configurations.commonResources)
+    for (def sourceSet in ['main', 'extension', 'transform']) {
+        for (def type in ['Java', 'Groovy', 'Resources']) {
+            dependsOn(configurations.named("${sourceSet}Common${type}"))
+            from(configurations.named("${sourceSet}Common${type}"))
+        }
+    }
 }

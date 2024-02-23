@@ -1,6 +1,5 @@
 //file:noinspection unused
 //file:noinspection GrFinalVariableAccess
-//file:noinspection GrDeprecatedAPIUsage
 package cgltest
 
 import groovy.transform.CompileStatic
@@ -13,8 +12,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.MapColor
-import net.minecraftforge.registries.DeferredRegister
-import net.minecraftforge.registries.ForgeRegistries
+import net.neoforged.neoforge.registries.DeferredRegister
 import org.groovymc.cgl.api.transform.registroid.BlockItemAddon
 import org.groovymc.cgl.api.transform.registroid.RecipeTypeAddon
 import org.groovymc.cgl.api.transform.registroid.RegistrationName
@@ -24,7 +22,7 @@ import org.groovymc.cgl.api.transform.registroid.SoundEventAddon
 @POJO
 @CompileStatic
 @SoundEventAddon
-@Registroid({ [ForgeRegistries.BLOCKS, Registries.SOUND_EVENT] })
+@Registroid({ [Registries.BLOCK, Registries.SOUND_EVENT] })
 class RegistroidTest {
     static final Block SOME_TEST = new Block(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).sound(SoundType.ROOTED_DIRT))
     static final SoundEvent TEST_SOUND

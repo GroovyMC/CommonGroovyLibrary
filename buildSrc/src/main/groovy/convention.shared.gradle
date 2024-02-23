@@ -12,6 +12,17 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 java.withSourcesJar()
 java.withJavadocJar()
 
+sourceSets {
+    extension {
+        java {}
+        groovy {}
+    }
+    transform {
+        java {}
+        groovy {}
+    }
+}
+
 base {
     archivesName = "cgl-${libs.versions.minecraft.get()}-${project.name}"
 }
@@ -30,13 +41,29 @@ repositories {
 
 configurations {
     rootProjectLicense.canBeResolved = true
+
+    allCompileOnly
+    compileOnly.extendsFrom allCompileOnly
+    testCompileOnly.extendsFrom allCompileOnly
+    extensionCompileOnly.extendsFrom allCompileOnly
+    transformCompileOnly.extendsFrom allCompileOnly
+
+    allAnnotationProcessor
+    annotationProcessor.extendsFrom allAnnotationProcessor
+    testAnnotationProcessor.extendsFrom allAnnotationProcessor
+    extensionAnnotationProcessor.extendsFrom allAnnotationProcessor
+    transformAnnotationProcessor.extendsFrom allAnnotationProcessor
 }
 
 dependencies {
-    compileOnly libs.jetbrains.annotations
-    compileOnly libs.autoservice
-    annotationProcessor libs.autoservice
+    allCompileOnly libs.jetbrains.annotations
+    allCompileOnly libs.autoservice
+    allAnnotationProcessor libs.autoservice
     rootProjectLicense project(path: ':', configuration: 'license')
+
+    compileOnly sourceSets.transform.output
+    compileOnly sourceSets.extension.output
+    transformCompileOnly sourceSets.extension.output
 }
 
 publishing {
@@ -63,11 +90,18 @@ tasks.withType(GroovyCompile).configureEach {
     it.exclude('mods.groovy')
 }
 
+processResources {
+    from sourceSets.transform.resources
+    from sourceSets.extension.resources
+}
+
 sourcesJar {
     dependsOn(configurations.rootProjectLicense)
     from(configurations.rootProjectLicense) {
         rename { "${it}_${artifact_id}" }
     }
+    from sourceSets.extension.allSource
+    from sourceSets.transform.allSource
 }
 
 jar {
@@ -75,6 +109,11 @@ jar {
     from(configurations.rootProjectLicense) {
         rename { "${it}_${artifact_id}" }
     }
+
+    dependsOn tasks.named(sourceSets.extension.classesTaskName)
+    from tasks.named(sourceSets.extension.classesTaskName)
+    dependsOn tasks.named(sourceSets.transform.classesTaskName)
+    from tasks.named(sourceSets.transform.classesTaskName)
 
     manifest {
         attributes([
