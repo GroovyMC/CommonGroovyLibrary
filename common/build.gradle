@@ -52,6 +52,11 @@ dependencies {
 afterEvaluate {
     configurations.transformCompileClasspath.extendsFrom configurations.minecraftNamedCompile
     configurations.extensionCompileClasspath.extendsFrom configurations.minecraftNamedCompile
+
+    dependencies {
+        transformCompileOnly reg.common()
+        extensionCompileOnly reg.common()
+    }
 }
 
 artifacts {

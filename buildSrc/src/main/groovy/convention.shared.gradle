@@ -61,6 +61,7 @@ configurations {
 dependencies {
     allCompileOnly libs.jetbrains.annotations
     allCompileOnly libs.autoservice
+    //allCompileOnly libs.enhancedgroovy
     allAnnotationProcessor libs.autoservice
     rootProjectLicense project(path: ':', configuration: 'license')
 

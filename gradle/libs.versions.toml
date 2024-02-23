@@ -17,6 +17,7 @@ jetbrains_annotations = "24.1.0"
 
 managedversioning = "1.2.8"
 registrationutils = "1.20.2-0.1.1"
+enhancedgroovy = "0.2.0"
 
 groovybundler = "2.1.1"
 groovyduvet = "3.1.2"
@@ -44,6 +45,8 @@ gml = { module = "org.groovymc.gml:gml-core", version.ref = "gml" }
 jankson = { module = "blue.endless:jankson", version.ref = "jankson" }
 nightconfig_core = { module = "com.electronwill.night-config:core", version.ref = "nightconfig" }
 nightconfig_toml = { module = "com.electronwill.night-config:toml", version.ref = "nightconfig" }
+
+enhancedgroovy = { module = "com.matyrobbrt.enhancedgroovy:dsl", version.ref = "enhancedgroovy" }
 
 [plugins]
 
