@@ -45,6 +45,15 @@ dependencies {
     }
 
     implementation libs.gml
+    api libs.jankson
+
+    allCompileOnly libs.jankson
+    allCompileOnly libs.gml
+}
+
+afterEvaluate {
+    configurations.transformCompileClasspath.extendsFrom configurations.minecraftNamedCompile
+    configurations.extensionCompileClasspath.extendsFrom configurations.minecraftNamedCompile
 }
 
 loom {

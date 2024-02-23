@@ -38,14 +38,22 @@ dependencies {
     modImplementation libs.fabric.loader
     modImplementation libs.fabric.api
 
-    implementation libs.jankson
-    implementation libs.nightconfig.toml
-
+    api libs.jankson
+    api libs.nightconfig.toml
     implementation libs.groovyduvet
+
+    allCompileOnly libs.jankson
+    allCompileOnly libs.nightconfig.toml
+    allCompileOnly libs.groovyduvet
 
     include libs.jankson
     include libs.nightconfig.toml
     include libs.nightconfig.core
+}
+
+afterEvaluate {
+    configurations.transformCompileClasspath.extendsFrom configurations.minecraftNamedCompile
+    configurations.extensionCompileClasspath.extendsFrom configurations.minecraftNamedCompile
 }
 
 loom {

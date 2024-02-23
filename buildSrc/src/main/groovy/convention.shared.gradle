@@ -2,7 +2,6 @@ plugins {
     id 'java-library'
     id 'groovy'
     id 'maven-publish'
-    id 'idea'
 }
 
 version = rootProject.version
@@ -53,6 +52,10 @@ configurations {
     testAnnotationProcessor.extendsFrom allAnnotationProcessor
     extensionAnnotationProcessor.extendsFrom allAnnotationProcessor
     transformAnnotationProcessor.extendsFrom allAnnotationProcessor
+
+    sharedCompileOnly
+    allCompileOnly.extendsFrom sharedCompileOnly
+    compileOnlyApi.extendsFrom sharedCompileOnly
 }
 
 dependencies {

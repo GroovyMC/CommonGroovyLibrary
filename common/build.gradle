@@ -1,7 +1,7 @@
 plugins {
     id 'convention.shared'
-    alias libs.plugins.mdg
     alias libs.plugins.architectury.loom
+    alias libs.plugins.mdg
 }
 
 modsDotGroovy.multiplatform.expose()
@@ -44,9 +44,14 @@ dependencies {
     minecraft libs.minecraft
     modImplementation libs.fabric.loader
 
-    compileOnlyApi libs.groovybundler
-    compileOnlyApi libs.jankson
-    compileOnlyApi libs.nightconfig.toml
+    sharedCompileOnly libs.groovybundler
+    sharedCompileOnly libs.jankson
+    sharedCompileOnly libs.nightconfig.toml
+}
+
+afterEvaluate {
+    configurations.transformCompileClasspath.extendsFrom configurations.minecraftNamedCompile
+    configurations.extensionCompileClasspath.extendsFrom configurations.minecraftNamedCompile
 }
 
 artifacts {
