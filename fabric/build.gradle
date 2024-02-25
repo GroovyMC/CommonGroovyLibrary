@@ -16,6 +16,11 @@ modsDotGroovy {
     apply()
 }
 
+loom {
+    createRemapConfigurations(sourceSets.transform)
+    createRemapConfigurations(sourceSets.extension)
+}
+
 registrationUtils {
     projects {
         fabric {
@@ -38,6 +43,12 @@ dependencies {
     modImplementation libs.fabric.loader
     modImplementation libs.fabric.api
 
+    modTransformCompileOnly libs.fabric.loader
+    modTransformCompileOnly libs.fabric.api
+
+    modExtensionCompileOnly libs.fabric.loader
+    modExtensionCompileOnly libs.fabric.api
+
     api libs.jankson
     api libs.nightconfig.toml
     implementation libs.groovyduvet
@@ -49,6 +60,9 @@ dependencies {
     include libs.jankson
     include libs.nightconfig.toml
     include libs.nightconfig.core
+
+    testCompileOnly sourceSets.transform.output
+    testCompileOnly sourceSets.extension.output
 }
 
 afterEvaluate {
@@ -57,8 +71,11 @@ afterEvaluate {
 
     dependencies {
         compileOnly reg.loaderSpecific()
+        testCompileOnly reg.loaderSpecific()
         transformCompileOnly reg.loaderSpecific()
         extensionCompileOnly reg.loaderSpecific()
+        transformCompileOnly reg.common()
+        extensionCompileOnly reg.common()
     }
 }
 

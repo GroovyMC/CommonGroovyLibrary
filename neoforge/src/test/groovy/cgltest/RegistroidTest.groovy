@@ -22,17 +22,18 @@ import org.groovymc.cgl.api.transform.registroid.SoundEventAddon
 @POJO
 @CompileStatic
 @SoundEventAddon
-@Registroid({ [Registries.BLOCK, Registries.SOUND_EVENT] })
+// TODO: fix mod ID detection
+@Registroid(value = { [Registries.BLOCK, Registries.SOUND_EVENT] }, modId = 'cgltest')
 class RegistroidTest {
     static final Block SOME_TEST = new Block(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).sound(SoundType.ROOTED_DIRT))
     static final SoundEvent TEST_SOUND
     static final SoundEvent TEST_SOUND_2 = SoundEvent.createVariableRangeEvent(null)
 
-    @Registroid
+    @Registroid(modId = 'cgltest')
     static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, 'groovylicioustest')
     static final Item SOME_ITEM = new Item(new Item.Properties())
 
-    @Registroid({ Registries.BLOCK })
+    @Registroid(value = { Registries.BLOCK }, modId = 'cgltest')
     @BlockItemAddon({ new Item.Properties().setNoRepair() })
     static final class BlockItems {
         @RegistrationName('hello_world')
@@ -40,12 +41,12 @@ class RegistroidTest {
     }
 
     @RecipeTypeAddon
-    @Registroid({ Registries.RECIPE_TYPE })
+    @Registroid(value = { Registries.RECIPE_TYPE }, modId = 'cgltest')
     static final class Recipes {
         static final RecipeType HELLO_WORLD
     }
 
-    @Registroid(value = { Registries.ITEM }, includeInnerClasses = true)
+    @Registroid(value = { Registries.ITEM }, includeInnerClasses = true, modId = 'cgltest')
     static final class InnersTest {
         static final class Inner1 {
             static final Item IT = new Item(new Item.Properties())

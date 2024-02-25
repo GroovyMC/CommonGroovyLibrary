@@ -57,8 +57,11 @@ afterEvaluate {
 
     dependencies {
         compileOnly reg.loaderSpecific()
+        testCompileOnly reg.loaderSpecific()
         transformCompileOnly reg.loaderSpecific()
         extensionCompileOnly reg.loaderSpecific()
+        transformCompileOnly reg.common()
+        extensionCompileOnly reg.common()
     }
 }
 

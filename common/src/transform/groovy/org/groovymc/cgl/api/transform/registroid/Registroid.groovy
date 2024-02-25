@@ -44,7 +44,6 @@ import java.lang.annotation.*
      * <ul>
      *     <li>{@linkplain net.minecraft.core.Registry Registry}</li>
      *     <li>{@linkplain net.minecraft.resources.ResourceKey ResourceKey}</li>
-     *     <li>{@linkplain net.minecraftforge.registries.IForgeRegistry ForgeRegistry} (if on Forge)</li>
      *     <li>or a list (using the {@code [val1, val2] format}) of the above (can be empty, or having multiple accepted types combined)</li>
      * </ul>
      * This value is optional, and when not specified, it will behave like an empty list.

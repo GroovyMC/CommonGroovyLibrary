@@ -4,18 +4,28 @@ plugins {
 
 configurations {
     for (def sourceSet in ['main', 'extension', 'transform']) {
-        for (def type in ['Java', 'Groovy', 'Resources']) {
-            create("${sourceSet}Common${type}") {
-                canBeResolved = true
+        for (def type in ['Java', 'Groovy', 'Resources', 'Exported']) {
+            maybeCreate("${sourceSet}Common${type}").tap {
+                it.canBeResolved = true
             }
         }
     }
+
+    testCompileOnly.extendsFrom mainCommonExported
+    testCompileOnly.extendsFrom extensionCommonExported
+    testCompileOnly.extendsFrom transformCommonExported
+
+    compileOnly.extendsFrom mainCommonExported
+    compileOnly.extendsFrom extensionCommonExported
+    compileOnly.extendsFrom transformCommonExported
+    transformCompileOnly.extendsFrom transformCommonExported
+    transformCompileOnly.extendsFrom extensionCommonExported
+    extensionCompileOnly.extendsFrom extensionCommonExported
 }
 
 dependencies {
-    allCompileOnly project(path: ':common', configuration: 'exportedClasses')
     for (def sourceSet in ['main', 'extension', 'transform']) {
-        for (def type in ['Java', 'Groovy', 'Resources']) {
+        for (def type in ['Java', 'Groovy', 'Resources', 'Exported']) {
             add("${sourceSet}Common${type}", project(path: ':common', configuration: "${sourceSet}Common${type}"))
         }
     }
@@ -25,25 +35,29 @@ for (def sourceSet in ['main', 'extension', 'transform']) {
     var java = sourceSets.named(sourceSet).get().getCompileTaskName('java')
     var groovy = sourceSets.named(sourceSet).get().getCompileTaskName('groovy')
     var resources = sourceSets.named(sourceSet).get().getProcessResourcesTaskName()
-    tasks.named(java, JavaCompile) {
-        dependsOn(configurations.named("${sourceSet}CommonJava"))
-        source(configurations.named("${sourceSet}CommonJava"))
+    def javaConf = configurations.named("${sourceSet}CommonJava").get()
+    def groovyConf = configurations.named("${sourceSet}CommonGroovy").get()
+    def resourcesConf = configurations.named("${sourceSet}CommonResources").get()
+    tasks.named(java, JavaCompile).configure {
+        dependsOn(javaConf)
+        source(javaConf)
     }
-    tasks.named(groovy, GroovyCompile) {
-        dependsOn(configurations.named("${sourceSet}CommonGroovy"))
-        source(configurations.named("${sourceSet}CommonGroovy"))
+    tasks.named(groovy, GroovyCompile).configure {
+        dependsOn(groovyConf)
+        source(groovyConf)
     }
-    tasks.named(resources, ProcessResources) {
-        dependsOn(configurations.named("${sourceSet}CommonResources"))
-        from(configurations.named("${sourceSet}CommonResources"))
+    tasks.named(resources, ProcessResources).configure {
+        dependsOn(resourcesConf)
+        from(resourcesConf)
     }
 }
 
-tasks.named("sourcesJar", Jar) {
+tasks.named("sourcesJar", Jar).configure {
     for (def sourceSet in ['main', 'extension', 'transform']) {
         for (def type in ['Java', 'Groovy', 'Resources']) {
-            dependsOn(configurations.named("${sourceSet}Common${type}"))
-            from(configurations.named("${sourceSet}Common${type}"))
+            def conf = configurations.named("${sourceSet}Common${type}").get()
+            dependsOn(conf)
+            from(conf)
         }
     }
 }

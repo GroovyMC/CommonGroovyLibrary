@@ -40,13 +40,12 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
     static final String REGISTER_DESC = Type.getMethodDescriptor(Type.getType(RegistryObject), Type.getType(String), Type.getType(Supplier))
     static final String DR_REGISTER_DESC = Type.getMethodDescriptor(Type.getObjectType('net/minecraftforge/registries/RegistryObject'), Type.getType(String), Type.getType(Supplier))
     public static final ClassNode RESOURCE_KEY_TYPE = ClassHelper.make(ResourceKey)
-    public static final Supplier<ClassNode> FORGE_REGISTRY_TYPE = Suppliers.memoize { ClassHelper.make('net.minecraftforge.registries.IForgeRegistry') }
-    public static final Supplier<ClassNode> FORGE_RO_TYPE = Suppliers.memoize { ClassHelper.make('net.minecraftforge.registries.RegistryObject') }
+    public static final Supplier<ClassNode> NEO_HOLDER_TYPE = Suppliers.memoize { ClassHelper.make('net.neoforged.neoforge.registries.DeferredHolder') }
     public static final ClassNode REGISTRATION_PROVIDER_TYPE = ClassHelper.make(RegistrationProvider)
     public static final ClassNode REG_OBJECT_TYPE = ClassHelper.make(RegistryObject)
     public static final ClassNode ADDON_CLASS_TYPE = ClassHelper.make(RegistroidAddonClass)
     public static final ClassNode REGISTRY_TYPE = ClassHelper.make(Registry)
-    public static final Supplier<ClassNode> MODLIST = Suppliers.memoize { ClassHelper.make('net.minecraftforge.fml.ModList') }
+    public static final Supplier<ClassNode> MODLIST = Suppliers.memoize { ClassHelper.make('net.neoforged.fml.ModList') }
     public static final Supplier<ClassNode> FORGEBUS_GETTER = Suppliers.memoize { ClassHelper.make('org.groovymc.cgl.reg.forge.ForgeBusGetter') }
 
     @Override
@@ -88,7 +87,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
 
         // Collect information about existing DR fields, in order to prevent addons from creating duplicate registries
         final existingDRFields = targetClass.fields.stream()
-                .filter { it.type == REGISTRATION_PROVIDER_TYPE || it.type.name == 'net.minecraftforge.registries.DeferredRegister' }
+                .filter { it.type == REGISTRATION_PROVIDER_TYPE || it.type.name == 'net.neoforged.neoforge.registries.DeferredRegister' }
                 .toList()
         final existingDRs = existingDRFields.stream()
                 .map { it.type.genericsTypes[0].type }.toList()
@@ -210,8 +209,6 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
             field = makeResourceKey(targetClass, registryField, modId)
         } else if (registryField.type.isDerivedFrom(REGISTRY_TYPE)) {
             field = makeRegistry(targetClass, registryField, modId)
-        } else if (GeneralUtils.isOrImplements(registryField.type, FORGE_REGISTRY_TYPE.get())) {
-            field = makeForgeRegistry(targetClass, registryField, modId)
         } else {
             addError("No known way of representing registry from ${registryField.owner.name}.${registryField.name}", registryField)
             return null
@@ -239,21 +236,6 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
         )
     }
 
-    private static FieldNode makeForgeRegistry(final ClassNode targetClass, final FieldNode registryField, final String modId) {
-        // IForgeRegistry<T>
-        final type = registryField.type.genericsTypes[0].type
-        return new FieldNode(
-                registryField.name.toUpperCase(Locale.ROOT),
-                Opcodes.ACC_STATIC | Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL,
-                GenericsUtils.makeClassSafeWithGenerics(RegistrationProvider, type),
-                targetClass, GeneralUtils.callX(
-                REGISTRATION_PROVIDER_TYPE, 'get', GeneralUtils.args(
-                    GeneralUtils.callX(GeneralUtils.fieldX(registryField), 'getRegistryKey'), GeneralUtils.constX(modId)
-                )
-            )
-        )
-    }
-
     private static FieldNode makeRegistry(final ClassNode targetClass, final FieldNode registryField, final String modId) {
         // Registry<T>
         final type = registryField.type.genericsTypes[0].type
@@ -274,7 +256,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
             addError('@Registroid can only be applied to static fields.', targetField)
             return
         }
-        if (targetField.type != REGISTRATION_PROVIDER_TYPE && targetField.type.name != 'net.minecraftforge.registries.DeferredRegister') {
+        if (targetField.type != REGISTRATION_PROVIDER_TYPE && targetField.type.name != 'net.neoforged.neoforge.registries.DeferredRegister') {
             addError('@Registroid can only be applied to fields of either the type DeferredRegister or RegistrationProvider', targetField)
             return
         }
@@ -284,12 +266,12 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
         // Check if the field is a subclass of the DR type
         final Predicate<PropertyNode> predicate = { PropertyNode it -> TransformUtils.isSubclass(it.type, baseType) && it.isStatic() /* Only process static fields */ }
 
-        final isForge = targetField.type != REGISTRATION_PROVIDER_TYPE
+        final isNeoForge = targetField.type != REGISTRATION_PROVIDER_TYPE
 
         // Process registry objects
         targetClass.properties.each {
             if (predicate.test(it)) {
-                register(baseType, targetField, targetClass, it, isForge)
+                register(baseType, targetField, targetClass, it, isNeoForge)
             }
         }
 
@@ -301,7 +283,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
         // And finally, if the annotation wants us to register the DR to the bus, do it
         final registerAutomatically = getMemberValue(annotation, 'registerAutomatically')
         if ((registerAutomatically === null || registerAutomatically === true) && modId) {
-            if (isForge) {
+            if (isNeoForge) {
                 targetClass.addStaticInitializerStatements([GeneralUtils.stmt(
                         GeneralUtils.callX(GeneralUtils.fieldX(targetField), 'register', GeneralUtils.args(
                                 GeneralUtils.callX(
@@ -336,10 +318,10 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
             if ((inner.modifiers & Opcodes.ACC_STATIC) == 0) return
 
             // Register properties of the inner class
-            final isForge = targetField.type != REGISTRATION_PROVIDER_TYPE
+            final isNeoForge = targetField.type != REGISTRATION_PROVIDER_TYPE
             inner.properties.each {
                 if (predicate.test(it)) {
-                    register(baseType, targetField, inner, it, isForge)
+                    register(baseType, targetField, inner, it, isNeoForge)
                 }
             }
             // Add a init method for easier classloading
@@ -361,7 +343,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
         }
     }
 
-    private void register(final ClassNode registryType, final FieldNode drVar, final ClassNode clazz, final PropertyNode property, final boolean isForge) {
+    private void register(final ClassNode registryType, final FieldNode drVar, final ClassNode clazz, final PropertyNode property, final boolean isNeoForge) {
         // Force Groovy to go through getters when accessing, and disallow setting
         property.modifiers = TransformUtils.CONSTANT_MODIFIERS
 
@@ -379,7 +361,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
                 Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, GeneralUtils.returnS(property.initialExpression))
 
         // Figure out the generic RegistryObject<T> type
-        final regObjectType = GenericsUtils.makeClassSafeWithGenerics(isForge ? FORGE_RO_TYPE.get() : REG_OBJECT_TYPE, new GenericsType(property.type))
+        final regObjectType = GenericsUtils.makeClassSafeWithGenerics(isNeoForge ? NEO_HOLDER_TYPE.get() : REG_OBJECT_TYPE, new GenericsType(registryType), new GenericsType(property.type))
 
         final classInternal = getInternalName(clazz)
 
@@ -402,7 +384,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
                                     new Handle(Opcodes.H_INVOKESTATIC, classInternal, lambdaMethod.name, getDesc, false),
                                     JarType.getType(getDesc)
                             })
-                    it.visitMethodInsn(isForge ? Opcodes.INVOKEVIRTUAL : Opcodes.INVOKEINTERFACE, drType, 'register', isForge ? DR_REGISTER_DESC : REGISTER_DESC, !isForge)
+                    it.visitMethodInsn(isNeoForge ? Opcodes.INVOKEVIRTUAL : Opcodes.INVOKEINTERFACE, drType, 'register', isNeoForge ? DR_REGISTER_DESC : REGISTER_DESC, !isNeoForge)
                 }
         )
 
@@ -420,7 +402,7 @@ final class RegistroidASTTransformer extends AbstractASTTransformation implement
                     // (MyFieldType) MyClass.$registryObjectForMY_PROPERTY.get()
                     final typeInternal = getInternalName(regObjectType)
                     it.visitFieldInsn(Opcodes.GETSTATIC, classInternal, field.name, "L$typeInternal;")
-                    it.visitMethodInsn(isForge ? Opcodes.INVOKEVIRTUAL : Opcodes.INVOKEINTERFACE, typeInternal, 'get', '()Ljava/lang/Object;', !isForge)
+                    it.visitMethodInsn(isNeoForge ? Opcodes.INVOKEVIRTUAL : Opcodes.INVOKEINTERFACE, typeInternal, 'get', '()Ljava/lang/Object;', !isNeoForge)
                     it.visitTypeInsn(Opcodes.CHECKCAST, getInternalName(property.type))
                 })
         ])

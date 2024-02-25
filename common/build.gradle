@@ -8,16 +8,12 @@ modsDotGroovy.multiplatform.expose()
 
 configurations {
     for (def sourceSet in ['main', 'extension', 'transform']) {
-        for (def type in ['Java', 'Groovy', 'Resources']) {
+        for (def type in ['Java', 'Groovy', 'Resources', 'Exported']) {
             create("${sourceSet}Common${type}") {
                 canBeResolved = false
                 canBeConsumed = true
             }
         }
-    }
-    exportedClasses {
-        canBeResolved = false
-        canBeConsumed = true
     }
 }
 
@@ -68,9 +64,11 @@ artifacts {
         add("${sourceSet}CommonJava", sourceSets.named(sourceSet).get().java.sourceDirectories.singleFile)
         add("${sourceSet}CommonGroovy", sourceSets.named(sourceSet).get().groovy.sourceDirectories.singleFile)
         add("${sourceSet}CommonResources", sourceSets.named(sourceSet).get().resources.sourceDirectories.singleFile)
-        def outputClasses = project.objects.directoryProperty()
+        add("${sourceSet}CommonExported", sourceSets.named(sourceSet).get().output.resourcesDir) {
+            builtBy tasks.named(sourceSets.named(sourceSet).get().processResourcesTaskName)
+        }
         sourceSets.named(sourceSet).get().output.classesDirs.files.each {
-            add('exportedClasses', it) {
+            add("${sourceSet}CommonExported", it) {
                 builtBy tasks.named(sourceSets.named(sourceSet).get().classesTaskName)
             }
         }
