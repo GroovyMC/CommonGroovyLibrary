@@ -16,17 +16,17 @@ modsDotGroovy {
     apply()
 }
 
+tasks.named('gatherNeoForgePlatformDetails', AbstractGatherPlatformDetailsTask).configure {
+    minecraftVersion = libs.versions.minecraft.get()
+    platformVersion = libs.versions.neoforge.get()
+}
+
 registrationUtils {
     projects {
         neoforge {
             type 'neoforge'
         }
     }
-}
-
-tasks.named('gatherNeoForgePlatformDetails', AbstractGatherPlatformDetailsTask).configure {
-    minecraftVersion = libs.versions.minecraft.get()
-    platformVersion = libs.versions.neoforge.get()
 }
 
 repositories {

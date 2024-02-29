@@ -16,6 +16,11 @@ modsDotGroovy {
     apply()
 }
 
+tasks.named('gatherFabricPlatformDetails', AbstractGatherPlatformDetailsTask).configure {
+    minecraftVersion = libs.versions.minecraft.get()
+    platformVersion = libs.versions.fabric.loader.get()
+}
+
 loom {
     createRemapConfigurations(sourceSets.transform)
     createRemapConfigurations(sourceSets.extension)
@@ -27,11 +32,6 @@ registrationUtils {
             type 'fabric'
         }
     }
-}
-
-tasks.named('gatherFabricPlatformDetails', AbstractGatherPlatformDetailsTask).configure {
-    minecraftVersion = libs.versions.minecraft.get()
-    platformVersion = libs.versions.fabric.loader.get()
 }
 
 dependencies {

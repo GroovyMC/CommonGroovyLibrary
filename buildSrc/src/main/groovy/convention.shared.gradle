@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'groovy'
     id 'maven-publish'
+    id 'signing'
 }
 
 version = rootProject.version
@@ -57,6 +58,7 @@ configurations {
     compileOnlyApi.extendsFrom sharedCompileOnly
 }
 
+
 dependencies {
     allCompileOnly libs.jetbrains.annotations
     allCompileOnly libs.autoservice
@@ -69,13 +71,37 @@ dependencies {
     transformCompileOnly sourceSets.extension.output
 }
 
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            artifactId base.archivesName.get()
-            from components.java
+tasks.named('groovydoc', Groovydoc) {
+    use = true
+}
+
+tasks.register('groovydocJar', Jar) {
+    archiveClassifier = 'javadoc'
+    from groovydoc.destinationDir
+    dependsOn 'groovydoc'
+}
+
+// Publish groovydoc as javadoc
+configurations {
+    javadocElements {
+        canBeConsumed = true
+        canBeResolved = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.class, Usage.JAVA_RUNTIME))
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.class, Category.DOCUMENTATION))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.class, Bundling.EXTERNAL))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.class, DocsType.JAVADOC))
         }
     }
+}
+
+project.components.named("java").configure {
+    AdhocComponentWithVariants javaComponent = (AdhocComponentWithVariants) it
+    javaComponent.addVariantsFromConfiguration(configurations.javadocElements) {}
+}
+
+artifacts {
+    javadocElements groovydocJar
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -132,5 +158,52 @@ jar {
                 'Implementation-Vendor'   : mod_author,
                 'Built-On-Minecraft'      : libs.versions.minecraft.get()
         ])
+    }
+}
+
+final String signingKey = System.getenv('GPG_SIGNING_KEY') ?: ''
+final String signingPassword = System.getenv('GPG_KEY_PASSWORD') ?: ''
+final boolean hasSigningDetails = !signingKey.isEmpty() && !signingPassword.isEmpty()
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId base.archivesName.get()
+            from components.java
+            pom {
+                name = "CommonGroovyLibrary - ${project.name.capitalize()}".toString()
+                description = 'A library for common easy Groovy mod development'
+                packaging = 'jar'
+                url = 'https://github.com/groovymc/CommonGroovyLibrary'
+                inceptionYear = '2022'
+
+                licenses {
+                    license {
+                        name = 'LGPL-3.0-or-later'
+                        url = 'https://spdx.org/licenses/LGPL-3.0-or-later'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'groovymc'
+                        name = 'GroovyMC'
+                        email = 'holdings@groovymc.org'
+                        url = 'https://github.com/GroovyMC/'
+                    }
+                }
+                scm {
+                    connection='scm:git:git://github.com/groovymc/CommonGroovyLibrary.git'
+                    developerConnection='scm:git:ssh://github.com/groovymc/CommonGroovyLibrary.git'
+                    url='https://github.com/groovymc/CommonGroovyLibrary'
+                }
+            }
+        }
+    }
+}
+
+if (hasSigningDetails) {
+    signing {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.mavenJava
     }
 }

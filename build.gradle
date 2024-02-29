@@ -3,19 +3,56 @@ plugins {
     alias libs.plugins.managedversioning
     alias libs.plugins.architectury.loom apply false
     alias libs.plugins.registrationutils apply false
+    alias libs.plugins.nexuspublish
 }
 
 managedVersioning {
     versionFile.set rootProject.file('version.properties')
 
     gitHubActions {
-
+        register('release') {
+            prettyName = 'Release'
+            workflowDispatch = true
+            gradleJob {
+                name = 'build'
+                step {
+                    setupGitUser()
+                }
+                readOnly = false
+                gradlew 'Tag Release', 'tagRelease'
+                gradlew 'Build', 'build'
+                step {
+                    run = 'git push && git push --tags'
+                }
+                recordVersion 'Record Version', 'version'
+            }
+            gradleJob {
+                name.set 'publish'
+                needs.add('build')
+                readOnly = false
+                gradlew 'Publish', 'publish', 'closeAndReleaseSonatypeStagingRepository'
+                tag.set('${{needs.build.outputs.version}}')
+                secrets 'GPG_SIGNING_KEY', 'GPG_KEY_PASSWORD', 'CENTRAL_MAVEN_USER', 'CENTRAL_MAVEN_PASSWORD'
+            }
+        }
     }
+
+    apply()
 }
 
 managedVersioning.apply()
 
 println "Building: $version"
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl = uri('https://s01.oss.sonatype.org/service/local/')
+            username = System.getenv('CENTRAL_MAVEN_USER') ?: ''
+            password = System.getenv('CENTRAL_MAVEN_PASSWORD') ?: ''
+        }
+    }
+}
 
 configurations {
     license {

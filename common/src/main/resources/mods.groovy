@@ -6,32 +6,36 @@ MultiplatformModsDotGroovy.make {
     issueTrackerUrl = 'https://github.com/GroovyMC/CommonGroovyLibrary/issues'
 
     mod {
-        modId = buildProperties['mod_id']
-        displayName = buildProperties['mod_name']
-        version = buildProperties['version']
+        modId = buildProperties.mod_id
+        displayName = buildProperties.mod_name
+        version = environmentInfo.version
+
         displayUrl = 'https://github.com/GroovyMC/CommonGroovyLibrary'
 
         description = "A library for common easy Groovy mod development."
-        author = buildProperties['mod_author']
+        author = buildProperties.mod_author
 
         dependencies {
-            minecraft = ">=${buildProperties['minecraftVersion']}"
+            minecraft = ">=${environmentInfo.minecraftVersion}"
 
-            onForge {
+            onNeoForge {
                 mod('neoforge') {
-                    versionRange = ">=${buildProperties['platformVersion']}"
+                    versionRange = ">=${environmentInfo.platformVersion}"
                 }
                 mod('gml') {
-                    versionRange = ">=${buildProperties['gml_version']}"
+                    versionRange = ">=${libs.versions.gml}"
                 }
             }
 
             onFabric {
                 mod('groovyduvet_core') {
-                    versionRange = ">=${buildProperties['groovyduvet_core_version']}"
+                    versionRange = ">=${libs.versions.groovyduvet}"
                 }
-                mod('fabric_loader') {
-                    versionRange = ">=${buildProperties['platformVersion']}"
+                mod('fabricloader') {
+                    versionRange = ">=${environmentInfo.platformVersion}"
+                }
+                mod('fabric-api') {
+                    versionRange = ">=${libs.versions.fabric_api}"
                 }
             }
         }

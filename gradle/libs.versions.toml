@@ -8,15 +8,16 @@ neoforge = "20.4.167"
 fabric_loader = "0.15.3"
 fabric_api = "0.92.0+1.20.4"
 
-mdg = "2.0.0-beta.10"
+mdg = "2.0.0-beta.14"
 autoservice = "1.1.1"
+nexuspublish = "2.0.0-rc-1"
 
 architectury_loom = "1.4.373"
 
 jetbrains_annotations = "24.1.0"
 
 managedversioning = "1.2.8"
-registrationutils = "1.20.2-0.1.1"
+registrationutils = "1.20.2-0.1.2"
 enhancedgroovy = "0.2.0"
 
 groovybundler = "2.1.1"
@@ -54,4 +55,5 @@ managedversioning = { id = "dev.lukebemish.managedversioning", version.ref = "ma
 mdg = { id = "org.groovymc.modsdotgroovy", version.ref = "mdg" }
 architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
 registrationutils = { id = "com.matyrobbrt.mc.registrationutils", version.ref = "registrationutils" }
+nexuspublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexuspublish" }
 
