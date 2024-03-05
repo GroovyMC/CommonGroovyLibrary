@@ -22,11 +22,15 @@ tasks.named('gatherNeoForgePlatformDetails', AbstractGatherPlatformDetailsTask).
 }
 
 registrationUtils {
+    addDependencies false
     projects {
         neoforge {
             type 'neoforge'
         }
     }
+}
+afterEvaluate {
+    reg.configureJarTask(tasks.jar)
 }
 
 repositories {
@@ -46,6 +50,7 @@ dependencies {
 
     implementation libs.gml
     api libs.jankson
+    include libs.jankson
 
     allCompileOnly libs.jankson
     allCompileOnly libs.gml
@@ -57,7 +62,9 @@ afterEvaluate {
 
     dependencies {
         compileOnly reg.loaderSpecific()
+        localRuntime reg.loaderSpecific()
         testCompileOnly reg.loaderSpecific()
+        testRuntimeOnly reg.loaderSpecific()
         transformCompileOnly reg.loaderSpecific()
         extensionCompileOnly reg.loaderSpecific()
         transformCompileOnly reg.common()
@@ -66,6 +73,15 @@ afterEvaluate {
 }
 
 loom {
+    mods {
+        cgltest {
+            sourceSet(sourceSets.test)
+        }
+        main {
+            sourceSet(sourceSets.extension)
+            sourceSet(sourceSets.transform)
+        }
+    }
     runs {
         client {
             client()
@@ -95,6 +111,3 @@ processResources {
         }
     }
 }
-
-// Publishing
-

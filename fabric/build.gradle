@@ -27,11 +27,15 @@ loom {
 }
 
 registrationUtils {
+    addDependencies false
     projects {
         fabric {
             type 'fabric'
         }
     }
+}
+afterEvaluate {
+    reg.configureJarTask(tasks.jar)
 }
 
 dependencies {
@@ -71,6 +75,7 @@ afterEvaluate {
 
     dependencies {
         compileOnly reg.loaderSpecific()
+        localRuntime reg.loaderSpecific()
         testCompileOnly reg.loaderSpecific()
         transformCompileOnly reg.loaderSpecific()
         extensionCompileOnly reg.loaderSpecific()
@@ -99,6 +104,3 @@ loom {
         }
     }
 }
-
-// Publishing
-

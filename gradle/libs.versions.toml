@@ -8,7 +8,7 @@ neoforge = "20.4.167"
 fabric_loader = "0.15.3"
 fabric_api = "0.92.0+1.20.4"
 
-mdg = "2.0.0-beta.14"
+mdg = "2.0.0-beta.15"
 autoservice = "1.1.1"
 nexuspublish = "2.0.0-rc-1"
 
@@ -22,7 +22,7 @@ enhancedgroovy = "0.2.0"
 
 groovybundler = "2.1.1"
 groovyduvet = "3.1.2"
-gml = "5.0.0"
+gml = "5.0.1"
 
 jankson = "1.2.3"
 nightconfig = "3.6.7"

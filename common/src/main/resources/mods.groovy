@@ -1,6 +1,6 @@
 MultiplatformModsDotGroovy.make {
     modLoader = 'gml'
-    loaderVersion = '[1,)'
+    loaderVersion = "[${libs.versions.gml},)"
 
     license = 'LGPL-3.0-or-later'
     issueTrackerUrl = 'https://github.com/GroovyMC/CommonGroovyLibrary/issues'
@@ -21,9 +21,6 @@ MultiplatformModsDotGroovy.make {
             onNeoForge {
                 mod('neoforge') {
                     versionRange = ">=${environmentInfo.platformVersion}"
-                }
-                mod('gml') {
-                    versionRange = ">=${libs.versions.gml}"
                 }
             }
 

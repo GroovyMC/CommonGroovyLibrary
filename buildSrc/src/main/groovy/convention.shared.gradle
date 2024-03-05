@@ -72,6 +72,8 @@ dependencies {
 }
 
 tasks.named('groovydoc', Groovydoc) {
+    source sourceSets.extension.allSource
+    source sourceSets.transform.allSource
     use = true
 }
 
