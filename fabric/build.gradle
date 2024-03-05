@@ -55,7 +55,8 @@ dependencies {
 
     api libs.jankson
     api libs.nightconfig.toml
-    implementation libs.groovyduvet
+    compileOnly libs.groovyduvet
+    localRuntime libs.groovyduvet
 
     allCompileOnly libs.jankson
     allCompileOnly libs.nightconfig.toml
