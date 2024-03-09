@@ -20,7 +20,7 @@ managedversioning = "1.2.8"
 registrationutils = "1.20.2-0.1.2"
 enhancedgroovy = "0.2.0"
 
-groovybundler = "2.1.1"
+groovybundler = "2.1.4"
 groovyduvet = "3.1.2"
 gml = "5.0.1"
 

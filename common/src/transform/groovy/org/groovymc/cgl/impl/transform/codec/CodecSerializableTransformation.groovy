@@ -81,8 +81,10 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
 
         Expression[] grouping = new Expression[assembler.parameters.size()]
 
+        def camelToSnake = getMemberBooleanValue(anno, 'camelToSnake', true)
+
         for (int i = 0; i < assembler.parameters.size(); i++) {
-            grouping[i] = assembleExpression(anno, parent, assembler.parameters[i], getMemberBooleanValue(anno, 'camelToSnake', true))
+            grouping[i] = assembleExpression(anno, parent, assembler.parameters[i], camelToSnake)
         }
 
         // Parse and merge comments
@@ -115,7 +117,7 @@ class CodecSerializableTransformation extends AbstractASTTransformation implemen
             }
 
             if (docs != '') {
-                comments[name] = docs
+                comments[camelToSnake? toSnakeCase(name) : name] = docs
             }
         }
 
