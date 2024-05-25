@@ -40,8 +40,6 @@ managedVersioning {
     apply()
 }
 
-managedVersioning.apply()
-
 println "Building: $version"
 
 nexusPublishing {
