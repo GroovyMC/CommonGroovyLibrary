@@ -1,4 +1,4 @@
-import org.groovymc.modsdotgroovy.core.Platform
+import org.groovymc.modsdotgroovy.types.core.Platform
 import org.groovymc.modsdotgroovy.gradle.tasks.AbstractGatherPlatformDetailsTask
 
 plugins {
@@ -61,12 +61,10 @@ afterEvaluate {
     configurations.extensionCompileClasspath.extendsFrom configurations.minecraftNamedCompile
 
     dependencies {
-        compileOnly reg.loaderSpecific()
-        localRuntime reg.loaderSpecific()
-        testCompileOnly reg.loaderSpecific()
-        testRuntimeOnly reg.loaderSpecific()
-        transformCompileOnly reg.loaderSpecific()
-        extensionCompileOnly reg.loaderSpecific()
+        compileOnly reg.common()
+        localRuntime reg.joined()
+        testCompileOnly reg.common()
+        testRuntimeOnly reg.joined()
         transformCompileOnly reg.common()
         extensionCompileOnly reg.common()
     }
@@ -88,12 +86,14 @@ loom {
             setConfigName("NeoForge Client")
             ideConfigGenerated(true)
             runDir("run")
+            source(sourceSets.test)
         }
         server {
             server()
             setConfigName("NeoForge Server")
             ideConfigGenerated(true)
             runDir("run")
+            source(sourceSets.test)
         }
     }
 }

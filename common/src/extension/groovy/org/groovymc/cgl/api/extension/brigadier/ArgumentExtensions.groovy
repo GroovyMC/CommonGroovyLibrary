@@ -311,14 +311,14 @@ final class ArgumentExtensions {
     ) Closure closure) {
         argument(self, name, ColorArgument.color(), defaultGetter(), closure)
     }
-    static <S, T extends ArgumentBuilder<S, T>> T component(ArgumentBuilder<S, T> self, String name, @DelegatesTo(
+    static <S, T extends ArgumentBuilder<S, T>> T component(ArgumentBuilder<S, T> self, String name, CommandBuildContext context, @DelegatesTo(
             type = 'com.mojang.brigadier.builder.RequiredArgumentBuilder<S,net.minecraft.network.chat.Component>',
             strategy = DELEGATE_FIRST
     ) @ClosureParams(
             value = FromString,
             options = 'org.groovymc.cgl.api.extension.brigadier.ArgumentGetter<S,net.minecraft.network.chat.Component>'
     ) Closure closure) {
-        argument(self, name, ComponentArgument.textComponent(), defaultGetter(), closure)
+        argument(self, name, ComponentArgument.textComponent(context), defaultGetter(), closure)
     }
     static <S, T extends ArgumentBuilder<S, T>> T uuid(ArgumentBuilder<S, T> self, String name, @DelegatesTo(
             type = 'com.mojang.brigadier.builder.RequiredArgumentBuilder<S,java.util.UUID>',

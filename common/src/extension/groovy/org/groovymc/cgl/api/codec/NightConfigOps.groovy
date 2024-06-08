@@ -49,7 +49,7 @@ abstract class NightConfigOps extends ObjectOps implements CommentingOps<Object>
             return DataResult.error({->"mergeToMap called with not a map: " + map}, map)
         }
         DataResult<String> stringResult = this.getStringValue(key)
-        Optional<DataResult.PartialResult<String>> badResult = stringResult.error()
+        Optional<DataResult.Error<String>> badResult = stringResult.error()
         if (badResult.isPresent())
             return DataResult.error({->"key is not a string: " + key}, map)
         return stringResult.flatMap{
@@ -77,7 +77,7 @@ abstract class NightConfigOps extends ObjectOps implements CommentingOps<Object>
     Object createMap(Stream<Pair<Object, Object>> map) {
         final Config result = newConfig()
         map.iterator().each {
-            String key = this.getStringValue(it.getFirst()).getOrThrow(false, {})
+            String key = this.getStringValue(it.getFirst()).getOrThrow()
             result.set(key, it.getSecond())
         }
         return result

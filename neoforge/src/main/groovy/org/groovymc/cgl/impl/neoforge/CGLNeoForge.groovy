@@ -15,7 +15,7 @@ import org.jetbrains.annotations.ApiStatus
 class CGLNeoForge {
     CGLNeoForge() {
         CommonGroovyLibrary.LOGGER.info('CGL NeoForge initialised')
-        forgeBus.addListener(AddReloadListenerEvent) { event ->
+        gameBus.addListener(AddReloadListenerEvent) { event ->
             event.addListener(new ScriptResourceListener())
         }
     }

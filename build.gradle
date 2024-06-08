@@ -4,6 +4,7 @@ plugins {
     alias libs.plugins.architectury.loom apply false
     alias libs.plugins.registrationutils apply false
     alias libs.plugins.nexuspublish
+    alias libs.plugins.idea.ext
 }
 
 managedVersioning {

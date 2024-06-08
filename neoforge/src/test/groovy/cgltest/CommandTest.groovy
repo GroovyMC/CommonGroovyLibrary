@@ -5,10 +5,10 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.Level
 import net.neoforged.bus.api.SubscribeEvent
-import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.event.RegisterCommandsEvent
+import org.groovymc.gml.bus.GEventBusSubscriber
 
-@Mod.EventBusSubscriber
+@GEventBusSubscriber
 class CommandTest {
     @SubscribeEvent
     static void test(RegisterCommandsEvent event) {
@@ -57,7 +57,7 @@ class CommandTest {
                 then literal('sendMessage') {
                     requires gameMaster
                     player('singlePlayer') { player ->
-                        component('message') { message ->
+                        component('message', event.buildContext) { message ->
                             executes {
                                 player(it).sendSystemMessage(message(it))
                             }

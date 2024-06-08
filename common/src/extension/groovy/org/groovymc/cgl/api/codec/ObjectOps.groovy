@@ -1,12 +1,10 @@
 package org.groovymc.cgl.api.codec
 
-
 import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
 import com.mojang.serialization.MapLike
 import groovy.transform.CompileStatic
-import org.codehaus.groovy.runtime.NullObject
 
 import java.util.function.BiConsumer
 import java.util.function.Consumer
@@ -27,7 +25,7 @@ class ObjectOps implements DynamicOps<Object> {
 
     @Override
     Object empty() {
-        return NullObject.nullObject
+        return null
     }
 
     @Override
@@ -36,7 +34,7 @@ class ObjectOps implements DynamicOps<Object> {
             return convertMap(outOps, input)
         if (input instanceof List)
             return convertList(outOps, input)
-        if (input == NullObject.nullObject)
+        if (input == null)
             return outOps.empty()
         if (input instanceof Boolean)
             return outOps.createBoolean(input)
@@ -94,7 +92,7 @@ class ObjectOps implements DynamicOps<Object> {
             return DataResult.error({->"mergeToMap called with not a map: " + map}, map)
         }
         DataResult<String> stringResult = this.getStringValue(key)
-        Optional<DataResult.PartialResult<String>> badResult = stringResult.error()
+        Optional<DataResult.Error<String>> badResult = stringResult.error()
         if (badResult.isPresent())
             return DataResult.error({->"key is not a string: " + key}, map)
         return stringResult.flatMap{
@@ -113,7 +111,7 @@ class ObjectOps implements DynamicOps<Object> {
         if (!(input instanceof Map))
             return DataResult.error {->"Not a map: " + input}
         return DataResult.success(((Map)input).entrySet().stream().map {
-            return Pair.of(it.key, it.value instanceof NullObject ? null : it.value)
+            return Pair.of(it.key, it.value)
         })
     }
 
@@ -121,11 +119,7 @@ class ObjectOps implements DynamicOps<Object> {
     DataResult<Consumer<BiConsumer<Object, Object>>> getMapEntries(Object input) {
         if (!(input instanceof Map))
             return DataResult.error {->"Not a map: " + input}
-        return DataResult.<Consumer<BiConsumer<Object, Object>>>success({BiConsumer<Object, Object> it ->
-            for (final Map.Entry<Object,Object> entry : ((Map)input).entrySet()) {
-                it.accept(entry.key, entry.value instanceof NullObject ? null : entry.value)
-            }
-        } as Consumer<BiConsumer<Object, Object>>)
+        return DataResult.<Consumer<BiConsumer<Object, Object>>>success((Consumer<BiConsumer<Object, Object>>) ((Map) input)::forEach)
     }
 
     @Override
@@ -135,20 +129,18 @@ class ObjectOps implements DynamicOps<Object> {
             return DataResult.<MapLike<Object>>success(new MapLike<Object>() {
                 @Override
                 Object get(Object key) {
-                    Object found = map.get(key)
-                    return found instanceof NullObject ? null : found
+                    return map.get(key)
                 }
 
                 @Override
                 Object get(String key) {
-                    Object found = map.get(key)
-                    return found instanceof NullObject ? null : found
+                    return map.get(key)
                 }
 
                 @Override
                 Stream<Pair<Object, Object>> entries() {
                     map.entrySet().stream().map {
-                        return Pair.of(it.key, it.value instanceof NullObject ? null : it.value)
+                        return Pair.of(it.key, it.value)
                     }
                 }
 
@@ -165,7 +157,7 @@ class ObjectOps implements DynamicOps<Object> {
     Object createMap(Stream<Pair<Object, Object>> map) {
         final Map result = [:]
         map.iterator().each {
-            result.put(this.getStringValue(it.getFirst()).getOrThrow(false, {}), it.getSecond())
+            result.put(this.getStringValue(it.getFirst()).getOrThrow(), it.getSecond())
         }
         return result
     }
@@ -176,7 +168,7 @@ class ObjectOps implements DynamicOps<Object> {
         {
             @SuppressWarnings("unchecked")
             List list = input as List
-            return DataResult.success(list.stream().map {it instanceof NullObject ? null : it})
+            return DataResult.success(list.stream())
         }
         return DataResult.error {->"Not a list: " + input}
     }
@@ -186,7 +178,7 @@ class ObjectOps implements DynamicOps<Object> {
         if (input instanceof List) {
             return DataResult.<Consumer<Consumer<Object>>>success({Consumer<Object> it ->
                 for (final Object element : input) {
-                    it.accept(element instanceof NullObject ? null : element)
+                    it.accept(element)
                 }
             } as Consumer<Consumer<Object>>)
         }

@@ -6,23 +6,24 @@ parchment_mappings = "2024.05.01"
 neoforge = "20.6.76-beta"
 
 fabric_loader = "0.15.10"
-fabric_api = "0.92.0+1.20.4"
+fabric_api = "0.100.0+1.20.6"
 
-mdg = "2.0.0-beta.25"
+mdg = "2.0.0-beta.27"
 autoservice = "1.1.1"
 nexuspublish = "2.0.0"
+idea_ext = "1.1.8"
 
 architectury_loom = "1.6.397"
 
 jetbrains_annotations = "24.1.0"
 
 managedversioning = "1.2.19"
-registrationutils = "1.20.2-0.1.2"
+registrationutils = "1.20.2-0.2.1"
 enhancedgroovy = "0.2.0"
 
 groovybundler = "2.1.4"
 groovyduvet = "3.1.6"
-gml = "6.0.0"
+gml = "6.0.1"
 
 jankson = "1.2.3"
 nightconfig = "3.6.7"
@@ -56,4 +57,4 @@ mdg = { id = "org.groovymc.modsdotgroovy", version.ref = "mdg" }
 architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
 registrationutils = { id = "com.matyrobbrt.mc.registrationutils", version.ref = "registrationutils" }
 nexuspublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexuspublish" }
-
+idea_ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea_ext" }

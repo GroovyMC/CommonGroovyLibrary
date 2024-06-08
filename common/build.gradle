@@ -4,7 +4,14 @@ plugins {
     alias libs.plugins.mdg
 }
 
-modsDotGroovy.multiplatform.expose()
+modsDotGroovy{
+    multiplatform.expose()
+    gather {
+        projectProperty 'mod_id'
+        projectProperty 'mod_name'
+        projectProperty 'mod_author'
+    }
+}
 
 configurations {
     for (def sourceSet in ['main', 'extension', 'transform']) {

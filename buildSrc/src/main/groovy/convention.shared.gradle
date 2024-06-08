@@ -8,7 +8,7 @@ plugins {
 version = rootProject.version
 group = rootProject.group
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 java.withSourcesJar()
 
 sourceSets {
@@ -57,7 +57,6 @@ configurations {
     allCompileOnly.extendsFrom sharedCompileOnly
     compileOnlyApi.extendsFrom sharedCompileOnly
 }
-
 
 dependencies {
     allCompileOnly libs.jetbrains.annotations
