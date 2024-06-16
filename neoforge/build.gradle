@@ -61,12 +61,12 @@ afterEvaluate {
     configurations.extensionCompileClasspath.extendsFrom configurations.minecraftNamedCompile
 
     dependencies {
-        compileOnly reg.common()
+        compileOnly reg.joined()
         localRuntime reg.joined()
-        testCompileOnly reg.common()
+        testCompileOnly reg.joined()
         testRuntimeOnly reg.joined()
-        transformCompileOnly reg.common()
-        extensionCompileOnly reg.common()
+        transformCompileOnly reg.joined()
+        extensionCompileOnly reg.joined()
     }
 }
 

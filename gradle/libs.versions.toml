@@ -18,7 +18,7 @@ architectury_loom = "1.6.397"
 jetbrains_annotations = "24.1.0"
 
 managedversioning = "1.2.19"
-registrationutils = "1.20.2-0.2.1"
+registrationutils = "1.20.6-0.1.0"
 enhancedgroovy = "0.2.0"
 
 groovybundler = "2.1.4"
