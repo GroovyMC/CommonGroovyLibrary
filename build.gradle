@@ -16,6 +16,7 @@ managedVersioning {
             workflowDispatch = true
             gradleJob {
                 name = 'build'
+                javaVersion = '21'
                 step {
                     setupGitUser()
                 }
@@ -29,6 +30,7 @@ managedVersioning {
             }
             gradleJob {
                 name.set 'publish'
+                javaVersion = '21'
                 needs.add('build')
                 readOnly = false
                 gradlew 'Publish', 'publish', 'closeAndReleaseSonatypeStagingRepository'
