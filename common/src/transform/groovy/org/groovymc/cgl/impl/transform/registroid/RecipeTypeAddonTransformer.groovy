@@ -20,8 +20,8 @@ class RecipeTypeAddonTransformer implements RegistroidAddon {
     @Override
     void process(AnnotationNode registroidAnnotation, ClassNode targetClass, PropertyNode property, RegistroidASTTransformer transformer, Supplier<String> modId) {
         property.field.setInitialValueExpression(
-                GeneralUtils.callX(RECIPE_TYPE_TYPE, 'simple', GeneralUtils.ctorX(
-                        RL_TYPE, GeneralUtils.args(
+                GeneralUtils.callX(RECIPE_TYPE_TYPE, 'simple', GeneralUtils.callX(
+                        RL_TYPE, "fromNamespaceAndPath", GeneralUtils.args(
                         GeneralUtils.constX(modId.get()), GeneralUtils.constX(transformer.getRegName(property))
                     )
                 ))

@@ -25,8 +25,8 @@ class SoundEventAddonTransformer implements RegistroidAddon {
     void process(AnnotationNode registroidAnnotation, ClassNode targetClass, PropertyNode property, RegistroidASTTransformer transformer, Supplier<String> modId) {
         if (property.field.initialValueExpression === null) {
             property.field.setInitialValueExpression(
-                    GeneralUtils.callX(SOUND_EVENT_TYPE, 'createVariableRangeEvent', GeneralUtils.ctorX(
-                            RL_TYPE, GeneralUtils.args(
+                    GeneralUtils.callX(SOUND_EVENT_TYPE, 'createVariableRangeEvent', GeneralUtils.callX(
+                            RL_TYPE, "fromNamespaceAndPath", GeneralUtils.args(
                             GeneralUtils.constX(modId.get()), GeneralUtils.constX(transformer.getRegName(property))
                     )))
             )
@@ -36,8 +36,8 @@ class SoundEventAddonTransformer implements RegistroidAddon {
             if (args instanceof ArgumentListExpression && args.size() >= 1) {
                 final arg0 = args[0]
                 if (arg0 instanceof ConstantExpression && arg0.value === null) {
-                    args.expressions.set(0, GeneralUtils.ctorX(
-                            RL_TYPE, GeneralUtils.args(
+                    args.expressions.set(0, GeneralUtils.callX(
+                            RL_TYPE, "fromNamespaceAndPath", GeneralUtils.args(
                             GeneralUtils.constX(modId.get()), GeneralUtils.constX(transformer.getRegName(property))
                         )
                     ))

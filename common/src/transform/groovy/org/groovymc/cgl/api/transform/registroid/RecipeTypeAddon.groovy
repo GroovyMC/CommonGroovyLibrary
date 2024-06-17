@@ -16,7 +16,7 @@ import java.lang.annotation.*
  * </pre>
  * Example out:
  * <pre>
- * {@code static final RecipeType<MyRecipe> HELLO_WORLD = RecipeType.simple(new ResourceLocation(yourModId, 'hello_world'))}
+ * {@code static final RecipeType<MyRecipe> HELLO_WORLD = RecipeType.simple(ResourceLocation.fromNamespaceAndPath(yourModId, 'hello_world'))}
  * </pre>
  */
 @Documented

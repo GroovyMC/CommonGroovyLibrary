@@ -1,14 +1,14 @@
 [versions]
-minecraft = "1.20.6"
+minecraft = "1.21"
 parchment_minecraft = "1.20.6"
 parchment_mappings = "2024.05.01"
 
-neoforge = "20.6.76-beta"
+neoforge = "21.0.14-beta"
 
-fabric_loader = "0.15.10"
-fabric_api = "0.100.0+1.20.6"
+fabric_loader = "0.15.11"
+fabric_api = "0.100.1+1.21"
 
-mdg = "2.0.0-beta.27"
+mdg = "2.0.0-beta.28"
 autoservice = "1.1.1"
 nexuspublish = "2.0.0"
 idea_ext = "1.1.8"
@@ -18,12 +18,12 @@ architectury_loom = "1.6.397"
 jetbrains_annotations = "24.1.0"
 
 managedversioning = "1.2.19"
-registrationutils = "1.20.6-0.1.0"
+registrationutils = "1.21.0-0.1.0"
 enhancedgroovy = "0.2.0"
 
-groovybundler = "2.1.4"
+groovybundler = "2.1.5"
 groovyduvet = "3.1.6"
-gml = "6.0.1"
+gml = "7.0.0"
 
 jankson = "1.2.3"
 nightconfig = "3.6.7"

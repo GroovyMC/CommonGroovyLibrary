@@ -16,8 +16,8 @@ import java.lang.annotation.*
  * </pre>
  * Example out:
  * <pre>
- * {@code static final SoundEvent HELLO_WORLD = new SoundEvent(new ResourceLocation(yourModId, 'hello_world'))}
- * {@code static final SoundEvent HELLO_THERE = new SoundEvent(new ResourceLocation(yourModId, 'hello_there'), 0.12f)}
+ * {@code static final SoundEvent HELLO_WORLD = new SoundEvent(ResourceLocation.fromNamespaceAndPath(yourModId, 'hello_world'))}
+ * {@code static final SoundEvent HELLO_THERE = new SoundEvent(ResourceLocation.fromNamespaceAndPath(yourModId, 'hello_there'), 0.12f)}
  * </pre>
  */
 @Documented
